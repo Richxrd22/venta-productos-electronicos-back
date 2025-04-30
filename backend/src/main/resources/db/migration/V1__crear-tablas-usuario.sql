@@ -11,7 +11,7 @@ CREATE TABLE empleado (
 
 CREATE TABLE rol (
     id_rol BIGINT NOT NULL AUTO_INCREMENT,
-    nombre_rol VARCHAR(50) NOT NULL,
+    nombre_rol VARCHAR(50) NOT NULL UNIQUE,
     PRIMARY KEY (id_rol)
 );
 
@@ -26,3 +26,9 @@ CREATE TABLE usuario (
     FOREIGN KEY (id_empleado) REFERENCES empleado(id_empleado),
     FOREIGN KEY (id_rol) REFERENCES rol(id_rol)
 );
+
+INSERT INTO rol (nombre_rol)
+VALUES 
+    ('Administrador'),
+    ('Almacenero'),
+    ('Vendedor');
