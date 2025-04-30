@@ -3,6 +3,8 @@ package com.neon.sve.model.Usuario;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.neon.sve.dto.empleado.DatosActualizarEmpleado;
+import com.neon.sve.dto.empleado.DatosRegistroEmpleado;
 import com.neon.sve.model.Producto.MovimientoStock;
 
 import jakarta.persistence.Column;
@@ -13,6 +15,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -54,4 +57,23 @@ public class Empleado {
 
     @OneToMany(mappedBy = "id_empleado")
     private List<MovimientoStock>  movimientos_stock;
+
+     public Empleado(@Valid DatosRegistroEmpleado datosRegistroEmpleado) {
+        this.nombre = datosRegistroEmpleado.nombre();
+        this.apellido = datosRegistroEmpleado.apellido();
+        this.dni = datosRegistroEmpleado.dni();
+        this.correo_empleado = datosRegistroEmpleado.correo_empleado();
+        this.celular = datosRegistroEmpleado.celular();
+        this.activo = datosRegistroEmpleado.activo();
+    }
+
+    public void actualizar(@Valid DatosActualizarEmpleado datosActualizarEmpleado) {
+        this.nombre = datosActualizarEmpleado.nombre();
+        this.apellido = datosActualizarEmpleado.apellido();
+        this.dni = datosActualizarEmpleado.dni();
+        this.correo_empleado = datosActualizarEmpleado.correo_empleado();
+        this.celular = datosActualizarEmpleado.celular();
+        this.activo = datosActualizarEmpleado.activo();
+    }
+
 }
