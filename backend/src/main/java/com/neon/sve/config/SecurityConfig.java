@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-     @Autowired
+        @Autowired
         private JwtAuthenticationFilter jwtAuthenticationFilter;
 
         @Autowired
@@ -48,10 +48,9 @@ public class SecurityConfig {
                                 }))
                                 .csrf(csrf -> csrf.disable())
                                 .authorizeHttpRequests(authRequest -> authRequest
-                                                .requestMatchers("/auth/login").permitAll()
-                                                .requestMatchers("/auth/register").permitAll()
+                                                .requestMatchers("/autenticacion/login").permitAll()
                                                 .requestMatchers("/usuario-empleado/listar").hasAnyRole("ADMINISTRADOR")
-                                                // otros endpoints...     
+                                                // otros endpoints...
                                                 .anyRequest().authenticated())
                                 .exceptionHandling(exceptionHandling -> exceptionHandling
                                                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
