@@ -45,5 +45,4 @@ public class Rol {
     public void actualizar(@Valid DatosActualizarRol datosActualizarRol) {
         this.nombre_rol = datosActualizarRol.nombre_rol();
     }
-
 }
