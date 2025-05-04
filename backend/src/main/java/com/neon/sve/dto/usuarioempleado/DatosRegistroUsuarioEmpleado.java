@@ -8,7 +8,7 @@ public record DatosRegistroUsuarioEmpleado(
     @NotBlank String nombre,
     @NotBlank String apellido,
     @NotBlank String dni,
-    @Email String correo_personal,
+    @Email String correo_empleado,
     @NotBlank String celular,
     @NotNull Boolean activo,
     @NotNull Long id_rol

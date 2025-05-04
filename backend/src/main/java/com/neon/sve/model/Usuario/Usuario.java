@@ -1,5 +1,12 @@
 package com.neon.sve.model.Usuario;
 
+import java.util.Collection;
+import java.util.List;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import com.neon.sve.dto.usuario.DatosActualizarUsuario;
 import com.neon.sve.dto.usuario.DatosRegistroUsuario;
 
@@ -26,7 +33,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id_usuario")
 @Table(name = "usuario")
-public class Usuario {
+public class Usuario implements UserDetails{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_usuario;
@@ -62,5 +69,42 @@ public class Usuario {
         this.id_rol = rol;
         this.id_empleado = empleado;
         this.clave_cambiada = datosActualizarUsuario.clave_cambiada();
+    }
+
+     @Override
+    public String getPassword() {
+        return clave;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        // Asigna los roles de la entidad Usuario
+        return List.of(new SimpleGrantedAuthority(id_rol.getNombre_rol()));
+    }
+    
+    @Override
+    public String getUsername() {
+        // En este caso, se utilizaría el correo como el nombre de usuario
+        return correo_usuario;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true; // Puedes ajustar la lógica según las necesidades de tu aplicación
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true; // Ajustar según las necesidades
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true; // Ajustar según las necesidades
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true; // Ajustar según las necesidades, por ejemplo, si el usuario está activo o no
     }
 }

@@ -11,7 +11,7 @@ import com.neon.sve.dto.usuario.DatosRespuestaUsuario;
 public interface UsuarioService {
     DatosRespuestaUsuario getUsuarioById(Long id_usuario);
 
-    //DatosRespuestaUsuario getUsuarioByCorreo(String correo);
+    DatosRespuestaUsuario getUsuarioByCorreo(String correo_usuario);
 
     Page<DatosListadoUsuario> getAllUsuarios(Pageable pageable);
 

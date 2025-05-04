@@ -29,6 +29,6 @@ CREATE TABLE usuario (
 
 INSERT INTO rol (nombre_rol)
 VALUES 
-    ('Administrador'),
-    ('Almacenero'),
-    ('Vendedor');
+    ('ADMINISTRADOR'),
+    ('ALMACENISTA'),
+    ('VENDEDOR');

@@ -39,9 +39,9 @@ public class UsuarioServiceImpl implements UsuarioService {
         }
     }
 
-   /* @Override
-    public DatosRespuestaUsuario getUsuarioByCorreo(String correo) {
-        Optional<Usuario> usuarioOptional = usuarioRepository.findByCorreo(correo);
+   @Override
+    public DatosRespuestaUsuario getUsuarioByCorreo(String correo_usuario) {
+        Optional<Usuario> usuarioOptional = usuarioRepository.findByCorreo(correo_usuario);
         if (usuarioOptional.isPresent()) {
             Usuario usuario = usuarioOptional.get();
             return new DatosRespuestaUsuario(usuario);
@@ -49,7 +49,7 @@ public class UsuarioServiceImpl implements UsuarioService {
             throw new RuntimeException("Usuario no encontrado");
         }
     }
-    */
+
     @Override
     public Page<DatosListadoUsuario> getAllUsuarios(Pageable pageable) {
         Page<Usuario> usuarioPage = usuarioRepository.findAll(pageable);

@@ -4,12 +4,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.neon.sve.dto.login.DatosRespuestaLoginUsuario;
+import com.neon.sve.dto.usuarioempleado.DatosListadoUsuarioEmpleado;
 import com.neon.sve.dto.usuarioempleado.DatosRegistroUsuarioEmpleado;
 
-public interface UsuarioEmpleado {
+public interface UsuarioEmpleadoService {
 
     DatosRespuestaLoginUsuario createUsuarioEmpleado(DatosRegistroUsuarioEmpleado datosRegistroUsuarioEmpleado);
 
-    Page<DatosRegistroUsuarioEmpleado> getAllUsuarioEmpleados(Pageable pageable);
+    Page<DatosListadoUsuarioEmpleado> getAllUsuarioEmpleados(Pageable pageable);
 
 }
