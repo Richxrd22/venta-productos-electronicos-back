@@ -22,6 +22,7 @@ import com.neon.sve.repository.UsuarioRepository;
 @Service
 public class UsuarioEmpleadoImpl implements UsuarioEmpleadoService {
 
+    
     @Autowired
     private UsuarioRepository usuarioRepository;
     @Autowired
@@ -35,6 +36,9 @@ public class UsuarioEmpleadoImpl implements UsuarioEmpleadoService {
 
     @Override
     public DatosRespuestaLoginUsuario createUsuarioEmpleado(DatosRegistroUsuarioEmpleado datosRegistroUsuarioEmpleado) {
+    
+        
+
         Rol rol = rolRepository.findById(datosRegistroUsuarioEmpleado.id_rol())
                 .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
 
@@ -82,4 +86,5 @@ public class UsuarioEmpleadoImpl implements UsuarioEmpleadoService {
         return usuarioEmpleadoPage.map(DatosListadoUsuarioEmpleado::new);
     }
 
+    
 }

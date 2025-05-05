@@ -17,7 +17,10 @@ import io.jsonwebtoken.security.Keys;
 
 @Service
 public class JwtService {
-     private static final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    
+    
+    
+    private static final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
      public String getToken(UserDetails userDetails) {
         return getToken(new HashMap<>(), userDetails);
@@ -67,4 +70,6 @@ public class JwtService {
     private Boolean isTokenExpired(String token) {
         return getExpiration(token).before(new Date());
     }
+
+    
 }

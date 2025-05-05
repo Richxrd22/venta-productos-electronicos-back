@@ -53,13 +53,15 @@ public class AuthController {
 
     @GetMapping("/validar-token")
     public ResponseEntity<?> validateToken(HttpServletRequest request) {
+
+
         String token = request.getHeader("Authorization");
         if (token == null || !token.startsWith("Bearer ")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token no proporcionado");
         }
 
         try {
-            String jwtToken = token.substring(7); 
+            String jwtToken = token.substring(7);
 
             String correo = jwtService.getCorreoFromToken(jwtToken);
 
@@ -78,5 +80,6 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token inválido");
         }
     }
+        
 
 }

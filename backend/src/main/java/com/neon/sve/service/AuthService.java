@@ -20,6 +20,9 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+
+    
+
     @Autowired
     private UsuarioRepository usuarioRepository;
 
@@ -54,4 +57,5 @@ public class AuthService {
         return usuarioEmpleadoService.createUsuarioEmpleado(request);
     }
 
+    
 }
