@@ -3,6 +3,8 @@ package com.neon.sve.model.Producto;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.neon.sve.dto.empresa.DatosActualizarEmpresa;
+import com.neon.sve.dto.empresa.DatosRegistroEmpresa;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -38,4 +41,18 @@ public class Empresa {
     @JsonIgnore
     @OneToMany(mappedBy = "id_empresa")
     private List<Proveedor> proveedores;
+
+      public Empresa(@Valid DatosRegistroEmpresa datosRegistroEmpresa) {
+        this.nombre = datosRegistroEmpresa.nombre();
+        this.ruc = datosRegistroEmpresa.ruc();
+        this.website = datosRegistroEmpresa.website();
+    }
+
+    public void actualizar(@Valid DatosActualizarEmpresa datosActualizarEmpresa) {
+      this.nombre = datosActualizarEmpresa.nombre();
+      this.ruc = datosActualizarEmpresa.ruc();
+      this.website = datosActualizarEmpresa.website();
+    }
+
+
 }
