@@ -39,12 +39,12 @@ public class AuthService {
     private EmpleadoRepository empleadoRepository;
 
     public DatosRespuestaLoginUsuario login(DatosLoginUsuario request) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.correo_usuario(), request.clave()));
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.correo(), request.clave()));
 
-        UserDetails usuario = usuarioRepository.findByCorreo(request.correo_usuario()).orElseThrow();
+        UserDetails usuario = usuarioRepository.findByCorreo(request.correo()).orElseThrow();
 
-        Empleado empleado = empleadoRepository.findByUsuarioCorreo(request.correo_usuario()).orElseThrow();
-        if (!empleado.getActivo()) {
+        Empleado empleado = empleadoRepository.findByUsuarioCorreo(request.correo()).orElseThrow();
+        if (!empleado.getEstado()) {
             throw new RuntimeException("El usuario no está activo.");
         }
 

@@ -26,23 +26,23 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id_rol")
-@Table(name = "rol")
+@Table(name = "roles")
 public class Rol {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_rol;
-    @Column(unique = true, nullable = false, name = "nombre_rol")
-    private String nombre_rol;
+    @Column(unique = true, nullable = false, name = "nombre")
+    private String nombre;
 
     @JsonIgnore
     @OneToMany(mappedBy = "id_rol")
     private List<Usuario> usuarios;
 
     public Rol(@Valid DatosRegistroRol datosRegistroRol) {
-        this.nombre_rol = datosRegistroRol.nombre_rol();
+        this.nombre = datosRegistroRol.nombre();
     }
 
     public void actualizar(@Valid DatosActualizarRol datosActualizarRol) {
-        this.nombre_rol = datosActualizarRol.nombre_rol();
+        this.nombre = datosActualizarRol.nombre();
     }
 }

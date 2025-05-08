@@ -32,14 +32,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id_usuario")
-@Table(name = "usuario")
+@Table(name = "usuarios")
 public class Usuario implements UserDetails{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_usuario;
 
     @Column(unique = true, nullable = false)
-    private String correo_usuario;
+    private String correo;
 
     @Column(nullable = false)
     private String clave;
@@ -56,7 +56,7 @@ public class Usuario implements UserDetails{
     private Empleado id_empleado;
 
     public Usuario(@Valid DatosRegistroUsuario datosRegistroUsuario,Empleado empleado, Rol rol ) {
-        this.correo_usuario = datosRegistroUsuario.correo_usuario();
+        this.correo = datosRegistroUsuario.correo();
         this.clave = datosRegistroUsuario.clave();
         this.id_rol = rol;
         this.id_empleado = empleado;
@@ -65,7 +65,7 @@ public class Usuario implements UserDetails{
 
     public void actualizar(@Valid DatosActualizarUsuario datosActualizarUsuario,Empleado empleado,Rol rol) {
         this.clave = datosActualizarUsuario.clave();
-        this.correo_usuario = datosActualizarUsuario.correo_usuario();
+        this.correo = datosActualizarUsuario.correo();
         this.id_rol = rol;
         this.id_empleado = empleado;
         this.clave_cambiada = datosActualizarUsuario.clave_cambiada();
@@ -79,13 +79,13 @@ public class Usuario implements UserDetails{
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // Asigna los roles de la entidad Usuario
-        return List.of(new SimpleGrantedAuthority(id_rol.getNombre_rol()));
+        return List.of(new SimpleGrantedAuthority(id_rol.getNombre()));
     }
     
     @Override
     public String getUsername() {
         // En este caso, se utilizaría el correo como el nombre de usuario
-        return correo_usuario;
+        return correo;
     }
 
     @Override

@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 public record DatosActualizarUsuario(
         @NotNull Long id_usuario,
         @NotBlank String clave,
-        @Email @NotBlank String correo_usuario,
+        @Email @NotBlank String correo,
         @NotNull Long id_empleado,
         @NotNull Long id_rol,
         @NotNull Boolean clave_cambiada

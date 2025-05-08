@@ -18,6 +18,6 @@ public interface RolService {
     DatosRespuestaRol createRol(DatosRegistroRol datosRegistroRol);
     DatosRespuestaRol updateRol(DatosActualizarRol datosActualizarRol);
     void deleteRol(Long id_rol);
-    Optional<Rol> findByNombreRol(String nombre_rol);
+    Optional<Rol> findByNombreRol(String nombre);
 
 } 

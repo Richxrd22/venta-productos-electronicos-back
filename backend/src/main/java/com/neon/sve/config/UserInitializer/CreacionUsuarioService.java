@@ -30,12 +30,12 @@ public class CreacionUsuarioService {
 
     public void crearUsuarioEmpleadoRol() {
 
-        Optional<Rol> rolOptional = rolRepository.findByNombre_rol("ADMINISTRADOR"); // Buscar el rol por nombre
+        Optional<Rol> rolOptional = rolRepository.findByNombreRol("ADMINISTRADOR"); // Buscar el rol por nombre
         Rol rol;
         if (rolOptional.isEmpty()) {
             // Si el rol no existe, crear uno nuevo
             rol = new Rol();
-            rol.setNombre_rol("ADMINISTRADOR");
+            rol.setNombre("ADMINISTRADOR");
             rolRepository.save(rol);
             System.out.println("Rol creado.");
         } else {
@@ -52,9 +52,9 @@ public class CreacionUsuarioService {
             empleado.setNombre("Admin");
             empleado.setApellido("Admin");
             empleado.setDni("12345678");
-            empleado.setCorreo_empleado("admin@gmail.com");
+            empleado.setCorreo("admin@gmail.com");
             empleado.setCelular("923456789");
-            empleado.setActivo(true);
+            empleado.setEstado(true);
             empleadoRepository.save(empleado);
             System.out.println("Empleado creado.");
         } else {
@@ -65,7 +65,7 @@ public class CreacionUsuarioService {
         Optional<Usuario> usuarioOptional = usuarioRepository.findByCorreo("SU12345678@neon.com");
         if (usuarioOptional.isEmpty()) {
             Usuario usuario = new Usuario();
-            usuario.setCorreo_usuario("SU12345678@neon.com");
+            usuario.setCorreo("SU12345678@neon.com");
             usuario.setClave_cambiada(true);
             String contrasenaSinEncriptar = "12345"; // Usualmente esta vendría del cliente
             String contrasenaEncriptada = passwordEncoder.encode(contrasenaSinEncriptar);

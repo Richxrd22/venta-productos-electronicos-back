@@ -11,7 +11,7 @@ public record DatosListadoProveedores(
         String correo_empleado,
         String dni,
         String celular,
-        int activo,
+        int estado,
         Empresa id_empresa,
         String telefono
 
@@ -25,7 +25,7 @@ public record DatosListadoProveedores(
                 proveedor.getCorreo(),
                 proveedor.getDni(),
                 proveedor.getCelular(),
-                proveedor.getActivo() != null && proveedor.getActivo() ? 1 : 0,
+                proveedor.getEstado() != null && proveedor.getEstado() ? 1 : 0,
                 proveedor.getId_empresa(),
                 proveedor.getTelefono());
     }

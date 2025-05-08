@@ -11,8 +11,8 @@ public record DatosRespuestaUsuario(
     public DatosRespuestaUsuario(Usuario usuario) {
         this(
                 usuario.getId_usuario(),
-                usuario.getCorreo_usuario(),
+                usuario.getCorreo(),
                 usuario.getId_empleado().getNombre() + " " + usuario.getId_empleado().getApellido(),
-                usuario.getId_rol().getNombre_rol());
+                usuario.getId_rol().getNombre());
     }
 }

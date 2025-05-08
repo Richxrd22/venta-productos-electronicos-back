@@ -7,9 +7,9 @@ public record DatosListadoEmpleado(
         String nombre,
         String apellido,
         String dni,
-        String correo_empleado,
+        String correo,
         String celular,
-        int activo
+        int estado
         ) {
 
     public DatosListadoEmpleado(Empleado empleado) {
@@ -18,8 +18,8 @@ public record DatosListadoEmpleado(
                 empleado.getNombre(),
                 empleado.getApellido(),
                 empleado.getDni(),
-                empleado.getCorreo_empleado(),
+                empleado.getCorreo(),
                 empleado.getCelular(),
-                empleado.getActivo() != null && empleado.getActivo() ? 1 : 0); // Convertir a 0 o 1,
+                empleado.getEstado() != null && empleado.getEstado() ? 1 : 0); // Convertir a 0 o 1,
     }
 }

@@ -1,11 +1,7 @@
 package com.neon.sve.model.Producto;
-import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.neon.sve.dto.Proveedores.DatosActualizarProveedores;
 import com.neon.sve.dto.Proveedores.DatosRegistroProveedores;
-import com.neon.sve.dto.empleado.DatosActualizarEmpleado;
-import com.neon.sve.dto.empleado.DatosRegistroEmpleado;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,7 +10,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -29,7 +24,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id_proveedor")
-@Table(name = "proveedor")
+@Table(name = "proveedores")
 public class Proveedor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,16 +42,13 @@ public class Proveedor {
     @Column(unique = true, nullable = false, length = 9)
     private String celular;
     @Column
-    private Boolean activo;
-
+    private Boolean estado;
+    
     @ManyToOne
     @JoinColumn(name = "id_empresa", nullable = false)
     private Empresa id_empresa;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "id_proveedor")
-    private List<Producto> productos;
-    
+
 
      public Proveedor(@Valid DatosRegistroProveedores datosRegistroProveedores, Empresa empresa) {
         this.nombre = datosRegistroProveedores.nombre();
@@ -64,20 +56,18 @@ public class Proveedor {
         this.correo = datosRegistroProveedores.correo();
         this.dni = datosRegistroProveedores.dni();
         this.celular = datosRegistroProveedores.celular();
-        this.activo = datosRegistroProveedores.activo();
+        this.estado = datosRegistroProveedores.estado();
         this.id_empresa = empresa;
         this.telefono = datosRegistroProveedores.telefono();
-
     }
     
     public void actualizar(@Valid DatosActualizarProveedores datosActualizarProveedor, Empresa empresa) {
-        
         this.nombre = datosActualizarProveedor.nombre();
         this.apellido = datosActualizarProveedor.apellido();
         this.correo = datosActualizarProveedor.correo();
         this.dni = datosActualizarProveedor.dni();
         this.celular = datosActualizarProveedor.celular();
-        this.activo = datosActualizarProveedor.activo();
+        this.estado = datosActualizarProveedor.estado();
         this.id_empresa = empresa;
         this.telefono = datosActualizarProveedor.telefono();
 

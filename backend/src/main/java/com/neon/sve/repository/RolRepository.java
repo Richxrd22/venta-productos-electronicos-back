@@ -10,6 +10,6 @@ import com.neon.sve.model.Usuario.Rol;
 
 @Repository
 public interface RolRepository extends JpaRepository<Rol,Long> {
-    @Query("SELECT r FROM Rol r WHERE r.nombre_rol = ?1")
-    Optional<Rol> findByNombre_rol(String nombre_rol);
+    @Query("SELECT r FROM Rol r WHERE r.nombre = ?1")
+    Optional<Rol> findByNombreRol(String nombre);
 }

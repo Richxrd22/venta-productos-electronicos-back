@@ -25,7 +25,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id_producto")
-@Table(name = "producto")
+@Table(name = "productos")
 public class Producto {
 
     @Id
@@ -39,11 +39,11 @@ public class Producto {
     @Column(nullable = false, length = 250)
     private String descripcion;
 
-    @Column(nullable = false, unique = true, length = 50)
-    private String sku;
+    @Column(nullable = false)
+    private double precio_venta;
 
     @Column(nullable = false)
-    private double precio;
+    private double precio_compra;
 
     @Column(nullable = false)
     private int min_stock;
@@ -52,13 +52,10 @@ public class Producto {
     private int max_stock;
 
     @Column(nullable = false)
-    private int stock;
-
-    @Column(nullable = false)
     private int garantia_meses;
 
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
-    private Boolean activo;
+    private Boolean estado;
 
     @Column(name = "fecha_creacion", updatable = false)
     @CreationTimestamp
@@ -69,16 +66,12 @@ public class Producto {
     private Empleado id_empleado;
 
     @ManyToOne
-    @JoinColumn(name = "id_categoria", nullable = false)
-    private Categoria id_categoria;
+    @JoinColumn(name = "id_subcategoria", nullable = false)
+    private SubCategoria id_subcategoria;
 
     @ManyToOne
     @JoinColumn(name = "id_marca", nullable = false)
     private Marca id_marca;
-
-    @ManyToOne
-    @JoinColumn(name = "id_proveedor", nullable = false)
-    private Proveedor id_proveedor;
 
 
 }

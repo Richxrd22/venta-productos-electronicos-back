@@ -75,8 +75,8 @@ public class ProveedorServiceImpl implements ProveedoreService{
         Proveedor proveedor = proveedorRepository.findById(id_proveedor)
         .orElseThrow(()-> new EntityNotFoundException("Proveedor no encontrado con ID:" + id_proveedor));
 
-        if (!proveedor.getActivo()) {
-            proveedor.setActivo(true);
+        if (!proveedor.getEstado()) {
+            proveedor.setEstado(true);
             proveedorRepository.save(proveedor);
 
         }
@@ -89,8 +89,8 @@ public class ProveedorServiceImpl implements ProveedoreService{
         Proveedor proveedor = proveedorRepository.findById(id_proveedor)
         .orElseThrow(()-> new EntityNotFoundException("Proveedor no encontrado con ID:" + id_proveedor));
 
-        if (!proveedor.getActivo()) {
-            proveedor.setActivo(false);
+        if (!proveedor.getEstado()) {
+            proveedor.setEstado(false);
             proveedorRepository.save(proveedor);
 
         }

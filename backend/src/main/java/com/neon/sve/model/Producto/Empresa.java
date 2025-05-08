@@ -26,33 +26,32 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id_empresa")
-@Table(name = "empresa")
+@Table(name = "empresas")
 public class Empresa {
-      @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_empresa;
-    @Column(nullable = false)
-    private String nombre;
-    @Column(unique = true, nullable = false)
-    private String ruc;
-    @Column(nullable = false)
-    private String website;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id_empresa;
+  @Column(nullable = false)
+  private String nombre;
+  @Column(unique = true, nullable = false)
+  private String ruc;
+  @Column(nullable = false)
+  private String website;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "id_empresa")
-    private List<Proveedor> proveedores;
+  @JsonIgnore
+  @OneToMany(mappedBy = "id_empresa")
+  private List<Proveedor> proveedores;
 
-      public Empresa(@Valid DatosRegistroEmpresa datosRegistroEmpresa) {
-        this.nombre = datosRegistroEmpresa.nombre();
-        this.ruc = datosRegistroEmpresa.ruc();
-        this.website = datosRegistroEmpresa.website();
-    }
+  public Empresa(@Valid DatosRegistroEmpresa datosRegistroEmpresa) {
+    this.nombre = datosRegistroEmpresa.nombre();
+    this.ruc = datosRegistroEmpresa.ruc();
+    this.website = datosRegistroEmpresa.website();
+  }
 
-    public void actualizar(@Valid DatosActualizarEmpresa datosActualizarEmpresa) {
-      this.nombre = datosActualizarEmpresa.nombre();
-      this.ruc = datosActualizarEmpresa.ruc();
-      this.website = datosActualizarEmpresa.website();
-    }
-
+  public void actualizar(@Valid DatosActualizarEmpresa datosActualizarEmpresa) {
+    this.nombre = datosActualizarEmpresa.nombre();
+    this.ruc = datosActualizarEmpresa.ruc();
+    this.website = datosActualizarEmpresa.website();
+  }
 
 }

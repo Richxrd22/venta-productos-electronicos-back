@@ -44,7 +44,7 @@ public class UsuarioEmpleadoImpl implements UsuarioEmpleadoService {
 
         List<Empleado> listaEmpleados = empleadoRepository.findAll();
         for (Empleado empleadoBD : listaEmpleados) {
-            if (empleadoBD.getCorreo_empleado().equals(datosRegistroUsuarioEmpleado.correo_empleado()) ||
+            if (empleadoBD.getCorreo().equals(datosRegistroUsuarioEmpleado.correo()) ||
                     empleadoBD.getCelular().equals(datosRegistroUsuarioEmpleado.celular()) ||
                     empleadoBD.getDni().equals(datosRegistroUsuarioEmpleado.dni())) {
                 throw new RuntimeException("El correo, celular o DNI ya están registrados en otro empleado.");
@@ -55,9 +55,9 @@ public class UsuarioEmpleadoImpl implements UsuarioEmpleadoService {
                 .nombre(datosRegistroUsuarioEmpleado.nombre())
                 .apellido(datosRegistroUsuarioEmpleado.apellido())
                 .dni(datosRegistroUsuarioEmpleado.dni())
-                .correo_empleado(datosRegistroUsuarioEmpleado.correo_empleado())
+                .correo(datosRegistroUsuarioEmpleado.correo())
                 .celular(datosRegistroUsuarioEmpleado.celular())
-                .activo(datosRegistroUsuarioEmpleado.activo())
+                .estado(datosRegistroUsuarioEmpleado.estado())
                 .build();
 
         String inicialNombre = datosRegistroUsuarioEmpleado.nombre().substring(0, 1).toUpperCase();
@@ -66,7 +66,7 @@ public class UsuarioEmpleadoImpl implements UsuarioEmpleadoService {
 
         Usuario usuario = Usuario.builder()
                 .clave(passwordEncoder.encode(datosRegistroUsuarioEmpleado.dni()))
-                .correo_usuario(correoUsuario)
+                .correo(correoUsuario)
                 .id_empleado(empleado)
                 .id_rol(rol)
                 .clave_cambiada(false)

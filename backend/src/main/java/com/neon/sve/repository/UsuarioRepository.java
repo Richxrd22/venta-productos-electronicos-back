@@ -12,6 +12,6 @@ import com.neon.sve.model.Usuario.Usuario;
 
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
-    @Query("SELECT u FROM Usuario u WHERE u.correo_usuario = :correo_usuario")
-    Optional<Usuario> findByCorreo(String correo_usuario);
+    @Query("SELECT u FROM Usuario u WHERE u.correo = :correo")
+    Optional<Usuario> findByCorreo(String correo);
 }

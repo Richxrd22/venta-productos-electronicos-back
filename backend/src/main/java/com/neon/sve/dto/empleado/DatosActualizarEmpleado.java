@@ -9,9 +9,9 @@ public record DatosActualizarEmpleado(
     @NotBlank String nombre,
     @NotBlank String apellido,
     @NotBlank String dni,
-    @Email String correo_empleado,
+    @Email String correo,
     @NotBlank String celular,
-    @NotNull Boolean activo
+    @NotNull Boolean estado
 ) {
     
 }

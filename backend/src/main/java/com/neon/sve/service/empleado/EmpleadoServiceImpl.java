@@ -58,8 +58,8 @@ public class EmpleadoServiceImpl implements EmpleadoService {
         Empleado empleado = empleadoRepository.findById(id_empleado)
                 .orElseThrow(() -> new EntityNotFoundException("Empleado no encontrado con ID: " + id_empleado));
 
-        if (!empleado.getActivo()) {
-            empleado.setActivo(true);
+        if (!empleado.getEstado()) {
+            empleado.setEstado(true);
             empleadoRepository.save(empleado);
         }
     }
@@ -69,19 +69,11 @@ public class EmpleadoServiceImpl implements EmpleadoService {
         Empleado empleado = empleadoRepository.findById(id_empleado)
                 .orElseThrow(() -> new EntityNotFoundException("Empleado no encontrado con ID: " + id_empleado));
 
-        if (empleado.getActivo()) {
-            empleado.setActivo(false);
+        if (empleado.getEstado()) {
+            empleado.setEstado(false);
             empleadoRepository.save(empleado);
         }
     }
 
-    /*
-     * Metodo para Spring Security
-     * 
-     * @Override
-     * public DatosRespuestaEmpleado getEmpleadoByCorreo(String correo_empleado) {
-     * 
-     * }
-     */
 
 }

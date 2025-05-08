@@ -9,6 +9,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -22,17 +24,24 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = "id_marca")
-@Table(name = "marcas")
-public class Marca {
+@EqualsAndHashCode(of = "id_subcategoria")
+@Table(name = "subcategorias")
+public class SubCategoria {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_marca;
+    private Long id_subcategoria;
 
     @Column(unique = true, nullable = false)
     private String nombre;
 
+    @Column(nullable = false, columnDefinition = "TINYINT(1)")
+    private Boolean estado;
+
+    @ManyToOne
+    @JoinColumn(name = "id_categoria", nullable = false)
+    private Categoria categoria;
+    
     @JsonIgnore
-    @OneToMany(mappedBy = "id_marca")
+    @OneToMany(mappedBy = "id_subcategoria")
     private List<Producto> productos;
 }

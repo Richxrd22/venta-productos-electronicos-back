@@ -1,33 +1,33 @@
-CREATE TABLE empleado (
+CREATE TABLE empleados (
     id_empleado BIGINT NOT NULL AUTO_INCREMENT,
     nombre VARCHAR(50) NOT NULL,
     apellido VARCHAR(50) NOT NULL,
     dni VARCHAR(8) NOT NULL UNIQUE,
-    correo_empleado VARCHAR(50) NOT NULL UNIQUE,
+    correo VARCHAR(50) NOT NULL UNIQUE,
     celular VARCHAR(9) NOT NULL,
-    activo BIT(1) NOT NULL,
+    estado BIT(1) NOT NULL,
     PRIMARY KEY (id_empleado)
 );
 
-CREATE TABLE rol (
+CREATE TABLE roles (
     id_rol BIGINT NOT NULL AUTO_INCREMENT,
-    nombre_rol VARCHAR(50) NOT NULL UNIQUE,
+    nombre VARCHAR(50) NOT NULL UNIQUE,
     PRIMARY KEY (id_rol)
 );
 
-CREATE TABLE usuario (
+CREATE TABLE usuarios (
     id_usuario BIGINT NOT NULL AUTO_INCREMENT,
     clave VARCHAR(50) NOT NULL,
-    correo_usuario VARCHAR(50) NOT NULL UNIQUE,
+    correo VARCHAR(50) NOT NULL UNIQUE,
     id_empleado BIGINT NOT NULL UNIQUE,
     id_rol BIGINT NOT NULL,
     clave_cambiada BIT(1) NOT NULL DEFAULT 0,
     PRIMARY KEY (id_usuario),
-    FOREIGN KEY (id_empleado) REFERENCES empleado(id_empleado),
-    FOREIGN KEY (id_rol) REFERENCES rol(id_rol)
+    FOREIGN KEY (id_empleado) REFERENCES empleados(id_empleado),
+    FOREIGN KEY (id_rol) REFERENCES roles(id_rol)
 );
 
-INSERT INTO rol (nombre_rol)
+INSERT INTO roles (nombre)
 VALUES 
     ('ADMINISTRADOR'),
     ('ALMACENISTA'),
