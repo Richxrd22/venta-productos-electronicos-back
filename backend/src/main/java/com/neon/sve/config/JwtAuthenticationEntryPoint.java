@@ -6,7 +6,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -15,20 +14,22 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
-            AuthenticationException authException) throws IOException, ServletException {
-        // Registra el error de autenticación para la depuración
-        System.out.println("Error de autenticación: " + authException.getMessage());
-
-        // Establece el código de estado 401 (No autorizado)
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-
-        // Establece el tipo de contenido como JSON
+            AuthenticationException authException) throws IOException {
         response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
 
-        // Crea un objeto de error en formato JSON
-        String errorMessage = "{\"error\": \"Error de autenticación: " + authException.getMessage() + "\"}";
+        // Mensaje por defecto
+        String errorMessage = "{\"error\": \"Error de autenticación\"}";
+        int status = HttpServletResponse.SC_UNAUTHORIZED;
 
-        // Escribe el mensaje de error en el cuerpo de la respuesta
+        if (authException.getClass().getSimpleName().equals("BadCredentialsException")) {
+            errorMessage = "{\"error\": \"Correo o contraseña incorrectos\"}";
+        } else if (authException.getClass().getSimpleName().equals("DisabledException")) {
+            errorMessage = "{\"error\": \"El usuario no está activo\"}";
+            status = HttpServletResponse.SC_FORBIDDEN; // 403
+        }
+
+        response.setStatus(status);
         response.getWriter().write(errorMessage);
     }
 }

@@ -40,10 +40,10 @@ public class SecurityConfig {
                 http
                                 .cors(cors -> cors.configurationSource(request -> {
                                         CorsConfiguration config = new CorsConfiguration();
-                                        config.setAllowedOrigins(List.of("http://localhost:5174")); // Reemplaza con el
+                                        config.setAllowedOrigins(List.of("http://localhost:3000")); // Reemplaza con el
                                                                                                     // origen de tu
                                                                                                     // frontend
-                                        config.setAllowedMethods(List.of("GET", "PUT", "DELETE"));
+                                        config.setAllowedMethods(List.of("GET", "PUT", "DELETE","POST"));
                                         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
                                         config.setAllowCredentials(true);
                                         return config;
