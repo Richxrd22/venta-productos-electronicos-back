@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.neon.sve.dto.login.DatosLoginUsuario;
 import com.neon.sve.dto.login.DatosRespuestaLoginUsuario;
+import com.neon.sve.dto.login.DatosRespuestaMensaje;
 import com.neon.sve.dto.usuarioempleado.DatosRegistroUsuarioEmpleado;
 import com.neon.sve.jwt.JwtService;
 import com.neon.sve.model.Usuario.Empleado;
@@ -66,7 +67,7 @@ public DatosRespuestaLoginUsuario login(DatosLoginUsuario request) {
     return new DatosRespuestaLoginUsuario(token);
 }
 
-    public DatosRespuestaLoginUsuario register(DatosRegistroUsuarioEmpleado request) {
+    public DatosRespuestaMensaje register(DatosRegistroUsuarioEmpleado request) {
         return usuarioEmpleadoService.createUsuarioEmpleado(request);
     }
 

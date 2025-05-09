@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.neon.sve.dto.login.DatosLoginUsuario;
 import com.neon.sve.dto.login.DatosRespuestaLoginUsuario;
+import com.neon.sve.dto.login.DatosRespuestaMensaje;
 import com.neon.sve.dto.usuarioempleado.DatosRegistroUsuarioEmpleado;
 import com.neon.sve.jwt.JwtService;
 import com.neon.sve.service.AuthService;
@@ -42,7 +43,7 @@ public class AuthController {
     @PostMapping("/registro")
     public ResponseEntity<?> register(@RequestBody DatosRegistroUsuarioEmpleado request) {
         try {
-            DatosRespuestaLoginUsuario respuesta = authService.register(request);
+            DatosRespuestaMensaje respuesta = authService.register(request);
             return new ResponseEntity<>(respuesta, HttpStatus.CREATED);
         } catch (RuntimeException e) {
             return new ResponseEntity<>("Error interno del servidor: " + e.getMessage(),

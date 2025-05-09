@@ -8,16 +8,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.neon.sve.dto.login.DatosRespuestaLoginUsuario;
+import com.neon.sve.dto.login.DatosRespuestaMensaje;
 import com.neon.sve.dto.usuarioempleado.DatosListadoUsuarioEmpleado;
 import com.neon.sve.dto.usuarioempleado.DatosRegistroUsuarioEmpleado;
-import com.neon.sve.jwt.JwtService;
 import com.neon.sve.model.Usuario.Empleado;
 import com.neon.sve.model.Usuario.Rol;
 import com.neon.sve.model.Usuario.Usuario;
 import com.neon.sve.repository.EmpleadoRepository;
 import com.neon.sve.repository.RolRepository;
 import com.neon.sve.repository.UsuarioRepository;
+import com.neon.sve.service.EmailService;
 
 @Service
 public class UsuarioEmpleadoImpl implements UsuarioEmpleadoService {
@@ -30,11 +30,12 @@ public class UsuarioEmpleadoImpl implements UsuarioEmpleadoService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private RolRepository rolRepository;
+ 
     @Autowired
-    private JwtService jwtService;
+    private EmailService emailService;
 
     @Override
-    public DatosRespuestaLoginUsuario createUsuarioEmpleado(DatosRegistroUsuarioEmpleado datosRegistroUsuarioEmpleado) {
+    public DatosRespuestaMensaje createUsuarioEmpleado(DatosRegistroUsuarioEmpleado datosRegistroUsuarioEmpleado) {
 
         Rol rol = rolRepository.findById(datosRegistroUsuarioEmpleado.id_rol())
                 .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
@@ -73,8 +74,13 @@ public class UsuarioEmpleadoImpl implements UsuarioEmpleadoService {
         empleadoRepository.save(empleado);
         usuarioRepository.save(usuario);
 
-        String tokenGenerado = jwtService.getToken(usuario);
-        return new DatosRespuestaLoginUsuario(tokenGenerado);
+
+        emailService.enviarCredenciales(
+                empleado.getCorreo(), // destinatario
+                usuario.getCorreo(), // correo de acceso al sistema
+                datosRegistroUsuarioEmpleado.dni() // contraseña sin codificar
+        );
+        return new DatosRespuestaMensaje("Empleado y usuario creados con éxito. Las credenciales fueron enviadas por correo.");
 
     }
 
