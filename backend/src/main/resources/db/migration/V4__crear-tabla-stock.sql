@@ -7,12 +7,15 @@ CREATE TABLE salida_stocks (
     motivo VARCHAR(100) NOT NULL, -- ejemplo: 'venta', 'dañado', 'donación', etc.
     observaciones TEXT,
     fecha_salida TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    id_empleado BIGINT NOT NULL,
+    id_usuario BIGINT NOT NULL,
+    activo BIT(1) NOT NULL DEFAULT 1,
     PRIMARY KEY (id_salida),
     FOREIGN KEY (id_producto) REFERENCES productos(id_producto),
-    FOREIGN KEY (id_empleado) REFERENCES empleados(id_empleado)
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)
 );
 
+
+/*
 CREATE TABLE productos_danados (
     id_danado BIGINT NOT NULL AUTO_INCREMENT,
     id_producto BIGINT NOT NULL,
@@ -27,3 +30,4 @@ CREATE TABLE productos_danados (
     FOREIGN KEY (id_empleado) REFERENCES empleados(id_empleado)
 );
 
+*/
