@@ -11,9 +11,7 @@ import com.neon.sve.dto.Proveedores.DatosActualizarProveedores;
 import com.neon.sve.dto.Proveedores.DatosListadoProveedores;
 import com.neon.sve.dto.Proveedores.DatosRegistroProveedores;
 import com.neon.sve.dto.Proveedores.DatosRespuestaProveedores;
-import com.neon.sve.model.Producto.Empresa;
 import com.neon.sve.model.Producto.Proveedor;
-import com.neon.sve.repository.EmpresaRepository;
 import com.neon.sve.repository.ProveedorRepository;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -24,13 +22,10 @@ public class ProveedorServiceImpl implements ProveedoreService{
     @Autowired
     private ProveedorRepository proveedorRepository;
 
-    @Autowired
-    private EmpresaRepository empresaRepository;
-
     @Override
-    public DatosRespuestaProveedores getProveedroById(Long id_proveedor) {
+    public DatosRespuestaProveedores getProveedroById(Long id) {
         
-        Optional<Proveedor> proveedorOptional = proveedorRepository.findById(id_proveedor);
+        Optional<Proveedor> proveedorOptional = proveedorRepository.findById(id);
         if (proveedorOptional.isPresent()) {
             Proveedor proveedor = proveedorOptional.get();
             return new DatosRespuestaProveedores(proveedor);
@@ -51,8 +46,7 @@ public class ProveedorServiceImpl implements ProveedoreService{
     @Override
     public DatosRespuestaProveedores createProveedores(DatosRegistroProveedores datosRegistroProveedores) {
         
-        Empresa empresa = empresaRepository.getReferenceById(datosRegistroProveedores.id_empresa());
-        Proveedor proveedor = proveedorRepository.save(new Proveedor(datosRegistroProveedores, empresa));
+        Proveedor proveedor = proveedorRepository.save(new Proveedor(datosRegistroProveedores));
         
         return new DatosRespuestaProveedores(proveedor);
 
@@ -61,19 +55,18 @@ public class ProveedorServiceImpl implements ProveedoreService{
     @Override
     public DatosRespuestaProveedores updateProveedores(DatosActualizarProveedores datosActualizarProveedores) {
         
-        Empresa empresa = empresaRepository.getReferenceById(datosActualizarProveedores.id_empresa());
-        Proveedor proveedor = proveedorRepository.getReferenceById(datosActualizarProveedores.id_proveedor());
-        proveedor.actualizar(datosActualizarProveedores, empresa);
+        Proveedor proveedor = proveedorRepository.getReferenceById(datosActualizarProveedores.id());
+        proveedor.actualizar(datosActualizarProveedores);
         proveedor = proveedorRepository.save(proveedor);
         return new DatosRespuestaProveedores(proveedor);
 
     }
 
     @Override
-    public void activarProveedor(Long id_proveedor) {
+    public void activarProveedor(Long id) {
         
-        Proveedor proveedor = proveedorRepository.findById(id_proveedor)
-        .orElseThrow(()-> new EntityNotFoundException("Proveedor no encontrado con ID:" + id_proveedor));
+        Proveedor proveedor = proveedorRepository.findById(id)
+        .orElseThrow(()-> new EntityNotFoundException("Proveedor no encontrado con ID:" + id));
 
         if (!proveedor.getActivo()) {
             proveedor.setActivo(true);
@@ -84,10 +77,10 @@ public class ProveedorServiceImpl implements ProveedoreService{
     }
 
     @Override
-    public void desactivarProveedor(Long id_proveedor) {
+    public void desactivarProveedor(Long id) {
 
-        Proveedor proveedor = proveedorRepository.findById(id_proveedor)
-        .orElseThrow(()-> new EntityNotFoundException("Proveedor no encontrado con ID:" + id_proveedor));
+        Proveedor proveedor = proveedorRepository.findById(id)
+        .orElseThrow(()-> new EntityNotFoundException("Proveedor no encontrado con ID:" + id));
 
         if (!proveedor.getActivo()) {
             proveedor.setActivo(false);

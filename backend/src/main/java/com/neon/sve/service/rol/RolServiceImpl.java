@@ -21,8 +21,8 @@ public class RolServiceImpl  implements RolService{
     private RolRepository rolRepository;
 
     @Override
-    public DatosRespuestaRol getRolById(Long id_rol) {
-        Optional<Rol> rolOptional = rolRepository.findById(id_rol);
+    public DatosRespuestaRol getRolById(Long id) {
+        Optional<Rol> rolOptional = rolRepository.findById(id);
         if (rolOptional.isPresent()) {
             Rol rol = rolOptional.get();
             return new DatosRespuestaRol(rol);
@@ -45,15 +45,15 @@ public class RolServiceImpl  implements RolService{
 
     @Override
     public DatosRespuestaRol updateRol(DatosActualizarRol datosActualizarRol) {
-        Rol rol=rolRepository.getReferenceById(datosActualizarRol.id_rol());
+        Rol rol=rolRepository.getReferenceById(datosActualizarRol.id());
         rol.actualizar(datosActualizarRol);
         rol = rolRepository.save(rol);
         return new DatosRespuestaRol(rol);
     }
 
     @Override
-    public void deleteRol(Long id_rol) {
-        Rol rol = rolRepository.findById(id_rol).orElse(null);
+    public void deleteRol(Long id) {
+        Rol rol = rolRepository.findById(id).orElse(null);
         if(rol != null){
             rolRepository.delete(rol);
         }else{

@@ -1,50 +1,40 @@
-CREATE TABLE empresas (
-    id_empresa BIGINT NOT NULL AUTO_INCREMENT,
-    nombre VARCHAR(50) NOT NULL,
-    ruc VARCHAR(11) NOT NULL UNIQUE,
-    website VARCHAR(255) NOT NULL,
-    activo BIT(1) NOT NULL DEFAULT 1,
-    PRIMARY KEY (id_empresa)
-);
-
 CREATE TABLE categorias (
-    id_categoria BIGINT NOT NULL AUTO_INCREMENT,
+    id BIGINT NOT NULL AUTO_INCREMENT,
     nombre VARCHAR(50) NOT NULL,
     activo BIT(1) NOT NULL DEFAULT 1,
-    PRIMARY KEY (id_categoria)
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE subcategorias(
-    id_subcategoria BIGINT NOT NULL AUTO_INCREMENT,
+    id BIGINT NOT NULL AUTO_INCREMENT,
     nombre VARCHAR(50) NOT NULL,
     activo BIT(1) NOT NULL DEFAULT 1,
     id_categoria BIGINT NOT NULL,
-    PRIMARY KEY (id_subcategoria),
-    FOREIGN KEY (id_categoria) REFERENCES categorias(id_categoria)
+    PRIMARY KEY (id),
+    FOREIGN KEY (id_categoria) REFERENCES categorias(id)
 );
 
 CREATE TABLE proveedores (
-    id_proveedor BIGINT NOT NULL AUTO_INCREMENT,
-    nombre VARCHAR(50) NOT NULL,
-    apellido VARCHAR(50) NOT NULL,
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    razon_social VARCHAR(50) NOT NULL,
+    ruc VARCHAR(11) NOT NULL UNIQUE,
+    direccion VARCHAR(100) NOT NULL,
     correo VARCHAR(50) NOT NULL UNIQUE,
-    dni VARCHAR(8) NOT NULL UNIQUE,
     celular VARCHAR(9) NOT NULL,
+    telefono VARCHAR(7) NULL,
     activo BIT(1) NOT NULL DEFAULT 1,
-    id_empresa BIGINT NOT NULL,
-    PRIMARY KEY (id_proveedor),
-    FOREIGN KEY (id_empresa) REFERENCES empresas(id_empresa)
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE marcas (
-    id_marca BIGINT NOT NULL AUTO_INCREMENT,
+    id BIGINT NOT NULL AUTO_INCREMENT,
     nombre_marca VARCHAR(50) NOT NULL,
     activo BIT(1) NOT NULL DEFAULT 1,
-    PRIMARY KEY (id_marca)
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE productos (
-    id_producto BIGINT NOT NULL AUTO_INCREMENT,
+    id BIGINT NOT NULL AUTO_INCREMENT,
     nombre VARCHAR(50) NOT NULL,
     descripcion VARCHAR(250) NOT NULL,
     precio_venta DOUBLE NOT NULL CHECK (precio_venta >= 0),
@@ -57,9 +47,9 @@ CREATE TABLE productos (
     id_usuario BIGINT NOT NULL,
     id_subcategoria BIGINT NOT NULL,
     id_marca BIGINT NOT NULL,
-    PRIMARY KEY (id_producto),
-    FOREIGN KEY (id_subcategoria) REFERENCES subcategorias(id_subcategoria),
-    FOREIGN KEY (id_marca) REFERENCES marcas(id_marca),
-    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)
+    PRIMARY KEY (id),
+    FOREIGN KEY (id_subcategoria) REFERENCES subcategorias(id),
+    FOREIGN KEY (id_marca) REFERENCES marcas(id),
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
 );
 

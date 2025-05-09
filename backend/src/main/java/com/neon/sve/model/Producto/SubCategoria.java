@@ -24,12 +24,12 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = "id_subcategoria")
+@EqualsAndHashCode(of = "id")
 @Table(name = "subcategorias")
 public class SubCategoria {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_subcategoria;
+    private Long id;
 
     @Column(unique = true, nullable = false)
     private String nombre;
@@ -39,7 +39,7 @@ public class SubCategoria {
 
     @ManyToOne
     @JoinColumn(name = "id_categoria", nullable = false)
-    private Categoria categoria;
+    private Categoria id_categoria;
     
     @JsonIgnore
     @OneToMany(mappedBy = "id_subcategoria")

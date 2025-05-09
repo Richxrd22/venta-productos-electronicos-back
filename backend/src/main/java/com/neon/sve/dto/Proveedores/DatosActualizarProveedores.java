@@ -6,11 +6,11 @@ import jakarta.validation.constraints.NotNull;
 
 public record DatosActualizarProveedores(
 
-    @NotNull Long id_proveedor,
-    @NotBlank String nombre,
-    @NotBlank String apellido,
+    @NotNull Long id,
+    @NotBlank String razon_social,
+    @NotBlank String ruc,
     @Email @NotBlank String correo,
-    @NotBlank String dni,
+    @NotBlank String direccion,
     @NotBlank String telefono,
     @NotBlank String celular,
     @NotNull Long id_empresa

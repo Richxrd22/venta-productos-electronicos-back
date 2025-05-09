@@ -13,7 +13,7 @@ public record DatosListadoUsuarioEmpleado(
         String nombre_rol) {
     public DatosListadoUsuarioEmpleado(Empleado empleado) {
         this(
-                empleado.getId_empleado(),
+                empleado.getId(),
                 empleado.getNombre() + " " + empleado.getApellido(),
                 empleado.getDni(),
                 empleado.getCorreo(),

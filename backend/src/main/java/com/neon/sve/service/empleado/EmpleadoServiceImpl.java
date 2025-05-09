@@ -47,7 +47,7 @@ public class EmpleadoServiceImpl implements EmpleadoService {
 
     @Override
     public DatosRespuestaEmpleado updateEmpleado(DatosActualizarEmpleado datosActualizarEmpleado) {
-        Empleado empleado = empleadoRepository.getReferenceById(datosActualizarEmpleado.id_empleado());
+        Empleado empleado = empleadoRepository.getReferenceById(datosActualizarEmpleado.id());
         empleado.actualizar(datosActualizarEmpleado);
         empleado = empleadoRepository.save(empleado);
         return new DatosRespuestaEmpleado(empleado);

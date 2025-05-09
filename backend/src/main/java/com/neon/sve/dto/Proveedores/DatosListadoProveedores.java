@@ -1,33 +1,31 @@
 package com.neon.sve.dto.Proveedores;
 
-import com.neon.sve.model.Producto.Empresa;
 import com.neon.sve.model.Producto.Proveedor;
 
 public record DatosListadoProveedores(
 
-        Long id_proveedor,
-        String nombre,
-        String apellido,
-        String correo_empleado,
-        String dni,
+        Long id,
+        String razon_social,
+        String ruc,
+        String correo,
+        String direccion,
         String celular,
-        int activo,
-        Empresa id_empresa,
-        String telefono
+        String telefono,
+        int activo
+     
 
 ) {
 
     public DatosListadoProveedores(Proveedor proveedor) {
         this(
-                proveedor.getId_proveedor(),
-                proveedor.getNombre(),
-                proveedor.getApellido(),
+                proveedor.getId(),
+                proveedor.getRazon_social(),
+                proveedor.getRuc(),
                 proveedor.getCorreo(),
-                proveedor.getDni(),
+                proveedor.getDireccion(),
                 proveedor.getCelular(),
-                proveedor.getActivo() != null && proveedor.getActivo() ? 1 : 0,
-                proveedor.getId_empresa(),
-                proveedor.getTelefono());
+                proveedor.getTelefono(),
+                proveedor.getActivo() != null && proveedor.getActivo() ? 1 : 0);
     }
 
 }

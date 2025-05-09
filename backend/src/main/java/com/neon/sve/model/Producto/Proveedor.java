@@ -8,8 +8,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -23,50 +21,43 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = "id_proveedor")
+@EqualsAndHashCode(of = "id")
 @Table(name = "proveedores")
 public class Proveedor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_proveedor;
+    private Long id;
     @Column(nullable = false)
-    private String nombre;
+    private String razon_social;
     @Column(nullable = false)
-    private String apellido;
+    private String ruc;
     @Column(unique = true, nullable = false)
     private String correo;
-    @Column(nullable = false, unique = true, length = 8)
-    private String dni;
-    @Column(unique = true, nullable = false, length = 9)
-    private String telefono;
+    @Column(nullable = false)
+    private String  direccion;
     @Column(unique = true, nullable = false, length = 9)
     private String celular;
+    @Column(unique = true, nullable = false, length = 7)
+    private String telefono;
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private Boolean activo=true;
     
-    @ManyToOne
-    @JoinColumn(name = "id_empresa", nullable = false)
-    private Empresa id_empresa;
 
-
-
-    public Proveedor(@Valid DatosRegistroProveedores datosRegistroProveedores, Empresa empresa) {
-        this.nombre = datosRegistroProveedores.nombre();
-        this.apellido = datosRegistroProveedores.apellido();
+    public Proveedor(@Valid DatosRegistroProveedores datosRegistroProveedores) {
+        this.razon_social = datosRegistroProveedores.razon_social();
+        this.ruc = datosRegistroProveedores.ruc();
         this.correo = datosRegistroProveedores.correo();
-        this.dni = datosRegistroProveedores.dni();
+        this.direccion = datosRegistroProveedores.direccion();
         this.celular = datosRegistroProveedores.celular();
-        this.id_empresa = empresa;
         this.telefono = datosRegistroProveedores.telefono();
     }
     
-    public void actualizar(@Valid DatosActualizarProveedores datosActualizarProveedor, Empresa empresa) {
-        this.nombre = datosActualizarProveedor.nombre();
-        this.apellido = datosActualizarProveedor.apellido();
+    public void actualizar(@Valid DatosActualizarProveedores datosActualizarProveedor) {
+        this.razon_social = datosActualizarProveedor.razon_social();
+        this.ruc = datosActualizarProveedor.ruc();
         this.correo = datosActualizarProveedor.correo();
-        this.dni = datosActualizarProveedor.dni();
+        this.direccion = datosActualizarProveedor.direccion();
         this.celular = datosActualizarProveedor.celular();
-        this.id_empresa = empresa;
         this.telefono = datosActualizarProveedor.telefono();
 
     }

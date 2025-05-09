@@ -1,32 +1,32 @@
 CREATE TABLE empleados (
-    id_empleado BIGINT NOT NULL AUTO_INCREMENT,
+    id BIGINT NOT NULL AUTO_INCREMENT,
     nombre VARCHAR(50) NOT NULL,
     apellido VARCHAR(50) NOT NULL,
     dni VARCHAR(8) NOT NULL UNIQUE,
     correo VARCHAR(50) NOT NULL UNIQUE,
     celular VARCHAR(9) NOT NULL,
     activo BIT(1) NOT NULL DEFAULT 1,
-    PRIMARY KEY (id_empleado)
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE roles (
-    id_rol BIGINT NOT NULL AUTO_INCREMENT,
+    id BIGINT NOT NULL AUTO_INCREMENT,
     nombre VARCHAR(50) NOT NULL UNIQUE,
     activo BIT(1) NOT NULL DEFAULT 1,
-    PRIMARY KEY (id_rol)
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE usuarios (
-    id_usuario BIGINT NOT NULL AUTO_INCREMENT,
+    id BIGINT NOT NULL AUTO_INCREMENT,
     clave VARCHAR(50) NOT NULL,
     correo VARCHAR(50) NOT NULL UNIQUE,
     id_empleado BIGINT NOT NULL UNIQUE,
     id_rol BIGINT NOT NULL,
     clave_cambiada BIT(1) NOT NULL DEFAULT 0,
     activo BIT(1) NOT NULL DEFAULT 1,
-    PRIMARY KEY (id_usuario),
-    FOREIGN KEY (id_empleado) REFERENCES empleados(id_empleado),
-    FOREIGN KEY (id_rol) REFERENCES roles(id_rol)
+    PRIMARY KEY (id),
+    FOREIGN KEY (id_empleado) REFERENCES empleados(id),
+    FOREIGN KEY (id_rol) REFERENCES roles(id)
 );
 
 INSERT INTO roles (nombre, activo)

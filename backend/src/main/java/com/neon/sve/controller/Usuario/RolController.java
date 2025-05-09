@@ -40,8 +40,8 @@ public class RolController {
             @Valid @RequestBody DatosRegistroRol datosRegistroRol,
             UriComponentsBuilder uriComponentsBuilder) {
         DatosRespuestaRol datosRespuestaRol = rolService.createRol(datosRegistroRol);
-        URI url = uriComponentsBuilder.path("/rol/buscar/{id_rol}")
-                .buildAndExpand(datosRespuestaRol.id_rol())
+        URI url = uriComponentsBuilder.path("/rol/buscar/{id}")
+                .buildAndExpand(datosRespuestaRol.id())
                 .toUri();
         return ResponseEntity.created(url).body(datosRespuestaRol);
     }
@@ -62,21 +62,21 @@ public class RolController {
         return ResponseEntity.ok(datosRespuestaRol);
     }
 
-    @GetMapping("/buscar/{id_rol}")
-    public ResponseEntity<?> buscarRol(@PathVariable Long id_rol) {
+    @GetMapping("/buscar/{id}")
+    public ResponseEntity<?> buscarRol(@PathVariable Long id) {
         try {
-            DatosRespuestaRol rol = rolService.getRolById(id_rol);
+            DatosRespuestaRol rol = rolService.getRolById(id);
             return ResponseEntity.ok(rol);
         } catch (Exception e) {
-            String mensajeError = "Error al obtener el Rol con ID " + id_rol;
+            String mensajeError = "Error al obtener el Rol con ID " + id;
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensajeError);
         }
     }
 
-    @DeleteMapping("/eliminar/{id_rol}")
-    public ResponseEntity<?> eliminarRol(@PathVariable Long id_rol) {
+    @DeleteMapping("/eliminar/{id}")
+    public ResponseEntity<?> eliminarRol(@PathVariable Long id) {
         try {
-            rolService.deleteRol(id_rol);
+            rolService.deleteRol(id);
             return ResponseEntity.ok("Eliminación exitosa");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

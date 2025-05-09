@@ -2,16 +2,14 @@ package com.neon.sve.dto.Proveedores;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 public record DatosRegistroProveedores(
 
-    @NotBlank String nombre,
-    @NotBlank String apellido,
+    @NotBlank String razon_social,
+    @NotBlank String ruc,
     @Email @NotBlank String correo,
-    @NotBlank String dni,
+    @NotBlank String direccion,
     @NotBlank String celular,
-    @NotNull Long id_empresa,
     @NotBlank String telefono
 ) {
     

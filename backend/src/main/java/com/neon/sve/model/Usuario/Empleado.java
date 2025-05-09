@@ -24,13 +24,13 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor 
 @AllArgsConstructor 
-@EqualsAndHashCode(of = "id_empleado")
+@EqualsAndHashCode(of = "id")
 @Table(name = "empleados")
 public class Empleado {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_empleado;
+    private Long id;
 
     @Column(nullable = false)
     private String nombre;

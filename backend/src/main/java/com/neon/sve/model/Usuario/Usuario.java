@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.neon.sve.dto.usuario.DatosActualizarUsuario;
 import com.neon.sve.dto.usuario.DatosRegistroUsuario;
+import com.neon.sve.model.Producto.Producto;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,6 +18,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.Valid;
@@ -31,12 +33,12 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = "id_usuario")
+@EqualsAndHashCode(of = "id")
 @Table(name = "usuarios")
 public class Usuario implements UserDetails{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_usuario;
+    private Long id;
 
     @Column(unique = true, nullable = false)
     private String correo;
@@ -49,6 +51,9 @@ public class Usuario implements UserDetails{
 
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private Boolean activo;
+
+    @OneToMany(mappedBy = "id_usuario")
+    private List<Producto> productos;
 
     @ManyToOne
     @JoinColumn(name = "id_rol")

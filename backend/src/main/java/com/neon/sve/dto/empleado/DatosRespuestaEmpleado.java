@@ -3,7 +3,7 @@ package com.neon.sve.dto.empleado;
 import com.neon.sve.model.Usuario.Empleado;
 
 public record DatosRespuestaEmpleado(
-        Long id_empleado,
+        Long id,
         String nombre,
         String apellido,
         String dni,
@@ -13,7 +13,7 @@ public record DatosRespuestaEmpleado(
 
     public DatosRespuestaEmpleado(Empleado empleado) {
         this(
-                empleado.getId_empleado(),
+                empleado.getId(),
                 empleado.getNombre(),
                 empleado.getApellido(),
                 empleado.getDni(),

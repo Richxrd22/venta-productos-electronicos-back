@@ -60,8 +60,8 @@ public class ProveedoresController {
             UriComponentsBuilder uriComponentsBuilder) {
         DatosRespuestaProveedores datosRespuestaProveedores = proveedoreService
                 .createProveedores(datosRegistroProveedores);
-        URI url = uriComponentsBuilder.path("/buscar/{id_proveedor}")
-                .buildAndExpand(datosRespuestaProveedores.id_proveedor())
+        URI url = uriComponentsBuilder.path("/buscar/{id}")
+                .buildAndExpand(datosRespuestaProveedores.id())
                 .toUri();
 
         return ResponseEntity.created(url).body(datosRespuestaProveedores);

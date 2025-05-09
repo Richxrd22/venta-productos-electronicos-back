@@ -39,8 +39,8 @@ public class EmpleadoController {
             @Valid @RequestBody DatosRegistroEmpleado datosRegistroEmpleado,
             UriComponentsBuilder uriComponentsBuilder) {
         DatosRespuestaEmpleado datosRespuestaEmpleado = empleadoService.createEmpleado(datosRegistroEmpleado);
-        URI url = uriComponentsBuilder.path("/buscar/{id_empleado}")
-                .buildAndExpand(datosRespuestaEmpleado.id_empleado())
+        URI url = uriComponentsBuilder.path("/buscar/{id}")
+                .buildAndExpand(datosRespuestaEmpleado.id())
                 .toUri();
         return ResponseEntity.created(url).body(datosRespuestaEmpleado);
     }
@@ -60,13 +60,13 @@ public class EmpleadoController {
         return ResponseEntity.ok(datosRespuestaEmpleado);
     }
 
-    @GetMapping("/buscar/{id_empleado}")
-    public ResponseEntity<?> buscarEmpleado(@PathVariable Long id_empleado) {
+    @GetMapping("/buscar/{id}")
+    public ResponseEntity<?> buscarEmpleado(@PathVariable Long id) {
         try {
-            DatosRespuestaEmpleado empleado = empleadoService.getEmpleadoById(id_empleado);
+            DatosRespuestaEmpleado empleado = empleadoService.getEmpleadoById(id);
             return ResponseEntity.ok(empleado);
         } catch (Exception e) {
-            String mensajeError = "Error al obtener el Empleado con ID " + id_empleado;
+            String mensajeError = "Error al obtener el Empleado con ID " + id;
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensajeError);
         }
     }

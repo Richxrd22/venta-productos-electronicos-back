@@ -3,7 +3,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record DatosActualizarRol(
-        @NotNull Long id_rol,
+        @NotNull Long id,
         @NotBlank String nombre
         ) {
 }

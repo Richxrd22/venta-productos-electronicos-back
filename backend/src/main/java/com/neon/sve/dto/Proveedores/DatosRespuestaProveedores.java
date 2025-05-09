@@ -4,27 +4,28 @@ import com.neon.sve.model.Producto.Proveedor;
 
 public record DatosRespuestaProveedores(
 
-        Long id_proveedor,
-        String nombre_apellido,
-        String correo_empleado,
-        String dni,
-        String celular_telefono,
-        int activo,
-        String nombre_empresa
+        Long id,
+        String razon_social,
+        String ruc,
+        String correo,
+        String direccion,
+        String celular,
+        String telefono,
+        int activo
 
 ) {
 
     public DatosRespuestaProveedores(Proveedor proveedor) {
 
         this(
-                proveedor.getId_proveedor(),
-                proveedor.getNombre() + " " + proveedor.getApellido(),
+                proveedor.getId(),
+                proveedor.getRazon_social(),
+                  proveedor.getRuc(),
                 proveedor.getCorreo(),
-                proveedor.getDni(),
-                proveedor.getCelular() + " y/o " + proveedor.getTelefono(),
-                
-                proveedor.getActivo() != null && proveedor.getActivo() ? 1 : 0,
-                proveedor.getId_empresa().getNombre());
+                proveedor.getDireccion(),
+                proveedor.getCelular(),
+                proveedor.getTelefono(),                
+                proveedor.getActivo() != null && proveedor.getActivo() ? 1 : 0);
 
     }
 

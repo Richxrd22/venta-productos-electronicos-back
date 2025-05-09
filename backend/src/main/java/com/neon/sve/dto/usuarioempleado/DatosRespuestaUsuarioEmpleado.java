@@ -14,7 +14,7 @@ public record DatosRespuestaUsuarioEmpleado(
 ) {
     public DatosRespuestaUsuarioEmpleado(Empleado empleado) {
         this(
-            empleado.getId_empleado(),
+            empleado.getId(),
             empleado.getNombre() + " " + empleado.getApellido(),
             empleado.getDni(),
             empleado.getCorreo(),

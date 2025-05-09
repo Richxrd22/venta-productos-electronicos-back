@@ -29,8 +29,8 @@ public class UsuarioServiceImpl implements UsuarioService {
     private RolRepository rolRepository;
 
     @Override
-    public DatosRespuestaUsuario getUsuarioById(Long id_usuario) {
-        Optional<Usuario> usuarioOptional = usuarioRepository.findById(id_usuario);
+    public DatosRespuestaUsuario getUsuarioById(Long id) {
+        Optional<Usuario> usuarioOptional = usuarioRepository.findById(id);
         if (usuarioOptional.isPresent()) {
             Usuario usuario = usuarioOptional.get();
             return new DatosRespuestaUsuario(usuario);

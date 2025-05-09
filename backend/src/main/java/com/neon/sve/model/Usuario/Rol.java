@@ -25,12 +25,12 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = "id_rol")
+@EqualsAndHashCode(of = "id")
 @Table(name = "roles")
 public class Rol {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_rol;
+    private Long id;
     @Column(unique = true, nullable = false, name = "nombre")
     private String nombre;
 

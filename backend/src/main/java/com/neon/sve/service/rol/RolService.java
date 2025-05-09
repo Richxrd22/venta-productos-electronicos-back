@@ -13,11 +13,11 @@ import com.neon.sve.model.Usuario.Rol;
 
 public interface RolService {
 
-    DatosRespuestaRol getRolById(Long id_rol);
+    DatosRespuestaRol getRolById(Long id);
     Page<DatosListadoRol> getAllRoles(Pageable pageable);
     DatosRespuestaRol createRol(DatosRegistroRol datosRegistroRol);
     DatosRespuestaRol updateRol(DatosActualizarRol datosActualizarRol);
-    void deleteRol(Long id_rol);
+    void deleteRol(Long id);
     Optional<Rol> findByNombreRol(String nombre);
 
 } 

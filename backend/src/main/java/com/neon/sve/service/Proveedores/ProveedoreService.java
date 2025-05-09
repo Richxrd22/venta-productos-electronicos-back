@@ -10,7 +10,7 @@ import com.neon.sve.dto.Proveedores.DatosRespuestaProveedores;
 
 public interface ProveedoreService {
 
-    DatosRespuestaProveedores getProveedroById(Long id_proveedor);
+    DatosRespuestaProveedores getProveedroById(Long id);
 
     Page<DatosListadoProveedores> getAllProveedores(Pageable pageable);
 
@@ -18,8 +18,8 @@ public interface ProveedoreService {
 
     DatosRespuestaProveedores updateProveedores(DatosActualizarProveedores datosActualizarProveedores);
 
-    void activarProveedor(Long id_proveedor);
+    void activarProveedor(Long id);
 
-    void desactivarProveedor(Long id_proveedor);
+    void desactivarProveedor(Long id);
 
 }

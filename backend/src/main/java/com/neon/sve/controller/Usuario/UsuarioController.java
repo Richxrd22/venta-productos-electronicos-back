@@ -39,7 +39,7 @@ public class UsuarioController {
             UriComponentsBuilder uriComponentsBuilder) {
         DatosRespuestaUsuario datosRespuestaUsuario = usuarioService.createUsuario(datosRegistroUsuario);
         URI url = uriComponentsBuilder.path("/buscar/{id_usuario}")
-                .buildAndExpand(datosRespuestaUsuario.id_usuario())
+                .buildAndExpand(datosRespuestaUsuario.id())
                 .toUri();
         return ResponseEntity.created(url).body(datosRespuestaUsuario);
     }

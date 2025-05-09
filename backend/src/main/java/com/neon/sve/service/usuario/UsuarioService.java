@@ -9,7 +9,7 @@ import com.neon.sve.dto.usuario.DatosRegistroUsuario;
 import com.neon.sve.dto.usuario.DatosRespuestaUsuario;
 
 public interface UsuarioService {
-    DatosRespuestaUsuario getUsuarioById(Long id_usuario);
+    DatosRespuestaUsuario getUsuarioById(Long id);
 
     DatosRespuestaUsuario getUsuarioByCorreo(String correo);
 
