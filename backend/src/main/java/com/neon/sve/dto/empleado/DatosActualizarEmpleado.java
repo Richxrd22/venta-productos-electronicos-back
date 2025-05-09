@@ -11,7 +11,7 @@ public record DatosActualizarEmpleado(
     @NotBlank String dni,
     @Email String correo,
     @NotBlank String celular,
-    @NotNull Boolean estado
+    @NotNull Boolean activo
 ) {
     
 }

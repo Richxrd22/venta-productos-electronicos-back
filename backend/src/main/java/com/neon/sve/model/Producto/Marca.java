@@ -32,6 +32,10 @@ public class Marca {
     @Column(unique = true, nullable = false)
     private String nombre;
 
+    @Column(nullable = false, columnDefinition = "TINYINT(1)")
+    private Boolean activo=true;
+
+
     @JsonIgnore
     @OneToMany(mappedBy = "id_marca")
     private List<Producto> productos;

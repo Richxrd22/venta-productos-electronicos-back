@@ -4,11 +4,15 @@ import com.neon.sve.model.Usuario.Rol;
 
 public record DatosRespuestaRol(
         Long id_rol,
-        String nombre) {
+        String nombre,
+        int activo
+        ) {
 
     public DatosRespuestaRol(Rol rol) {
         this(
                 rol.getId_rol(),
-                rol.getNombre());
+                rol.getNombre(),
+                rol.getActivo() != null && rol.getActivo() ? 1 : 0  // Convertir a 0 o 1
+                );
     }
 }

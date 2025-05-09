@@ -6,7 +6,8 @@ public record DatosListadoEmpresa(
         Long id_empresa,
         String nombre,
         String ruc,
-        String website
+        String website,
+        int activo
         ) {
 
     public DatosListadoEmpresa(Empresa empresa) {
@@ -14,7 +15,8 @@ public record DatosListadoEmpresa(
                 empresa.getId_empresa(),
                 empresa.getNombre(),
                 empresa.getRuc(),
-                empresa.getWebsite());
+                empresa.getWebsite(),
+                empresa.getActivo() != null && empresa.getActivo() ? 1 : 0); // Convertir a 0 o 1
 
     }
 }

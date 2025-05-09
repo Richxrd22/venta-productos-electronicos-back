@@ -47,6 +47,9 @@ public class Usuario implements UserDetails{
     @Column(nullable = false, columnDefinition = "TINYINT(1) DEFAULT 0")
     private Boolean clave_cambiada;
 
+    @Column(nullable = false, columnDefinition = "TINYINT(1)")
+    private Boolean activo;
+
     @ManyToOne
     @JoinColumn(name = "id_rol")
     private Rol id_rol;
@@ -61,6 +64,7 @@ public class Usuario implements UserDetails{
         this.id_rol = rol;
         this.id_empleado = empleado;
         this.clave_cambiada = datosRegistroUsuario.clave_cambiada();
+        this.activo = datosRegistroUsuario.activo();
     }
 
     public void actualizar(@Valid DatosActualizarUsuario datosActualizarUsuario,Empleado empleado,Rol rol) {
@@ -69,9 +73,10 @@ public class Usuario implements UserDetails{
         this.id_rol = rol;
         this.id_empleado = empleado;
         this.clave_cambiada = datosActualizarUsuario.clave_cambiada();
+        this.activo = datosActualizarUsuario.activo();
     }
 
-     @Override
+    @Override
     public String getPassword() {
         return clave;
     }

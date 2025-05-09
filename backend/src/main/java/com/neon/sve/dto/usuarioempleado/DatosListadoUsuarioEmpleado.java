@@ -9,7 +9,7 @@ public record DatosListadoUsuarioEmpleado(
         String correo_empleado,
         String correo_empresarial,
         String celular,
-        int estado,
+        int activo,
         String nombre_rol) {
     public DatosListadoUsuarioEmpleado(Empleado empleado) {
         this(
@@ -19,7 +19,7 @@ public record DatosListadoUsuarioEmpleado(
                 empleado.getCorreo(),
                 empleado.getUsuario().getCorreo(),
                 empleado.getCelular(),
-                empleado.getEstado() != null && empleado.getEstado() ? 1 : 0,
+                empleado.getActivo() != null && empleado.getActivo() ? 1 : 0,
                 empleado.getUsuario().getId_rol().getNombre());
     }
 }

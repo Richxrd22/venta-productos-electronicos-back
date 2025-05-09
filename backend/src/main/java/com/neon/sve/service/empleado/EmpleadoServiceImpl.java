@@ -58,8 +58,8 @@ public class EmpleadoServiceImpl implements EmpleadoService {
         Empleado empleado = empleadoRepository.findById(id_empleado)
                 .orElseThrow(() -> new EntityNotFoundException("Empleado no encontrado con ID: " + id_empleado));
 
-        if (!empleado.getEstado()) {
-            empleado.setEstado(true);
+        if (!empleado.getActivo()) {
+            empleado.setActivo(true);
             empleadoRepository.save(empleado);
         }
     }
@@ -69,8 +69,8 @@ public class EmpleadoServiceImpl implements EmpleadoService {
         Empleado empleado = empleadoRepository.findById(id_empleado)
                 .orElseThrow(() -> new EntityNotFoundException("Empleado no encontrado con ID: " + id_empleado));
 
-        if (empleado.getEstado()) {
-            empleado.setEstado(false);
+        if (empleado.getActivo()) {
+            empleado.setActivo(false);
             empleadoRepository.save(empleado);
         }
     }

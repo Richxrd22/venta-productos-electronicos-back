@@ -3,7 +3,7 @@ import java.sql.Timestamp;
 
 import org.hibernate.annotations.CreationTimestamp;
 
-import com.neon.sve.model.Usuario.Empleado;
+import com.neon.sve.model.Usuario.Usuario;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -55,15 +55,15 @@ public class Producto {
     private int garantia_meses;
 
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
-    private Boolean estado;
+    private Boolean activo=true;
 
     @Column(name = "fecha_creacion", updatable = false)
     @CreationTimestamp
     private Timestamp fecha_creacion;
 
     @ManyToOne
-    @JoinColumn(name = "id_empleado", nullable = false)
-    private Empleado id_empleado;
+    @JoinColumn(name = "id_usuario", nullable = false)
+    private Usuario id_usuario;
 
     @ManyToOne
     @JoinColumn(name = "id_subcategoria", nullable = false)

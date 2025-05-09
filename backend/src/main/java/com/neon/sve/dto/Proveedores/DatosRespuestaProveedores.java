@@ -9,7 +9,7 @@ public record DatosRespuestaProveedores(
         String correo_empleado,
         String dni,
         String celular_telefono,
-        int estado,
+        int activo,
         String nombre_empresa
 
 ) {
@@ -23,7 +23,7 @@ public record DatosRespuestaProveedores(
                 proveedor.getDni(),
                 proveedor.getCelular() + " y/o " + proveedor.getTelefono(),
                 
-                proveedor.getEstado() != null && proveedor.getEstado() ? 1 : 0,
+                proveedor.getActivo() != null && proveedor.getActivo() ? 1 : 0,
                 proveedor.getId_empresa().getNombre());
 
     }

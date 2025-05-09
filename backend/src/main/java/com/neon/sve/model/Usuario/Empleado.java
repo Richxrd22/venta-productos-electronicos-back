@@ -48,7 +48,7 @@ public class Empleado {
     private String dni;
 
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
-    private Boolean estado;
+    private Boolean activo;
 
     @JsonIgnore
     @OneToOne(mappedBy = "id_empleado")
@@ -60,7 +60,7 @@ public class Empleado {
         this.dni = datosRegistroEmpleado.dni();
         this.correo = datosRegistroEmpleado.correo();
         this.celular = datosRegistroEmpleado.celular();
-        this.estado = datosRegistroEmpleado.estado();
+        this.activo = datosRegistroEmpleado.activo();
     }
 
     public void actualizar(@Valid DatosActualizarEmpleado datosActualizarEmpleado) {
@@ -69,7 +69,7 @@ public class Empleado {
         this.dni = datosActualizarEmpleado.dni();
         this.correo = datosActualizarEmpleado.correo();
         this.celular = datosActualizarEmpleado.celular();
-        this.estado = datosActualizarEmpleado.estado();
+        this.activo = datosActualizarEmpleado.activo();
     }
 
 }

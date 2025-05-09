@@ -37,6 +37,9 @@ public class Empresa {
   private String ruc;
   @Column(nullable = false)
   private String website;
+  @Column(nullable = false, columnDefinition = "TINYINT(1)")
+  private Boolean activo=true;
+
 
   @JsonIgnore
   @OneToMany(mappedBy = "id_empresa")

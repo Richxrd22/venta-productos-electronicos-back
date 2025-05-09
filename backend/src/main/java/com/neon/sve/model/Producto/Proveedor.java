@@ -41,8 +41,8 @@ public class Proveedor {
     private String telefono;
     @Column(unique = true, nullable = false, length = 9)
     private String celular;
-    @Column
-    private Boolean estado;
+    @Column(nullable = false, columnDefinition = "TINYINT(1)")
+    private Boolean activo=true;
     
     @ManyToOne
     @JoinColumn(name = "id_empresa", nullable = false)
@@ -50,13 +50,12 @@ public class Proveedor {
 
 
 
-     public Proveedor(@Valid DatosRegistroProveedores datosRegistroProveedores, Empresa empresa) {
+    public Proveedor(@Valid DatosRegistroProveedores datosRegistroProveedores, Empresa empresa) {
         this.nombre = datosRegistroProveedores.nombre();
         this.apellido = datosRegistroProveedores.apellido();
         this.correo = datosRegistroProveedores.correo();
         this.dni = datosRegistroProveedores.dni();
         this.celular = datosRegistroProveedores.celular();
-        this.estado = datosRegistroProveedores.estado();
         this.id_empresa = empresa;
         this.telefono = datosRegistroProveedores.telefono();
     }
@@ -67,7 +66,6 @@ public class Proveedor {
         this.correo = datosActualizarProveedor.correo();
         this.dni = datosActualizarProveedor.dni();
         this.celular = datosActualizarProveedor.celular();
-        this.estado = datosActualizarProveedor.estado();
         this.id_empresa = empresa;
         this.telefono = datosActualizarProveedor.telefono();
 

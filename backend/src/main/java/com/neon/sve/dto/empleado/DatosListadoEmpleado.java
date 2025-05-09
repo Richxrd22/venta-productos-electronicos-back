@@ -9,7 +9,7 @@ public record DatosListadoEmpleado(
         String dni,
         String correo,
         String celular,
-        int estado
+        int activo
         ) {
 
     public DatosListadoEmpleado(Empleado empleado) {
@@ -20,6 +20,6 @@ public record DatosListadoEmpleado(
                 empleado.getDni(),
                 empleado.getCorreo(),
                 empleado.getCelular(),
-                empleado.getEstado() != null && empleado.getEstado() ? 1 : 0); // Convertir a 0 o 1,
+                empleado.getActivo() != null && empleado.getActivo() ? 1 : 0); // Convertir a 0 o 1,
     }
 }

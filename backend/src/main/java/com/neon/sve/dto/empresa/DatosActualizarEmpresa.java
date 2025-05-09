@@ -7,6 +7,7 @@ public record DatosActualizarEmpresa(
         @NotNull Long id_empresa,
         @NotNull String nombre,
         @NotNull String ruc,
-        @NotNull String website) {
+        @NotNull String website
+        ) {
 
 }

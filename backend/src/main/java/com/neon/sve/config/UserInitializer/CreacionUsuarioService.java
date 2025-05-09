@@ -36,6 +36,7 @@ public class CreacionUsuarioService {
             // Si el rol no existe, crear uno nuevo
             rol = new Rol();
             rol.setNombre("ADMINISTRADOR");
+            rol.setActivo(true);
             rolRepository.save(rol);
             System.out.println("Rol creado.");
         } else {
@@ -54,7 +55,7 @@ public class CreacionUsuarioService {
             empleado.setDni("12345678");
             empleado.setCorreo("admin@gmail.com");
             empleado.setCelular("923456789");
-            empleado.setEstado(true);
+            empleado.setActivo(true);
             empleadoRepository.save(empleado);
             System.out.println("Empleado creado.");
         } else {
@@ -72,6 +73,7 @@ public class CreacionUsuarioService {
             usuario.setId_rol(rol); // Asignar el rol
             usuario.setId_empleado(empleado); // Asignar el empleado
             usuario.setClave(contrasenaEncriptada);
+            usuario.setActivo(true);
             usuarioRepository.save(usuario);
 
             System.out.println("Usuario creado.");

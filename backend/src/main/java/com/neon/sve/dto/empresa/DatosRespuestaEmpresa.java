@@ -6,13 +6,17 @@ public record DatosRespuestaEmpresa(
         Long id_empresa,
         String nombre,
         String ruc,
-        String website) {
+        String website,
+        int activo
+        ) {
 
     public DatosRespuestaEmpresa(Empresa empresa) {
         this(
                 empresa.getId_empresa(),
                 empresa.getNombre(),
                 empresa.getRuc(),
-                empresa.getWebsite());
+                empresa.getWebsite(),
+                empresa.getActivo() != null && empresa.getActivo() ? 1 : 0);
+                
     }
 }

@@ -43,7 +43,7 @@ CREATE TABLE registro_ventas (
     id_usuario BIGINT NOT NULL,  
     id_cliente BIGINT NOT NULL,  
     id_metodo_pago BIGINT NOT NULL,  
-    cancelado BIT(1) NOT NULL DEFAULT 0,
+    cancelado BIT(1) NOT NULL,
     activo BIT(1) NOT NULL DEFAULT 1,
     PRIMARY KEY (id_registro_venta),
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario),  

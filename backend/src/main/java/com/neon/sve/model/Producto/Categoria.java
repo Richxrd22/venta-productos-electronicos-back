@@ -33,7 +33,7 @@ public class Categoria {
     private String nombre;
 
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
-    private Boolean estado;
+    private Boolean activo = true;
 
     @JsonIgnore
     @OneToMany(mappedBy = "categoria")

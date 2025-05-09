@@ -10,6 +10,6 @@ public record DatosRegistroEmpleado(
     @NotBlank String dni,
     @Email String correo,
     @NotBlank String celular,
-    @NotNull Boolean estado
+    @NotNull Boolean activo
 ) {
 } 

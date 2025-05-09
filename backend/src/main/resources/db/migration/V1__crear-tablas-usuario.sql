@@ -5,14 +5,14 @@ CREATE TABLE empleados (
     dni VARCHAR(8) NOT NULL UNIQUE,
     correo VARCHAR(50) NOT NULL UNIQUE,
     celular VARCHAR(9) NOT NULL,
-    activo BIT(1) NOT NULL,
+    activo BIT(1) NOT NULL DEFAULT 1,
     PRIMARY KEY (id_empleado)
 );
 
 CREATE TABLE roles (
     id_rol BIGINT NOT NULL AUTO_INCREMENT,
     nombre VARCHAR(50) NOT NULL UNIQUE,
-    activo BIT(1) NOT NULL,
+    activo BIT(1) NOT NULL DEFAULT 1,
     PRIMARY KEY (id_rol)
 );
 
@@ -29,8 +29,8 @@ CREATE TABLE usuarios (
     FOREIGN KEY (id_rol) REFERENCES roles(id_rol)
 );
 
-INSERT INTO roles (nombre)
+INSERT INTO roles (nombre, activo)
 VALUES 
-    ('ADMINISTRADOR'),
-    ('ALMACENISTA'),
-    ('VENDEDOR');
+    ('ADMINISTRADOR', 1),
+    ('ALMACENISTA', 1),
+    ('VENDEDOR', 1);

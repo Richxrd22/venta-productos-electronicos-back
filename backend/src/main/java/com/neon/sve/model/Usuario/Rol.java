@@ -34,9 +34,14 @@ public class Rol {
     @Column(unique = true, nullable = false, name = "nombre")
     private String nombre;
 
+    @Column(nullable = false, columnDefinition = "TINYINT(1)")
+    private Boolean activo=true;
+
+
     @JsonIgnore
     @OneToMany(mappedBy = "id_rol")
     private List<Usuario> usuarios;
+
 
     public Rol(@Valid DatosRegistroRol datosRegistroRol) {
         this.nombre = datosRegistroRol.nombre();

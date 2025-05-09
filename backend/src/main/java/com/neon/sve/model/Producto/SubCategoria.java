@@ -35,7 +35,7 @@ public class SubCategoria {
     private String nombre;
 
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
-    private Boolean estado;
+    private Boolean activo=true;
 
     @ManyToOne
     @JoinColumn(name = "id_categoria", nullable = false)

@@ -54,7 +54,7 @@ public DatosRespuestaLoginUsuario login(DatosLoginUsuario request) {
     Empleado empleado = empleadoRepository.findByUsuarioCorreo(request.correo())
         .orElseThrow(() -> new BadCredentialsException("Correo o contraseña incorrectos"));
 
-    if (!empleado.getEstado()) {
+    if (!empleado.getActivo()) {
         throw new DisabledException("El usuario no está activo");
     }
 
