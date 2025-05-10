@@ -51,6 +51,14 @@ public class SecurityConfig {
                                 .csrf(csrf -> csrf.disable())
                                 .authorizeHttpRequests(authRequest -> authRequest
                                                 .requestMatchers("/autenticacion/login").permitAll()
+                                                .requestMatchers("/autenticacion/registro").hasAnyRole("ADMINISTRADOR")
+                                                .requestMatchers("/autenticacion/validar-token").hasAnyRole("ADMINISTRADOR",
+                                                        "ALMACENERO","VENDEDOR")
+                                                .requestMatchers("/autenticacion/cambiar-clave").hasAnyRole("ADMINISTRADOR",
+                                                        "ALMACENERO","VENDEDOR")
+                                                        
+                                                .requestMatchers("/usuario/info").hasAnyRole("ADMINISTRADOR",
+                                                        "ALMACENERO","VENDEDOR")
                                                 .requestMatchers("/usuario-empleado/listar").hasAnyRole("ADMINISTRADOR")
                                                 // otros endpoints...
                                                 .anyRequest().authenticated())

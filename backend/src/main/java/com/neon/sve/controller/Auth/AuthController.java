@@ -1,16 +1,21 @@
 package com.neon.sve.controller.Auth;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.neon.sve.dto.login.DatosCambiarClave;
 import com.neon.sve.dto.login.DatosLoginUsuario;
 import com.neon.sve.dto.login.DatosRespuestaLoginUsuario;
 import com.neon.sve.dto.login.DatosRespuestaMensaje;
@@ -34,6 +39,8 @@ public class AuthController {
 
     @Autowired
     private UserDetailsService userDetailsService;
+
+
 
     @PostMapping("/login")
     public ResponseEntity<DatosRespuestaLoginUsuario> login(@RequestBody DatosLoginUsuario request) {
@@ -79,5 +86,16 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token inválido");
         }
     }
+
+    @PutMapping("/cambiar-clave")
+    @Transactional
+    public ResponseEntity<String> cambiarClave(@RequestBody DatosCambiarClave request) {
+    try {
+        String mensaje = authService.cambiarClaveUsuarioAutenticado(request);
+        return ResponseEntity.ok(mensaje);
+    } catch (RuntimeException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+}
 
 }
