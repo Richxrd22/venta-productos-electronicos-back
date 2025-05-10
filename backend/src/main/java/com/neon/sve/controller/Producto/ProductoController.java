@@ -47,8 +47,9 @@ public class ProductoController {
             DatosRespuestaProducto producto = productoService.getProductoById(id);
             return ResponseEntity.ok(producto);
         } catch (Exception e) {
-            String mensajeError = "Error al obtener el producto requerido, verifique ID ingresado : " + id;
+            String mensajeError = "Error al buscar el producto requerido, verifique ID ingresado : " + id;
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensajeError);
+
         }
     }
 

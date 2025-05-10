@@ -13,7 +13,7 @@ public record DatosActualizarProveedores(
     @NotBlank String direccion,
     @NotBlank String telefono,
     @NotBlank String celular,
-    @NotNull Long id_empresa
+    @NotNull Boolean activo
 
 ) {
     

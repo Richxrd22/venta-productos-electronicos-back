@@ -70,7 +70,6 @@ public class IngresoStock {
         this.id_usuario = usuario;
         this.sku = datosRegistroIngresoStock.sku();
         this.cantidad = datosRegistroIngresoStock.cantidad();
-        this.activo = datosRegistroIngresoStock.activo();
     }
 
     public void actualizar(@Valid DatosActualizarIngresoStock datosActualizarIngresoStock, Producto producto, Proveedor proveedor, Usuario usuario) {

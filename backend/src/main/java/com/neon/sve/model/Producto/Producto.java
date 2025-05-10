@@ -95,7 +95,6 @@ public class Producto {
         this.min_stock = datosRegistroProducto.min_stock();
         this.max_stock = datosRegistroProducto.max_stock();
         this.garantia_meses = datosRegistroProducto.garantia_meses();
-        this.activo = datosRegistroProducto.activo();
         this.id_usuario = usuario;
         this.id_subcategoria = subCategoria;
         this.id_marca = marca;

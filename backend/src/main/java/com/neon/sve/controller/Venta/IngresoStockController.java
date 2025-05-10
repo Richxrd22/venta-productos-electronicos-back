@@ -1,17 +1,31 @@
 package com.neon.sve.controller.Venta;
 
+import java.net.URI;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import com.neon.sve.dto.ingresoStock.DatosActualizarIngresoStock;
 import com.neon.sve.dto.ingresoStock.DatosListadoIngresoStock;
+import com.neon.sve.dto.ingresoStock.DatosRegistroIngresoStock;
+import com.neon.sve.dto.ingresoStock.DatosRespuestaIngresoStock;
 import com.neon.sve.service.ingresoStock.IngresoStockService;
+
+import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/ingresoStock")
@@ -25,6 +39,52 @@ public class IngresoStockController {
             @PageableDefault(direction = Sort.Direction.ASC) Pageable paginacion) {
         Page<DatosListadoIngresoStock> ingresoStockPage = ingresoStockService.getAllIngresoStock(paginacion);
         return ResponseEntity.ok(ingresoStockPage);
+    }
+
+    @GetMapping("/buscar/{id}")
+    public ResponseEntity<?> buscarIngresoStock(@PathVariable Long id) {
+        try {
+            DatosRespuestaIngresoStock ingresoStock = ingresoStockService.getIngresoStockById(id);
+            return ResponseEntity.ok(ingresoStock);
+        } catch (Exception e) {
+            String mensajeError = "Error al buscar el Ingreso Stock requerido, verifique ID ingresado : " + id;
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensajeError);
+
+        }
+    }
+
+    @PostMapping("/registrar")
+    public ResponseEntity<DatosRespuestaIngresoStock> registrarIngresoStock(
+            @Valid @RequestBody DatosRegistroIngresoStock datosRegistroIngresoStock,
+            UriComponentsBuilder uriComponentsBuilder) {
+
+        DatosRespuestaIngresoStock datosRespuestaIngresoStock = ingresoStockService
+                .createIngresoStock(datosRegistroIngresoStock);
+        URI url = uriComponentsBuilder.path("/buscar/{id}")
+                .buildAndExpand(datosRespuestaIngresoStock.id())
+                .toUri();
+        return ResponseEntity.created(url).body(datosRespuestaIngresoStock);
+    }
+
+    @PutMapping("/actualizar")
+    @Transactional
+    public ResponseEntity<DatosRespuestaIngresoStock> actualizarIngresoStock(
+            @Valid @RequestBody DatosActualizarIngresoStock datosActualizarIngresoStock) {
+        DatosRespuestaIngresoStock datosRespuestaIngresoStock = ingresoStockService
+                .updateIngresoStock(datosActualizarIngresoStock);
+        return ResponseEntity.ok(datosRespuestaIngresoStock);
+    }
+
+    @PutMapping("/activar/{id}")
+    public ResponseEntity<String> activarIngresoStock(@PathVariable Long id) {
+        ingresoStockService.activarIngresoStock(id);
+        return ResponseEntity.ok("Ingreso de Stock activado correctamente");
+    }
+
+    @PutMapping("/desactivar/{id}")
+    public ResponseEntity<String> desactivarIngresoStock(@PathVariable Long id) {
+        ingresoStockService.desactivarIngresoStock(id);
+        return ResponseEntity.ok("Ingreso de Stock desactivado correctamente");
     }
 
 }
