@@ -28,7 +28,7 @@ CREATE TABLE proveedores (
 
 CREATE TABLE marcas (
     id BIGINT NOT NULL AUTO_INCREMENT,
-    nombre_marca VARCHAR(50) NOT NULL,
+    nombre VARCHAR(50) NOT NULL,
     activo BIT(1) NOT NULL DEFAULT 1,
     PRIMARY KEY (id)
 );
