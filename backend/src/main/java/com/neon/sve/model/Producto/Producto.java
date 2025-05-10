@@ -1,13 +1,16 @@
 package com.neon.sve.model.Producto;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.neon.sve.dto.producto.DatosActualizarProducto;
 import com.neon.sve.dto.producto.DatosRegistroProducto;
 import com.neon.sve.model.Usuario.Empleado;
 import com.neon.sve.model.Usuario.Usuario;
+import com.neon.sve.model.Ventas.IngresoStock;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,6 +19,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -76,6 +80,10 @@ public class Producto {
     @ManyToOne
     @JoinColumn(name = "id_marca", nullable = false)
     private Marca id_marca;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "id_producto")
+    private List<IngresoStock> ingresoStocks;
 
     public Producto(@Valid DatosRegistroProducto datosRegistroProducto, Usuario usuario, SubCategoria subCategoria,
             Marca marca) {

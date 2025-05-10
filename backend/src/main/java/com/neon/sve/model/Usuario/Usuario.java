@@ -7,9 +7,12 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.neon.sve.dto.usuario.DatosActualizarUsuario;
 import com.neon.sve.dto.usuario.DatosRegistroUsuario;
 import com.neon.sve.model.Producto.Producto;
+import com.neon.sve.model.Producto.SubCategoria;
+import com.neon.sve.model.Ventas.IngresoStock;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -62,6 +65,10 @@ public class Usuario implements UserDetails{
     @OneToOne
     @JoinColumn(name = "id_empleado", unique = true, nullable = false)
     private Empleado id_empleado;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "id_usuario")
+    private List<IngresoStock> ingresoStocks;
 
     public Usuario(@Valid DatosRegistroUsuario datosRegistroUsuario,Empleado empleado, Rol rol ) {
         this.correo = datosRegistroUsuario.correo();

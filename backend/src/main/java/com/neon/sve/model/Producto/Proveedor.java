@@ -1,13 +1,18 @@
 package com.neon.sve.model.Producto;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.neon.sve.dto.Proveedores.DatosActualizarProveedores;
 import com.neon.sve.dto.Proveedores.DatosRegistroProveedores;
+import com.neon.sve.model.Ventas.IngresoStock;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -42,6 +47,9 @@ public class Proveedor {
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private Boolean activo=true;
     
+    @JsonIgnore
+    @OneToMany(mappedBy = "id_proveedor")
+    private List<IngresoStock> ingresoStocks;
 
     public Proveedor(@Valid DatosRegistroProveedores datosRegistroProveedores) {
         this.razon_social = datosRegistroProveedores.razon_social();
