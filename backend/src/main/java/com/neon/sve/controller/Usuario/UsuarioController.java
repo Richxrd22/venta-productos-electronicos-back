@@ -75,6 +75,7 @@ public class UsuarioController {
         } catch (Exception e) {
             String mensajeError = "Error al obtener el Usuario con ID " + id_usuario;
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensajeError);
+
         }
     }
 

@@ -42,13 +42,13 @@ public class ProveedoresController {
         return ResponseEntity.ok(proveedoresPage);
     }
 
-    @GetMapping("/buscar/{id_proveedor}")
-    public ResponseEntity<?> buscarProveedor(@PathVariable Long id_proveedor) {
+    @GetMapping("/buscar/{id}")
+    public ResponseEntity<?> buscarProveedor(@PathVariable Long id) {
         try {
-            DatosRespuestaProveedores proveedores = proveedoreService.getProveedroById(id_proveedor);
+            DatosRespuestaProveedores proveedores = proveedoreService.getProveedroById(id);
             return ResponseEntity.ok(proveedores);
         } catch (Exception e) {
-            String mensajeError = "Error al obtener al proveedor con ID" + id_proveedor;
+            String mensajeError = "Error al obtener al proveedor con ID" + id;
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensajeError);
         }
     }
@@ -76,13 +76,13 @@ public class ProveedoresController {
         return ResponseEntity.ok(datosRespuestaProveedores);
     }
 
-    @PutMapping("/activar/{id_proveedor}")
+    @PutMapping("/activar/{id}")
     public ResponseEntity<String> activarProveedor(@PathVariable Long id) {
         proveedoreService.activarProveedor(id);
         return ResponseEntity.ok("Proveedor activado correctamente");
     }
 
-    @PutMapping("/desactivar/{id_proveedor}")
+    @PutMapping("/desactivar/{id}")
     public ResponseEntity<String> desactivarProveedor(@PathVariable Long id) {
         proveedoreService.desactivarProveedor(id);
         return ResponseEntity.ok("Proveedor desactivado correctamente");
