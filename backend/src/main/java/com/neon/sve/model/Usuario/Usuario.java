@@ -102,6 +102,7 @@ public class Usuario implements UserDetails{
     public boolean isAccountNonExpired() {
         return true; // Puedes ajustar la lógica según las necesidades de tu aplicación
     }
+    
 
     @Override
     public boolean isAccountNonLocked() {

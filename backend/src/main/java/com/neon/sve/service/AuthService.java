@@ -24,8 +24,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthService {
 
-    
-
     @Autowired
     private UsuarioRepository usuarioRepository;
 
@@ -41,35 +39,32 @@ public class AuthService {
     @Autowired
     private EmpleadoRepository empleadoRepository;
 
-    
-public DatosRespuestaLoginUsuario login(DatosLoginUsuario request) {
-    try {
-        authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(request.correo(), request.clave())
-        );
-    } catch (Exception ex) {
-        // Esto lanza un BadCredentialsException si las credenciales no coinciden
-        throw new BadCredentialsException("Correo o contraseña incorrectos");
+    public DatosRespuestaLoginUsuario login(DatosLoginUsuario request) {
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.correo(), request.clave()));
+        } catch (Exception ex) {
+            // Esto lanza un BadCredentialsException si las credenciales no coinciden
+            throw new BadCredentialsException("Correo o contraseña incorrectos");
+        }
+
+        Empleado empleado = empleadoRepository.findByUsuarioCorreo(request.correo())
+                .orElseThrow(() -> new BadCredentialsException("Correo o contraseña incorrectos"));
+
+        if (!empleado.getActivo()) {
+            throw new DisabledException("El usuario no está activo");
+        }
+
+        UserDetails usuario = usuarioRepository.findByCorreo(request.correo())
+                .orElseThrow();
+
+        String token = jwtService.getToken(usuario);
+
+        return new DatosRespuestaLoginUsuario(token);
     }
-
-    Empleado empleado = empleadoRepository.findByUsuarioCorreo(request.correo())
-        .orElseThrow(() -> new BadCredentialsException("Correo o contraseña incorrectos"));
-
-    if (!empleado.getActivo()) {
-        throw new DisabledException("El usuario no está activo");
-    }
-
-    UserDetails usuario = usuarioRepository.findByCorreo(request.correo())
-        .orElseThrow();
-
-    String token = jwtService.getToken(usuario);
-
-    return new DatosRespuestaLoginUsuario(token);
-}
 
     public DatosRespuestaMensaje register(DatosRegistroUsuarioEmpleado request) {
         return usuarioEmpleadoService.createUsuarioEmpleado(request);
     }
 
-    
 }

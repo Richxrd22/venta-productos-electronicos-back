@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/autenticacion")
 @RequiredArgsConstructor
 public class AuthController {
-    
+
     @Autowired
     private AuthService authService;
 
@@ -50,11 +50,9 @@ public class AuthController {
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
 
     @GetMapping("/validar-token")
     public ResponseEntity<?> validateToken(HttpServletRequest request) {
-
 
         String token = request.getHeader("Authorization");
         if (token == null || !token.startsWith("Bearer ")) {
@@ -81,6 +79,5 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token inválido");
         }
     }
-        
 
 }
