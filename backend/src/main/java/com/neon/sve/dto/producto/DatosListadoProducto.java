@@ -2,7 +2,7 @@ package com.neon.sve.dto.producto;
 
 import java.sql.Timestamp;
 
-import com.neon.sve.model.Producto.Producto;
+import com.neon.sve.model.producto.Producto;
 
 public record DatosListadoProducto(
 

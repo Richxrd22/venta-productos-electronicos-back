@@ -1,4 +1,4 @@
-package com.neon.sve.service.proveedores;
+package com.neon.sve.service.proveedor;
 
 import java.util.Optional;
 
@@ -7,28 +7,28 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.neon.sve.dto.proveedores.DatosActualizarProveedores;
-import com.neon.sve.dto.proveedores.DatosListadoProveedores;
-import com.neon.sve.dto.proveedores.DatosRegistroProveedores;
-import com.neon.sve.dto.proveedores.DatosRespuestaProveedores;
-import com.neon.sve.model.Producto.Proveedor;
+import com.neon.sve.dto.proveedor.DatosActualizarProveedor;
+import com.neon.sve.dto.proveedor.DatosListadoProveedor;
+import com.neon.sve.dto.proveedor.DatosRegistroProveedor;
+import com.neon.sve.dto.proveedor.DatosRespuestaProveedor;
+import com.neon.sve.model.producto.Proveedor;
 import com.neon.sve.repository.ProveedorRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
-public class ProveedorServiceImpl implements ProveedoreService{
+public class ProveedorServiceImpl implements ProveedorService{
 
     @Autowired
     private ProveedorRepository proveedorRepository;
 
     @Override
-    public DatosRespuestaProveedores getProveedroById(Long id) {
+    public DatosRespuestaProveedor getProveedroById(Long id) {
         
         Optional<Proveedor> proveedorOptional = proveedorRepository.findById(id);
         if (proveedorOptional.isPresent()) {
             Proveedor proveedor = proveedorOptional.get();
-            return new DatosRespuestaProveedores(proveedor);
+            return new DatosRespuestaProveedor(proveedor);
         } else {
             throw new RuntimeException("Proveedor no encontrado");
 
@@ -37,28 +37,28 @@ public class ProveedorServiceImpl implements ProveedoreService{
     }
 
     @Override
-    public Page<DatosListadoProveedores> getAllProveedores(Pageable pageable) {
+    public Page<DatosListadoProveedor> getAllProveedores(Pageable pageable) {
         Page<Proveedor> proveedorPage = proveedorRepository.findAll(pageable);
-        return proveedorPage.map(DatosListadoProveedores::new);
+        return proveedorPage.map(DatosListadoProveedor::new);
 
     }
 
     @Override
-    public DatosRespuestaProveedores createProveedores(DatosRegistroProveedores datosRegistroProveedores) {
+    public DatosRespuestaProveedor createProveedores(DatosRegistroProveedor datosRegistroProveedores) {
         
         Proveedor proveedor = proveedorRepository.save(new Proveedor(datosRegistroProveedores));
         
-        return new DatosRespuestaProveedores(proveedor);
+        return new DatosRespuestaProveedor(proveedor);
 
     }
 
     @Override
-    public DatosRespuestaProveedores updateProveedores(DatosActualizarProveedores datosActualizarProveedores) {
+    public DatosRespuestaProveedor updateProveedores(DatosActualizarProveedor datosActualizarProveedores) {
         
         Proveedor proveedor = proveedorRepository.getReferenceById(datosActualizarProveedores.id());
         proveedor.actualizar(datosActualizarProveedores);
         proveedor = proveedorRepository.save(proveedor);
-        return new DatosRespuestaProveedores(proveedor);
+        return new DatosRespuestaProveedor(proveedor);
 
     }
 

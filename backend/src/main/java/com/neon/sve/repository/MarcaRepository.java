@@ -2,7 +2,7 @@ package com.neon.sve.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.neon.sve.model.Producto.Marca;
+import com.neon.sve.model.producto.Marca;
 
 public interface MarcaRepository extends JpaRepository<Marca, Long> {
     

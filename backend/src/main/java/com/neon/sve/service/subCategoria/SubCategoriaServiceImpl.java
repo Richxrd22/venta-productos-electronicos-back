@@ -11,8 +11,8 @@ import com.neon.sve.dto.subCategoria.DatosActualizarSubCategoria;
 import com.neon.sve.dto.subCategoria.DatosListadoSubCategoria;
 import com.neon.sve.dto.subCategoria.DatosRegistroSubCategoria;
 import com.neon.sve.dto.subCategoria.DatosRespuestaSubCategoria;
-import com.neon.sve.model.Producto.Categoria;
-import com.neon.sve.model.Producto.SubCategoria;
+import com.neon.sve.model.producto.Categoria;
+import com.neon.sve.model.producto.SubCategoria;
 import com.neon.sve.repository.CategoriaRepository;
 import com.neon.sve.repository.SubCategoriaRepository;
 

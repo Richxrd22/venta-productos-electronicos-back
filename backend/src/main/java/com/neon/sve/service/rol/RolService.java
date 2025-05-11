@@ -9,7 +9,7 @@ import com.neon.sve.dto.rol.DatosActualizarRol;
 import com.neon.sve.dto.rol.DatosListadoRol;
 import com.neon.sve.dto.rol.DatosRegistroRol;
 import com.neon.sve.dto.rol.DatosRespuestaRol;
-import com.neon.sve.model.Usuario.Rol;
+import com.neon.sve.model.usuario.Rol;
 
 public interface RolService {
 

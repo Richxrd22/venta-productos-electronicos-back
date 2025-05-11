@@ -1,8 +1,8 @@
-package com.neon.sve.dto.proveedores;
+package com.neon.sve.dto.proveedor;
 
-import com.neon.sve.model.Producto.Proveedor;
+import com.neon.sve.model.producto.Proveedor;
 
-public record DatosListadoProveedores(
+public record DatosRespuestaProveedor(
 
         Long id,
         String razon_social,
@@ -12,20 +12,21 @@ public record DatosListadoProveedores(
         String celular,
         String telefono,
         int activo
-     
 
 ) {
 
-    public DatosListadoProveedores(Proveedor proveedor) {
+    public DatosRespuestaProveedor(Proveedor proveedor) {
+
         this(
                 proveedor.getId(),
                 proveedor.getRazon_social(),
-                proveedor.getRuc(),
+                  proveedor.getRuc(),
                 proveedor.getCorreo(),
                 proveedor.getDireccion(),
                 proveedor.getCelular(),
-                proveedor.getTelefono(),
+                proveedor.getTelefono(),                
                 proveedor.getActivo() != null && proveedor.getActivo() ? 1 : 0);
+
     }
 
 }

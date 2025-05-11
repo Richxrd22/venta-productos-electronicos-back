@@ -1,6 +1,6 @@
 package com.neon.sve.dto.subCategoria;
 
-import com.neon.sve.model.Producto.SubCategoria;
+import com.neon.sve.model.producto.SubCategoria;
 
 public record DatosRespuestaSubCategoria(
 

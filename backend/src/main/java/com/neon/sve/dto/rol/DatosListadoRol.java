@@ -1,6 +1,6 @@
 package com.neon.sve.dto.rol;
 
-import com.neon.sve.model.Usuario.Rol;
+import com.neon.sve.model.usuario.Rol;
 
 public record DatosListadoRol(
     Long id,

@@ -13,7 +13,7 @@ import com.neon.sve.dto.categoria.DatosActualizarCategoria;
 import com.neon.sve.dto.categoria.DatosListadoCategoria;
 import com.neon.sve.dto.categoria.DatosRegistroCategoria;
 import com.neon.sve.dto.categoria.DatosRespuestaCategoria;
-import com.neon.sve.model.Producto.Categoria;
+import com.neon.sve.model.producto.Categoria;
 import com.neon.sve.repository.CategoriaRepository;
 
 import jakarta.persistence.EntityNotFoundException;

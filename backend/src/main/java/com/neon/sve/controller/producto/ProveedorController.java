@@ -1,4 +1,4 @@
-package com.neon.sve.controller.Producto;
+package com.neon.sve.controller.producto;
 
 import java.net.URI;
 
@@ -13,11 +13,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.neon.sve.dto.proveedores.DatosActualizarProveedores;
-import com.neon.sve.dto.proveedores.DatosListadoProveedores;
-import com.neon.sve.dto.proveedores.DatosRegistroProveedores;
-import com.neon.sve.dto.proveedores.DatosRespuestaProveedores;
-import com.neon.sve.service.proveedores.ProveedoreService;
+import com.neon.sve.dto.proveedor.DatosActualizarProveedor;
+import com.neon.sve.dto.proveedor.DatosListadoProveedor;
+import com.neon.sve.dto.proveedor.DatosRegistroProveedor;
+import com.neon.sve.dto.proveedor.DatosRespuestaProveedor;
+import com.neon.sve.service.proveedor.ProveedorService;
 
 import jakarta.validation.Valid;
 
@@ -30,22 +30,22 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 @RequestMapping("/proveedores")
-public class ProveedoresController {
+public class ProveedorController {
 
     @Autowired
-    private ProveedoreService proveedoreService;
+    private ProveedorService proveedoreService;
 
     @GetMapping("/listar")
-    public ResponseEntity<Page<DatosListadoProveedores>> ListarProveedores(
+    public ResponseEntity<Page<DatosListadoProveedor>> ListarProveedores(
             @PageableDefault(direction = Sort.Direction.ASC) Pageable pagination) {
-        Page<DatosListadoProveedores> proveedoresPage = proveedoreService.getAllProveedores(pagination);
+        Page<DatosListadoProveedor> proveedoresPage = proveedoreService.getAllProveedores(pagination);
         return ResponseEntity.ok(proveedoresPage);
     }
 
     @GetMapping("/buscar/{id}")
     public ResponseEntity<?> buscarProveedor(@PathVariable Long id) {
         try {
-            DatosRespuestaProveedores proveedores = proveedoreService.getProveedroById(id);
+            DatosRespuestaProveedor proveedores = proveedoreService.getProveedroById(id);
             return ResponseEntity.ok(proveedores);
         } catch (Exception e) {
             String mensajeError = "Error al obtener al proveedor con ID" + id;
@@ -55,10 +55,10 @@ public class ProveedoresController {
 
     @PostMapping("/registrar")
     // @Transactional
-    public ResponseEntity<DatosRespuestaProveedores> registroProveedor(
-            @Valid @RequestBody DatosRegistroProveedores datosRegistroProveedores,
+    public ResponseEntity<DatosRespuestaProveedor> registroProveedor(
+            @Valid @RequestBody DatosRegistroProveedor datosRegistroProveedores,
             UriComponentsBuilder uriComponentsBuilder) {
-        DatosRespuestaProveedores datosRespuestaProveedores = proveedoreService
+        DatosRespuestaProveedor datosRespuestaProveedores = proveedoreService
                 .createProveedores(datosRegistroProveedores);
         URI url = uriComponentsBuilder.path("/buscar/{id}")
                 .buildAndExpand(datosRespuestaProveedores.id())
@@ -69,9 +69,9 @@ public class ProveedoresController {
 
     @PutMapping("/actualizar")
     @Transactional
-    public ResponseEntity<DatosRespuestaProveedores> actualizarProveedor(
-            @Valid @RequestBody DatosActualizarProveedores datosActualizarProveedores) {
-        DatosRespuestaProveedores datosRespuestaProveedores = proveedoreService
+    public ResponseEntity<DatosRespuestaProveedor> actualizarProveedor(
+            @Valid @RequestBody DatosActualizarProveedor datosActualizarProveedores) {
+        DatosRespuestaProveedor datosRespuestaProveedores = proveedoreService
                 .updateProveedores(datosActualizarProveedores);
         return ResponseEntity.ok(datosRespuestaProveedores);
     }

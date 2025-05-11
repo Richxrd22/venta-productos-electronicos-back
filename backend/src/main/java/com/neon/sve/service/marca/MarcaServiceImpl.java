@@ -11,7 +11,7 @@ import com.neon.sve.dto.marca.DatosActualizarMarca;
 import com.neon.sve.dto.marca.DatosListadoMarca;
 import com.neon.sve.dto.marca.DatosRegistroMarca;
 import com.neon.sve.dto.marca.DatosRespuestaMarca;
-import com.neon.sve.model.Producto.Marca;
+import com.neon.sve.model.producto.Marca;
 import com.neon.sve.repository.MarcaRepository;
 
 import jakarta.persistence.EntityNotFoundException;

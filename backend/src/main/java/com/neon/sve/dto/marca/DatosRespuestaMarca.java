@@ -1,6 +1,6 @@
 package com.neon.sve.dto.marca;
 
-import com.neon.sve.model.Producto.Marca;
+import com.neon.sve.model.producto.Marca;
 
 public record DatosRespuestaMarca(
         Long id,

@@ -1,10 +1,10 @@
-package com.neon.sve.dto.proveedores;
+package com.neon.sve.dto.proveedor;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public record DatosActualizarProveedores(
+public record DatosActualizarProveedor(
 
     @NotNull Long id,
     @NotBlank String razon_social,
