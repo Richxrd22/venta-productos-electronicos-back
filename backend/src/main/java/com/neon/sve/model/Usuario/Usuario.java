@@ -11,7 +11,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.neon.sve.dto.usuario.DatosActualizarUsuario;
 import com.neon.sve.dto.usuario.DatosRegistroUsuario;
 import com.neon.sve.model.Producto.Producto;
-import com.neon.sve.model.Producto.SubCategoria;
 import com.neon.sve.model.Ventas.IngresoStock;
 
 import jakarta.persistence.Column;

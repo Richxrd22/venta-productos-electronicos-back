@@ -4,7 +4,7 @@ CREATE TABLE empleados (
     apellido VARCHAR(50) NOT NULL,
     dni VARCHAR(8) NOT NULL UNIQUE,
     correo VARCHAR(50) NOT NULL UNIQUE,
-    celular VARCHAR(9) NOT NULL,
+    celular VARCHAR(9) NOT NULL UNIQUE,
     activo BIT(1) NOT NULL DEFAULT 1,
     PRIMARY KEY (id)
 );

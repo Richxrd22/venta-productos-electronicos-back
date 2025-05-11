@@ -17,19 +17,9 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
             AuthenticationException authException) throws IOException {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
-        // Mensaje por defecto
-        String errorMessage = "{\"error\": \"Error de autenticación\"}";
-        int status = HttpServletResponse.SC_UNAUTHORIZED;
-
-        if (authException.getClass().getSimpleName().equals("BadCredentialsException")) {
-            errorMessage = "{\"error\": \"Correo o contraseña incorrectos\"}";
-        } else if (authException.getClass().getSimpleName().equals("DisabledException")) {
-            errorMessage = "{\"error\": \"El usuario no está activo\"}";
-            status = HttpServletResponse.SC_FORBIDDEN; // 403
-        }
-
-        response.setStatus(status);
-        response.getWriter().write(errorMessage);
+        // Este error solo aplica si el JWT no es válido o no se envió
+        response.getWriter().write("{\"error\": \"No autorizado: token inválido o ausente\"}");
     }
 }

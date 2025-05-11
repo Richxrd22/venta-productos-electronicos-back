@@ -1,4 +1,4 @@
-package com.neon.sve.dto.Proveedores;
+package com.neon.sve.dto.proveedores;
 
 import com.neon.sve.model.Producto.Proveedor;
 

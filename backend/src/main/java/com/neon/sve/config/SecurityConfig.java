@@ -53,12 +53,12 @@ public class SecurityConfig {
                                                 .requestMatchers("/autenticacion/login").permitAll()
                                                 .requestMatchers("/autenticacion/registro").hasAnyRole("ADMINISTRADOR")
                                                 .requestMatchers("/autenticacion/validar-token").hasAnyRole("ADMINISTRADOR",
-                                                        "ALMACENERO","VENDEDOR")
+                                                        "ALMACENISTA","VENDEDOR")
                                                 .requestMatchers("/autenticacion/cambiar-clave").hasAnyRole("ADMINISTRADOR",
-                                                        "ALMACENERO","VENDEDOR")
+                                                        "ALMACENISTA","VENDEDOR")
                                                         
                                                 .requestMatchers("/usuario/info").hasAnyRole("ADMINISTRADOR",
-                                                        "ALMACENERO","VENDEDOR")
+                                                        "ALMACENISTA","VENDEDOR")
                                                 .requestMatchers("/usuario-empleado/listar").hasAnyRole("ADMINISTRADOR")
                                                 // otros endpoints...
                                                 .anyRequest().authenticated())

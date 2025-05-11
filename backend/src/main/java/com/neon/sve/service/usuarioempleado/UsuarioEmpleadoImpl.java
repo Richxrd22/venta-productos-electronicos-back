@@ -5,8 +5,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.neon.sve.dto.login.DatosRespuestaMensaje;
 import com.neon.sve.dto.usuarioempleado.DatosListadoUsuarioEmpleado;
@@ -38,14 +40,14 @@ public class UsuarioEmpleadoImpl implements UsuarioEmpleadoService {
     public DatosRespuestaMensaje createUsuarioEmpleado(DatosRegistroUsuarioEmpleado datosRegistroUsuarioEmpleado) {
 
         Rol rol = rolRepository.findById(datosRegistroUsuarioEmpleado.id_rol())
-                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Rol no encontrado"));
 
         List<Empleado> listaEmpleados = empleadoRepository.findAll();
         for (Empleado empleadoBD : listaEmpleados) {
             if (empleadoBD.getCorreo().equals(datosRegistroUsuarioEmpleado.correo()) ||
                     empleadoBD.getCelular().equals(datosRegistroUsuarioEmpleado.celular()) ||
                     empleadoBD.getDni().equals(datosRegistroUsuarioEmpleado.dni())) {
-                throw new RuntimeException("El correo, celular o DNI ya están registrados en otro empleado.");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El correo, celular o DNI ya están registrados en otro empleado.");
             }
         }
 

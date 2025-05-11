@@ -1,16 +1,19 @@
 package com.neon.sve.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import com.neon.sve.dto.MensajeRespuesta;
 import com.neon.sve.dto.login.DatosCambiarClave;
 import com.neon.sve.dto.login.DatosLoginUsuario;
 import com.neon.sve.dto.login.DatosRespuestaLoginUsuario;
@@ -53,25 +56,28 @@ public class AuthService {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.correo(), request.clave()));
         } catch (Exception ex) {
-            // Esto lanza un BadCredentialsException si las credenciales no coinciden
-            throw new BadCredentialsException("Correo o contraseña incorrectos");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Correo o contraseña incorrectos");
         }
 
         Empleado empleado = empleadoRepository.findByUsuarioCorreo(request.correo())
-                .orElseThrow(() -> new BadCredentialsException("Correo o contraseña incorrectos"));
+                .orElseThrow(
+                        () -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Correo o contraseña incorrectos"));
 
         if (!empleado.getActivo()) {
-            throw new DisabledException("El usuario no está activo");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "El usuario no está activo");
         }
 
         UserDetails usuarioDetails = usuarioRepository.findByCorreo(request.correo())
-                .orElseThrow();
-        
-        Usuario usuario = usuarioRepository.findByCorreo(request.correo()).orElseThrow();
+                .orElseThrow(
+                        () -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Correo o contraseña incorrectos"));
+
+        Usuario usuario = usuarioRepository.findByCorreo(request.correo())
+                .orElseThrow(
+                        () -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Correo o contraseña incorrectos"));
 
         String token = jwtService.getToken(usuarioDetails);
 
-        return new DatosRespuestaLoginUsuario(token,usuario.getClave_cambiada());
+        return new DatosRespuestaLoginUsuario(token, usuario.getClave_cambiada());
     }
 
     public DatosRespuestaMensaje register(DatosRegistroUsuarioEmpleado request) {
@@ -79,23 +85,23 @@ public class AuthService {
     }
 
     @Transactional
-public String cambiarClaveUsuarioAutenticado(DatosCambiarClave request) {
-    Authentication  authentication = SecurityContextHolder.getContext().getAuthentication();
-    String correo = authentication.getName();
+    public ResponseEntity<MensajeRespuesta> cambiarClaveUsuarioAutenticado(DatosCambiarClave request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String correo = authentication.getName();
 
-    Usuario usuario = usuarioRepository.findByCorreo(correo)
-        .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        Usuario usuario = usuarioRepository.findByCorreo(correo)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 
-    if (!passwordEncoder.matches(request.clave_actual(), usuario.getClave())) {
-        throw new RuntimeException("La clave actual no es correcta");
+        if (!passwordEncoder.matches(request.clave_actual(), usuario.getClave())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La clave actual no es correcta");
+        }
+
+        usuario.setClave(passwordEncoder.encode(request.clave_nueva()));
+        usuario.setClave_cambiada(true);
+
+        usuarioRepository.save(usuario);
+
+        return ResponseEntity.ok(new MensajeRespuesta("Clave actualizada correctamente"));
     }
-
-    usuario.setClave(passwordEncoder.encode(request.clave_nueva()));
-    usuario.setClave_cambiada(true);
-
-    usuarioRepository.save(usuario);
-
-    return "Clave actualizada correctamente";
-}
 
 }

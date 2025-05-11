@@ -1,4 +1,4 @@
-package com.neon.sve.service.subCategoria;
+package com.neon.sve.service.subcategoria;
 
 import java.util.Optional;
 
@@ -7,8 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.neon.sve.dto.categoria.DatosListadoCategoria;
-import com.neon.sve.dto.categoria.DatosRespuestaCategoria;
 import com.neon.sve.dto.subCategoria.DatosActualizarSubCategoria;
 import com.neon.sve.dto.subCategoria.DatosListadoSubCategoria;
 import com.neon.sve.dto.subCategoria.DatosRegistroSubCategoria;

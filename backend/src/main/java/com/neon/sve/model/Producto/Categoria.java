@@ -48,7 +48,6 @@ public class Categoria {
 
     public void actualizar(@Valid DatosActualizarCategoria datosActualizarCategoria) {
         this.nombre = datosActualizarCategoria.nombre();
-        this.activo = datosActualizarCategoria.activo();
     }
 
 }

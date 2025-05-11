@@ -3,8 +3,8 @@ package com.neon.sve.model.Producto;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.neon.sve.dto.Proveedores.DatosActualizarProveedores;
-import com.neon.sve.dto.Proveedores.DatosRegistroProveedores;
+import com.neon.sve.dto.proveedores.DatosActualizarProveedores;
+import com.neon.sve.dto.proveedores.DatosRegistroProveedores;
 import com.neon.sve.model.Ventas.IngresoStock;
 
 import jakarta.persistence.Column;
@@ -32,7 +32,7 @@ public class Proveedor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
+    @Column(nullable = false,unique = true)
     private String razon_social;
     @Column(nullable = false)
     private String ruc;

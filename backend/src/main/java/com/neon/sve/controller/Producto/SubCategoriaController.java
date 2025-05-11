@@ -23,8 +23,7 @@ import com.neon.sve.dto.subCategoria.DatosActualizarSubCategoria;
 import com.neon.sve.dto.subCategoria.DatosListadoSubCategoria;
 import com.neon.sve.dto.subCategoria.DatosRegistroSubCategoria;
 import com.neon.sve.dto.subCategoria.DatosRespuestaSubCategoria;
-import com.neon.sve.service.subCategoria.SubCategoriaService;
-import com.neon.sve.service.usuario.UsuarioService;
+import com.neon.sve.service.subcategoria.SubCategoriaService;
 
 import jakarta.validation.Valid;
 

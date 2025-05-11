@@ -1,13 +1,13 @@
 CREATE TABLE categorias (
     id BIGINT NOT NULL AUTO_INCREMENT,
-    nombre VARCHAR(50) NOT NULL,
+    nombre VARCHAR(50) NOT NULL UNIQUE,
     activo BIT(1) NOT NULL DEFAULT 1,
     PRIMARY KEY (id)
 );
 
 CREATE TABLE subcategorias(
     id BIGINT NOT NULL AUTO_INCREMENT,
-    nombre VARCHAR(50) NOT NULL,
+    nombre VARCHAR(50) NOT NULL UNIQUE,
     activo BIT(1) NOT NULL DEFAULT 1,
     id_categoria BIGINT NOT NULL,
     PRIMARY KEY (id),
@@ -16,26 +16,26 @@ CREATE TABLE subcategorias(
 
 CREATE TABLE proveedores (
     id BIGINT NOT NULL AUTO_INCREMENT,
-    razon_social VARCHAR(50) NOT NULL,
+    razon_social VARCHAR(50) NOT NULL UNIQUE,
     ruc VARCHAR(11) NOT NULL UNIQUE,
     direccion VARCHAR(100) NOT NULL,
     correo VARCHAR(50) NOT NULL UNIQUE,
-    celular VARCHAR(9) NOT NULL,
-    telefono VARCHAR(7) NULL,
+    celular VARCHAR(9) NOT NULL UNIQUE,
+    telefono VARCHAR(7) NULL UNIQUE,
     activo BIT(1) NOT NULL DEFAULT 1,
     PRIMARY KEY (id)
 );
 
 CREATE TABLE marcas (
     id BIGINT NOT NULL AUTO_INCREMENT,
-    nombre VARCHAR(50) NOT NULL,
+    nombre VARCHAR(50) NOT NULL UNIQUE,
     activo BIT(1) NOT NULL DEFAULT 1,
     PRIMARY KEY (id)
 );
 
 CREATE TABLE productos (
     id BIGINT NOT NULL AUTO_INCREMENT,
-    nombre VARCHAR(50) NOT NULL,
+    nombre VARCHAR(50) NOT NULL UNIQUE,
     descripcion VARCHAR(250) NOT NULL,
     precio_venta DOUBLE NOT NULL CHECK (precio_venta >= 0),
     precio_compra DOUBLE NOT NULL CHECK (precio_compra >= 0),

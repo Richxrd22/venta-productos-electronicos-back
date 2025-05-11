@@ -13,11 +13,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.neon.sve.dto.Proveedores.DatosActualizarProveedores;
-import com.neon.sve.dto.Proveedores.DatosListadoProveedores;
-import com.neon.sve.dto.Proveedores.DatosRegistroProveedores;
-import com.neon.sve.dto.Proveedores.DatosRespuestaProveedores;
-import com.neon.sve.service.Proveedores.ProveedoreService;
+import com.neon.sve.dto.proveedores.DatosActualizarProveedores;
+import com.neon.sve.dto.proveedores.DatosListadoProveedores;
+import com.neon.sve.dto.proveedores.DatosRegistroProveedores;
+import com.neon.sve.dto.proveedores.DatosRespuestaProveedores;
+import com.neon.sve.service.proveedores.ProveedoreService;
 
 import jakarta.validation.Valid;
 

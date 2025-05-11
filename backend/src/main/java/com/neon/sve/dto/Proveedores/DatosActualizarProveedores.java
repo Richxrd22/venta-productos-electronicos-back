@@ -1,4 +1,4 @@
-package com.neon.sve.dto.Proveedores;
+package com.neon.sve.dto.proveedores;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

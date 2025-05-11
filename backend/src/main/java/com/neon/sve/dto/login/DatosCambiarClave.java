@@ -1,8 +1,10 @@
 package com.neon.sve.dto.login;
 
+import jakarta.validation.constraints.NotBlank;
+
 public record DatosCambiarClave(
-    String clave_actual,
-    String clave_nueva
+    @NotBlank String clave_actual,
+    @NotBlank String clave_nueva
 ) {
     
 }

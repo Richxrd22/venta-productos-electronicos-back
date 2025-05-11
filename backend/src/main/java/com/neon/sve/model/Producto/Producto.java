@@ -8,7 +8,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.neon.sve.dto.producto.DatosActualizarProducto;
 import com.neon.sve.dto.producto.DatosRegistroProducto;
-import com.neon.sve.model.Usuario.Empleado;
 import com.neon.sve.model.Usuario.Usuario;
 import com.neon.sve.model.Ventas.IngresoStock;
 

@@ -1,12 +1,12 @@
-package com.neon.sve.service.Proveedores;
+package com.neon.sve.service.proveedores;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.neon.sve.dto.Proveedores.DatosActualizarProveedores;
-import com.neon.sve.dto.Proveedores.DatosListadoProveedores;
-import com.neon.sve.dto.Proveedores.DatosRegistroProveedores;
-import com.neon.sve.dto.Proveedores.DatosRespuestaProveedores;
+import com.neon.sve.dto.proveedores.DatosActualizarProveedores;
+import com.neon.sve.dto.proveedores.DatosListadoProveedores;
+import com.neon.sve.dto.proveedores.DatosRegistroProveedores;
+import com.neon.sve.dto.proveedores.DatosRespuestaProveedores;
 
 public interface ProveedoreService {
 
