@@ -1,4 +1,4 @@
-package com.neon.sve.service.subcategoria;
+package com.neon.sve.service.subCategoria;
 
 import java.util.Optional;
 
