@@ -1,4 +1,4 @@
-package com.neon.sve.service.subCategoria;
+package com.neon.sve.service.subcategoria;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
