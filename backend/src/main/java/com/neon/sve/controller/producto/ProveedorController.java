@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.neon.sve.dto.MensajeRespuesta;
 import com.neon.sve.dto.proveedor.DatosActualizarProveedor;
 import com.neon.sve.dto.proveedor.DatosListadoProveedor;
 import com.neon.sve.dto.proveedor.DatosRegistroProveedor;
@@ -75,15 +76,15 @@ public class ProveedorController {
     }
 
     @PutMapping("/activar/{id}")
-    public ResponseEntity<String> activarProveedor(@PathVariable Long id) {
+    public ResponseEntity<MensajeRespuesta> activarProveedor(@PathVariable Long id) {
         proveedorService.activarProveedor(id);
-        return ResponseEntity.ok("Proveedor activado correctamente");
+        return ResponseEntity.ok(new MensajeRespuesta("Proveedor activado correctamente"));
     }
 
     @PutMapping("/desactivar/{id}")
-    public ResponseEntity<String> desactivarProveedor(@PathVariable Long id) {
+    public ResponseEntity<MensajeRespuesta> desactivarProveedor(@PathVariable Long id) {
         proveedorService.desactivarProveedor(id);
-        return ResponseEntity.ok("Proveedor desactivado correctamente");
+        return ResponseEntity.ok(new MensajeRespuesta("Proveedor desactivado correctamente"));
     }
 
 }

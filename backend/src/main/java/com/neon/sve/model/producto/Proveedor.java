@@ -67,7 +67,6 @@ public class Proveedor {
         this.direccion = datosActualizarProveedor.direccion();
         this.celular = datosActualizarProveedor.celular();
         this.telefono = datosActualizarProveedor.telefono();
-        this.activo = datosActualizarProveedor.activo();
 
     }
 

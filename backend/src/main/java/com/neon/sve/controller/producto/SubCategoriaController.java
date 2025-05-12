@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.neon.sve.dto.MensajeRespuesta;
 import com.neon.sve.dto.subCategoria.DatosActualizarSubCategoria;
 import com.neon.sve.dto.subCategoria.DatosListadoSubCategoria;
 import com.neon.sve.dto.subCategoria.DatosRegistroSubCategoria;
@@ -72,15 +73,15 @@ public class SubCategoriaController {
     }
 
     @PutMapping("/activar/{id}")
-    public ResponseEntity<String> activarSubCategoria(@PathVariable Long id) {
+    public ResponseEntity<MensajeRespuesta> activarSubCategoria(@PathVariable Long id) {
         subCategoriaService.activarSubCategoria(id);
-        return ResponseEntity.ok("SubCategoria activada correctamente");
+        return ResponseEntity.ok(new MensajeRespuesta("SubCategoria activada correctamente"));
     }
 
     @PutMapping("/desactivar/{id}")
-    public ResponseEntity<String> desactivarSubCategoria(@PathVariable Long id) {
+    public ResponseEntity<MensajeRespuesta> desactivarSubCategoria(@PathVariable Long id) {
         subCategoriaService.desactivarSubCategoria(id);
-        return ResponseEntity.ok("SubCategoria desactivada correctamente");
+        return ResponseEntity.ok(new MensajeRespuesta("SubCategoria desactivada correctamente"));
     }
 
 }

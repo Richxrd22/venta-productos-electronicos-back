@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.neon.sve.dto.MensajeRespuesta;
 import com.neon.sve.dto.producto.DatosActualizarProducto;
 import com.neon.sve.dto.producto.DatosListadoProducto;
 import com.neon.sve.dto.producto.DatosRegistroProducto;
@@ -71,15 +72,15 @@ public class ProductoController {
     }
 
     @PutMapping("/activar/{id}")
-    public ResponseEntity<String> activarProducto(@PathVariable Long id) {
+    public ResponseEntity<MensajeRespuesta> activarProducto(@PathVariable Long id) {
         productoService.activarProducto(id);
-        return ResponseEntity.ok("Producto activado exitosamente");
+        return ResponseEntity.ok(new MensajeRespuesta("Producto activado exitosamente"));
     }
 
     @PutMapping("/desactivar/{id}")
-    public ResponseEntity<String> desactivarProducto(@PathVariable Long id) {
+    public ResponseEntity<MensajeRespuesta> desactivarProducto(@PathVariable Long id) {
         productoService.desactivarProducto(id);
-        return ResponseEntity.ok("Producto desactivado exitosamente");
+        return ResponseEntity.ok(new MensajeRespuesta("Producto desactivado exitosamente"));
     }
 
 }

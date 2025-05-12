@@ -48,7 +48,6 @@ public class Marca {
 
     public void actualizar(@Valid DatosActualizarMarca datosActualizarMarca) {
         this.nombre = datosActualizarMarca.nombre();
-        this.activo = datosActualizarMarca.activo();
     }
 
 }

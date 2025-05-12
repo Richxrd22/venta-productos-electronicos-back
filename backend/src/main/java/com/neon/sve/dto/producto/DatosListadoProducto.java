@@ -7,6 +7,7 @@ import com.neon.sve.model.producto.Producto;
 public record DatosListadoProducto(
 
         Long id,
+        String sku,
         String nombre,
         String descripcion,
         Double precio_venta,
@@ -27,6 +28,7 @@ public record DatosListadoProducto(
     public DatosListadoProducto(Producto producto) {
         this(
                 producto.getId(),
+                producto.getSku(),
                 producto.getNombre(),
                 producto.getDescripcion(),
                 producto.getPrecio_venta(),

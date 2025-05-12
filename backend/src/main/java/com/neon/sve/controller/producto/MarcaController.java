@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.neon.sve.dto.MensajeRespuesta;
 import com.neon.sve.dto.marca.DatosActualizarMarca;
 import com.neon.sve.dto.marca.DatosListadoMarca;
 import com.neon.sve.dto.marca.DatosRegistroMarca;
@@ -77,15 +78,15 @@ public class MarcaController {
     }
 
     @PutMapping("/activar/{id}")
-    public ResponseEntity<String> activarMarca(@PathVariable Long id) {
+    public ResponseEntity<MensajeRespuesta> activarMarca(@PathVariable Long id) {
         marcaService.activarMarca(id);
-        return ResponseEntity.ok("Marca activada correctamente");
+        return ResponseEntity.ok(new MensajeRespuesta("Marca activada correctamente"));
     }
 
     @PutMapping("/desactivar/{id}")
-    public ResponseEntity<String> desactivarMarca(@PathVariable Long id) {
+    public ResponseEntity<MensajeRespuesta> desactivarMarca(@PathVariable Long id) {
         marcaService.desactivarMarca(id);
-        return ResponseEntity.ok("Marca desactivada correctamente");
+        return ResponseEntity.ok(new MensajeRespuesta("Marca desactivada correctamente"));
     }
 
 }

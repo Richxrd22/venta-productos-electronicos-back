@@ -7,7 +7,6 @@ public record DatosActualizarSubCategoria(
 
         @NotNull Long id,
         @NotBlank String nombre,
-        @NotNull Boolean activo,
         @NotNull Long id_categoria
 
 ) {

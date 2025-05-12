@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.neon.sve.dto.MensajeRespuesta;
 import com.neon.sve.dto.ingresoStock.DatosActualizarIngresoStock;
 import com.neon.sve.dto.ingresoStock.DatosListadoIngresoStock;
 import com.neon.sve.dto.ingresoStock.DatosRegistroIngresoStock;
@@ -74,15 +75,15 @@ public class IngresoStockController {
     }
 
     @PutMapping("/activar/{id}")
-    public ResponseEntity<String> activarIngresoStock(@PathVariable Long id) {
+    public ResponseEntity<MensajeRespuesta> activarIngresoStock(@PathVariable Long id) {
         ingresoStockService.activarIngresoStock(id);
-        return ResponseEntity.ok("Ingreso de Stock activado correctamente");
+        return ResponseEntity.ok(new MensajeRespuesta("Ingreso de Stock activado correctamente"));
     }
 
     @PutMapping("/desactivar/{id}")
-    public ResponseEntity<String> desactivarIngresoStock(@PathVariable Long id) {
+    public ResponseEntity<MensajeRespuesta> desactivarIngresoStock(@PathVariable Long id) {
         ingresoStockService.desactivarIngresoStock(id);
-        return ResponseEntity.ok("Ingreso de Stock desactivado correctamente");
+        return ResponseEntity.ok(new MensajeRespuesta("Ingreso de Stock desactivado correctamente"));
     }
 
 }

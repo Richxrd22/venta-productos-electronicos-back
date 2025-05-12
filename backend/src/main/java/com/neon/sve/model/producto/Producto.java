@@ -90,6 +90,7 @@ public class Producto {
     public Producto(@Valid DatosRegistroProducto datosRegistroProducto, Usuario usuario, SubCategoria subCategoria,
             Marca marca) {
 
+        this.sku = datosRegistroProducto.sku();
         this.nombre = datosRegistroProducto.nombre();
         this.descripcion = datosRegistroProducto.descripcion();
         this.precio_venta = datosRegistroProducto.precio_venta();
@@ -107,6 +108,7 @@ public class Producto {
             SubCategoria subCategoria,
             Marca marca) {
 
+        this.sku = datosActualizarProducto.sku();
         this.nombre = datosActualizarProducto.nombre();
         this.descripcion = datosActualizarProducto.descripcion();
         this.precio_venta = datosActualizarProducto.precio_venta();
@@ -114,7 +116,6 @@ public class Producto {
         this.min_stock = datosActualizarProducto.min_stock();
         this.max_stock = datosActualizarProducto.max_stock();
         this.garantia_meses = datosActualizarProducto.garantia_meses();
-        this.activo = datosActualizarProducto.activo();
         this.id_usuario = usuario;
         this.id_subcategoria = subCategoria;
         this.id_marca = marca;

@@ -55,7 +55,6 @@ public class SubCategoria {
 
     public void actualizar(@Valid DatosActualizarSubCategoria datosActualizarSubCategoria, Categoria categoria) {
         this.nombre = datosActualizarSubCategoria.nombre();
-        this.activo = datosActualizarSubCategoria.activo();
         this.id_categoria = categoria;
     }
 

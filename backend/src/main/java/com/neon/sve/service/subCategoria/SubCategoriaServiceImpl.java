@@ -5,7 +5,9 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.neon.sve.dto.subCategoria.DatosActualizarSubCategoria;
 import com.neon.sve.dto.subCategoria.DatosListadoSubCategoria;
@@ -36,7 +38,7 @@ public class SubCategoriaServiceImpl implements SubCategoriaService {
             return new DatosRespuestaSubCategoria(subCategoria);
 
         } else {
-            throw new RuntimeException("SubCategoria no encontrada");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "SubCategoria no encontrada");
 
         }
     }
@@ -50,6 +52,13 @@ public class SubCategoriaServiceImpl implements SubCategoriaService {
 
     @Override
     public DatosRespuestaSubCategoria createSubCategoria(DatosRegistroSubCategoria datosRegistroSubCategoria) {
+        Optional<SubCategoria> subCategorOptional = subCategoriaRepository
+                .findByNombre(datosRegistroSubCategoria.nombre());
+        if (subCategorOptional.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Ya existe la SubCategoria con el nombre ingresado : " + datosRegistroSubCategoria.nombre());
+        }
+
         Categoria categoria = categoriaRepository.getReferenceById(datosRegistroSubCategoria.id_categoria());
         SubCategoria subCategoria = subCategoriaRepository.save(new SubCategoria(datosRegistroSubCategoria, categoria));
         return new DatosRespuestaSubCategoria(subCategoria);
@@ -57,6 +66,13 @@ public class SubCategoriaServiceImpl implements SubCategoriaService {
 
     @Override
     public DatosRespuestaSubCategoria updateSubCategoria(DatosActualizarSubCategoria datosActualizarSubCategoria) {
+        Optional<SubCategoria> subCategorOptional = subCategoriaRepository
+                .findByNombre(datosActualizarSubCategoria.nombre());
+        if (subCategorOptional.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Ya existe la SubCategoria con el nombre ingresado : " + datosActualizarSubCategoria.nombre());
+        }
+
         Categoria categoria = categoriaRepository.getReferenceById(datosActualizarSubCategoria.id_categoria());
         SubCategoria subCategoria = subCategoriaRepository.getReferenceById(datosActualizarSubCategoria.id());
         subCategoria.actualizar(datosActualizarSubCategoria, categoria);
@@ -70,10 +86,11 @@ public class SubCategoriaServiceImpl implements SubCategoriaService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         "SubCategoria no encontrada, verifique el ID ingresado : " + id));
 
-        if (!subCategoria.getActivo()) {
-            subCategoria.setActivo(true);
-            subCategoriaRepository.save(subCategoria);
+        if (Boolean.TRUE.equals(subCategoria.getActivo())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La SubCategoria ya esta activa");
         }
+        subCategoria.setActivo(true);
+        subCategoriaRepository.save(subCategoria);
     }
 
     @Override
@@ -82,10 +99,11 @@ public class SubCategoriaServiceImpl implements SubCategoriaService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         "SubCategoria no encontrada, verifique el ID ingresado : " + id));
 
-        if (subCategoria.getActivo()) {
-            subCategoria.setActivo(false);
-            subCategoriaRepository.save(subCategoria);
+        if (!subCategoria.getActivo()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La SubCategoria ya se encuentra desactivada");
         }
+        subCategoria.setActivo(false);
+        subCategoriaRepository.save(subCategoria);
     }
 
 }

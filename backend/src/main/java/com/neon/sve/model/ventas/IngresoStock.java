@@ -80,7 +80,6 @@ public class IngresoStock {
         this.id_proveedor = proveedor;
         this.id_usuario = usuario;
         this.cantidad = datosActualizarIngresoStock.cantidad();
-        this.activo = datosActualizarIngresoStock.activo();
     }
 
 }
