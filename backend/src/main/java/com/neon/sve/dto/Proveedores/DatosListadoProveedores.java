@@ -1,6 +1,6 @@
 package com.neon.sve.dto.proveedores;
 
-import com.neon.sve.model.Producto.Proveedor;
+import com.neon.sve.model.producto.Proveedor;
 
 public record DatosListadoProveedores(
 

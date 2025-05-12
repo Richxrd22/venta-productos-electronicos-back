@@ -1,4 +1,4 @@
-package com.neon.sve.config.UserInitializer;
+package com.neon.sve.config.userInitializer;
 
 import java.util.Optional;
 
@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.neon.sve.model.Usuario.Empleado;
-import com.neon.sve.model.Usuario.Rol;
-import com.neon.sve.model.Usuario.Usuario;
+import com.neon.sve.model.usuario.Empleado;
+import com.neon.sve.model.usuario.Rol;
+import com.neon.sve.model.usuario.Usuario;
 import com.neon.sve.repository.EmpleadoRepository;
 import com.neon.sve.repository.RolRepository;
 import com.neon.sve.repository.UsuarioRepository;

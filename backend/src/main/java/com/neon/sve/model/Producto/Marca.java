@@ -1,4 +1,4 @@
-package com.neon.sve.model.Producto;
+package com.neon.sve.model.producto;
 
 import java.util.List;
 
@@ -48,7 +48,6 @@ public class Marca {
 
     public void actualizar(@Valid DatosActualizarMarca datosActualizarMarca) {
         this.nombre = datosActualizarMarca.nombre();
-        this.activo = datosActualizarMarca.activo();
     }
 
 }

@@ -13,7 +13,7 @@ import com.neon.sve.dto.categoria.DatosActualizarCategoria;
 import com.neon.sve.dto.categoria.DatosListadoCategoria;
 import com.neon.sve.dto.categoria.DatosRegistroCategoria;
 import com.neon.sve.dto.categoria.DatosRespuestaCategoria;
-import com.neon.sve.model.Producto.Categoria;
+import com.neon.sve.model.producto.Categoria;
 import com.neon.sve.repository.CategoriaRepository;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -74,11 +74,11 @@ public class CategoriaServiceImpl implements CategoriaService {
         Categoria categoria = categoriaRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "Categoría no encontrada con el ID ingresado: " + id));
-        
-                        if (Boolean.TRUE.equals(categoria.getActivo()))
+
+        if (Boolean.TRUE.equals(categoria.getActivo()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La categoría ya está activa");
-        
-            categoria.setActivo(true);
+
+        categoria.setActivo(true);
         categoriaRepository.save(categoria);
     }
 

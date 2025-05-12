@@ -12,8 +12,7 @@ public record DatosActualizarProveedores(
     @Email @NotBlank String correo,
     @NotBlank String direccion,
     @NotBlank String telefono,
-    @NotBlank String celular,
-    @NotNull Boolean activo
+    @NotBlank String celular
 
 ) {
     

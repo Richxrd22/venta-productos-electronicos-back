@@ -1,4 +1,4 @@
-package com.neon.sve.model.Producto;
+package com.neon.sve.model.producto;
 
 import java.util.List;
 
@@ -55,7 +55,6 @@ public class SubCategoria {
 
     public void actualizar(@Valid DatosActualizarSubCategoria datosActualizarSubCategoria, Categoria categoria) {
         this.nombre = datosActualizarSubCategoria.nombre();
-        this.activo = datosActualizarSubCategoria.activo();
         this.id_categoria = categoria;
     }
 

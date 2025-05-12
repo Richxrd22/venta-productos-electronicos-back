@@ -1,4 +1,4 @@
-package com.neon.sve.controller.Usuario;
+package com.neon.sve.controller.usuario;
 
 import java.net.URI;
 

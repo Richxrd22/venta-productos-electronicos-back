@@ -5,16 +5,18 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.neon.sve.dto.producto.DatosActualizarProducto;
 import com.neon.sve.dto.producto.DatosListadoProducto;
 import com.neon.sve.dto.producto.DatosRegistroProducto;
 import com.neon.sve.dto.producto.DatosRespuestaProducto;
-import com.neon.sve.model.Producto.Marca;
-import com.neon.sve.model.Producto.Producto;
-import com.neon.sve.model.Producto.SubCategoria;
-import com.neon.sve.model.Usuario.Usuario;
+import com.neon.sve.model.producto.Marca;
+import com.neon.sve.model.producto.Producto;
+import com.neon.sve.model.producto.SubCategoria;
+import com.neon.sve.model.usuario.Usuario;
 import com.neon.sve.repository.MarcaRepository;
 import com.neon.sve.repository.ProductoRepository;
 import com.neon.sve.repository.SubCategoriaRepository;
@@ -47,7 +49,7 @@ public class ProductoServiceImpl implements ProductoService {
 
         } else {
 
-            throw new RuntimeException("Producto no encontrado, verifique ID ingresado");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado, verifique ID ingresado");
         }
     }
 
@@ -59,6 +61,12 @@ public class ProductoServiceImpl implements ProductoService {
 
     @Override
     public DatosRespuestaProducto createProducto(DatosRegistroProducto datosRegistroProducto) {
+        Optional<Producto> productOptional = productoRepository.findByNombre(datosRegistroProducto.nombre());
+        if (productOptional.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Ya existe un producto con el nombre ingresado : " + datosRegistroProducto.nombre());
+
+        }
         Usuario usuario = usuarioRepository.getReferenceById(datosRegistroProducto.id_usuario());
         SubCategoria subCategoria = subCategoriaRepository.getReferenceById(datosRegistroProducto.id_subcategoria());
         Marca marca = marcaRepository.getReferenceById(datosRegistroProducto.id_marca());
@@ -70,6 +78,12 @@ public class ProductoServiceImpl implements ProductoService {
 
     @Override
     public DatosRespuestaProducto updateProducto(DatosActualizarProducto datosActualizarProducto) {
+        Optional<Producto> productOptional = productoRepository.findByNombre(datosActualizarProducto.nombre());
+        if (productOptional.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Ya existe un producto con el nombre ingresado : " + datosActualizarProducto.nombre());
+
+        }
         Usuario usuario = usuarioRepository.getReferenceById(datosActualizarProducto.id_usuario());
         SubCategoria subCategoria = subCategoriaRepository.getReferenceById(datosActualizarProducto.id_subcategoria());
         Marca marca = marcaRepository.getReferenceById(datosActualizarProducto.id_marca());
@@ -86,10 +100,11 @@ public class ProductoServiceImpl implements ProductoService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Producto no encontrado con el ID ingresado, verifique ID : " + id));
 
-        if (!producto.getActivo()) {
-            producto.setActivo(true);
-            productoRepository.save(producto);
+        if (Boolean.TRUE.equals(producto.getActivo())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El producto ya esta activado");
         }
+        producto.setActivo(true);
+        productoRepository.save(producto);
     }
 
     @Override
@@ -98,10 +113,11 @@ public class ProductoServiceImpl implements ProductoService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Producto no encontrado con el ID ingresado, verifique ID : " + id));
 
-        if (producto.getActivo()) {
-            producto.setActivo(false);
-            productoRepository.save(producto);
+        if (!producto.getActivo()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El producto ya se encuenta desactivado");
         }
+        producto.setActivo(false);
+        productoRepository.save(producto);
     }
 
 }

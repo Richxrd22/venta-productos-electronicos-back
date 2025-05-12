@@ -1,4 +1,4 @@
-package com.neon.sve.controller.Auth;
+package com.neon.sve.controller.auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

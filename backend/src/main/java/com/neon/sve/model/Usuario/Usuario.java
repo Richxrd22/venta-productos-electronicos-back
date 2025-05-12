@@ -1,4 +1,4 @@
-package com.neon.sve.model.Usuario;
+package com.neon.sve.model.usuario;
 
 import java.util.Collection;
 import java.util.List;
@@ -10,8 +10,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.neon.sve.dto.usuario.DatosActualizarUsuario;
 import com.neon.sve.dto.usuario.DatosRegistroUsuario;
-import com.neon.sve.model.Producto.Producto;
-import com.neon.sve.model.Ventas.IngresoStock;
+import com.neon.sve.model.producto.Producto;
+import com.neon.sve.model.ventas.IngresoStock;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

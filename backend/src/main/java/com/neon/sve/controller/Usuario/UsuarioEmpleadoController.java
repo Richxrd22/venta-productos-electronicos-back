@@ -1,4 +1,4 @@
-package com.neon.sve.controller.Usuario;
+package com.neon.sve.controller.usuario;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

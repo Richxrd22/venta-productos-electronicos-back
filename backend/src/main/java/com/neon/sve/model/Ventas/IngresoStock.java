@@ -1,4 +1,4 @@
-package com.neon.sve.model.Ventas;
+package com.neon.sve.model.ventas;
 
 import java.sql.Timestamp;
 
@@ -6,9 +6,9 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import com.neon.sve.dto.ingresoStock.DatosActualizarIngresoStock;
 import com.neon.sve.dto.ingresoStock.DatosRegistroIngresoStock;
-import com.neon.sve.model.Producto.Producto;
-import com.neon.sve.model.Producto.Proveedor;
-import com.neon.sve.model.Usuario.Usuario;
+import com.neon.sve.model.producto.Producto;
+import com.neon.sve.model.producto.Proveedor;
+import com.neon.sve.model.usuario.Usuario;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -78,7 +78,6 @@ public class IngresoStock {
         this.id_usuario = usuario;
         this.sku = datosActualizarIngresoStock.sku();
         this.cantidad = datosActualizarIngresoStock.cantidad();
-        this.activo = datosActualizarIngresoStock.activo();
     }
 
 }

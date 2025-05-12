@@ -1,4 +1,4 @@
-package com.neon.sve.model.Producto;
+package com.neon.sve.model.producto;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -8,8 +8,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.neon.sve.dto.producto.DatosActualizarProducto;
 import com.neon.sve.dto.producto.DatosRegistroProducto;
-import com.neon.sve.model.Usuario.Usuario;
-import com.neon.sve.model.Ventas.IngresoStock;
+import com.neon.sve.model.usuario.Usuario;
+import com.neon.sve.model.ventas.IngresoStock;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -111,7 +111,6 @@ public class Producto {
         this.min_stock = datosActualizarProducto.min_stock();
         this.max_stock = datosActualizarProducto.max_stock();
         this.garantia_meses = datosActualizarProducto.garantia_meses();
-        this.activo = datosActualizarProducto.activo();
         this.id_usuario = usuario;
         this.id_subcategoria = subCategoria;
         this.id_marca = marca;

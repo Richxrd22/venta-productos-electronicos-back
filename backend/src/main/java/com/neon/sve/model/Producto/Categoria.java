@@ -1,4 +1,4 @@
-package com.neon.sve.model.Producto;
+package com.neon.sve.model.producto;
 
 import java.util.List;
 

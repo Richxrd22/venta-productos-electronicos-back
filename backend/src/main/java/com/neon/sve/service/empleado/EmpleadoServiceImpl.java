@@ -11,7 +11,7 @@ import com.neon.sve.dto.empleado.DatosActualizarEmpleado;
 import com.neon.sve.dto.empleado.DatosListadoEmpleado;
 import com.neon.sve.dto.empleado.DatosRegistroEmpleado;
 import com.neon.sve.dto.empleado.DatosRespuestaEmpleado;
-import com.neon.sve.model.Usuario.Empleado;
+import com.neon.sve.model.usuario.Empleado;
 import com.neon.sve.repository.EmpleadoRepository;
 
 import jakarta.persistence.EntityNotFoundException;

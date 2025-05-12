@@ -1,6 +1,6 @@
 package com.neon.sve.dto.usuarioempleado;
 
-import com.neon.sve.model.Usuario.Empleado;
+import com.neon.sve.model.usuario.Empleado;
 
 public record DatosListadoUsuarioEmpleado(
         Long id_empleado,

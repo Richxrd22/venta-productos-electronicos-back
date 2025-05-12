@@ -10,7 +10,6 @@ public record DatosActualizarIngresoStock(
         @NotNull Long id_proveedor,
         @NotNull Long id_usuario,
         @NotBlank String sku,
-        @NotNull int cantidad,
-        @NotNull Boolean activo) {
+        @NotNull int cantidad) {
 
 }

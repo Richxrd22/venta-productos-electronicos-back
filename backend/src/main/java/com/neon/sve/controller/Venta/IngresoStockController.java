@@ -1,4 +1,4 @@
-package com.neon.sve.controller.Venta;
+package com.neon.sve.controller.venta;
 
 import java.net.URI;
 

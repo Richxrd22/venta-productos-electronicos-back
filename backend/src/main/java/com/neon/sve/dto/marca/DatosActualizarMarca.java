@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotNull;
 public record DatosActualizarMarca(
 
         @NotNull Long id,
-        @NotBlank String nombre,
-        @NotNull Boolean activo) {
+        @NotBlank String nombre) {
 
 }

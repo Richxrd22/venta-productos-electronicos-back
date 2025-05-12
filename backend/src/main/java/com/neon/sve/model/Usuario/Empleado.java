@@ -1,4 +1,4 @@
-package com.neon.sve.model.Usuario;
+package com.neon.sve.model.usuario;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;

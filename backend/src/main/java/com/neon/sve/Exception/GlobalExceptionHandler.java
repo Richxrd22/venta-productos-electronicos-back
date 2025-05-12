@@ -1,4 +1,4 @@
-package com.neon.sve.Exception;
+package com.neon.sve.exception;
 
 import java.util.HashMap;
 import java.util.Map;

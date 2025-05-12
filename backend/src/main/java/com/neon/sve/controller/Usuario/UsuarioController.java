@@ -1,4 +1,4 @@
-package com.neon.sve.controller.Usuario;
+package com.neon.sve.controller.usuario;
 
 import java.net.URI;
 
@@ -26,7 +26,7 @@ import com.neon.sve.dto.usuario.DatosListadoUsuario;
 import com.neon.sve.dto.usuario.DatosRegistroUsuario;
 import com.neon.sve.dto.usuario.DatosRespuestaUsuario;
 import com.neon.sve.dto.usuarioempleado.DatosUsuarioEmpleadoInfo;
-import com.neon.sve.model.Usuario.Usuario;
+import com.neon.sve.model.usuario.Usuario;
 import com.neon.sve.repository.UsuarioRepository;
 import com.neon.sve.service.usuario.UsuarioService;
 
