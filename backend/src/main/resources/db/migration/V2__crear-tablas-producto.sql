@@ -35,6 +35,7 @@ CREATE TABLE marcas (
 
 CREATE TABLE productos (
     id BIGINT NOT NULL AUTO_INCREMENT,
+    sku VARCHAR(50) NOT NULL UNIQUE,
     nombre VARCHAR(50) NOT NULL UNIQUE,
     descripcion VARCHAR(250) NOT NULL,
     precio_venta DOUBLE NOT NULL CHECK (precio_venta >= 0),

@@ -15,7 +15,7 @@ public record DatosListadoIngresoStock(
         String celular_proveedor,
         String correo_usuario,
         String nombre_usuario,
-        String sku,
+        String lote,
         int cantidad,
         Timestamp fecha_ingreso,
         int activo
@@ -33,7 +33,7 @@ public record DatosListadoIngresoStock(
                 ingresoStock.getId_proveedor().getCelular(),
                 ingresoStock.getId_usuario().getCorreo(),
                 ingresoStock.getId_usuario().getId_empleado().getNombre(),
-                ingresoStock.getSku(),
+                ingresoStock.getLote(),
                 ingresoStock.getCantidad(),
                 ingresoStock.getFecha_ingreso(),
                 ingresoStock.getActivo() != null && ingresoStock.getActivo() ? 1 : 0);
