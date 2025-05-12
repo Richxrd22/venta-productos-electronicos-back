@@ -1,12 +1,10 @@
 package com.neon.sve.controller.producto;
 
 import java.net.URI;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -35,10 +33,10 @@ public class SubCategoriaController {
     private SubCategoriaService subCategoriaService;
 
     @GetMapping("/listar")
-    public ResponseEntity<Page<DatosListadoSubCategoria>> listadoSubCategoria(
-            @PageableDefault(direction = Sort.Direction.ASC) Pageable paginacion) {
-        Page<DatosListadoSubCategoria> subCategoriaPage = subCategoriaService.getAllSubCategoria(paginacion);
-        return ResponseEntity.ok(subCategoriaPage);
+    public ResponseEntity<List<DatosListadoSubCategoria>> listadoSubCategoria() {
+        Pageable paginacion = Pageable.unpaged();
+        List<DatosListadoSubCategoria> subCategorias = subCategoriaService.getAllSubCategoria(paginacion).getContent();
+        return ResponseEntity.ok(subCategorias);
     }
 
     @GetMapping("/buscar/{id}")
@@ -49,7 +47,6 @@ public class SubCategoriaController {
         } catch (Exception e) {
             String mensajeError = "Error al obtener la SubCategoria, verifique el ID :" + id;
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensajeError);
-
         }
     }
 

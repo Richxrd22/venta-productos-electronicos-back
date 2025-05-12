@@ -1,11 +1,10 @@
 package com.neon.sve.controller.usuario;
 
 import java.net.URI;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
-import org.springframework.data.domain.Sort;
 
 import com.neon.sve.dto.usuario.DatosActualizarUsuario;
 import com.neon.sve.dto.usuario.DatosListadoUsuario;
@@ -53,10 +51,10 @@ public class UsuarioController {
     }
 
     @GetMapping("/listar")
-    public ResponseEntity<Page<DatosListadoUsuario>> listarUsuarios(
-            @PageableDefault(direction = Sort.Direction.ASC) Pageable paginacion) {
-        Page<DatosListadoUsuario> usuarioPage = usuarioService.getAllUsuarios(paginacion);
-        return ResponseEntity.ok(usuarioPage);
+    public ResponseEntity<List<DatosListadoUsuario>> listarUsuarios() {
+        Pageable paginacion = Pageable.unpaged();
+        List<DatosListadoUsuario> usuarios = usuarioService.getAllUsuarios(paginacion).getContent();
+        return ResponseEntity.ok(usuarios);
     }
 
     @PutMapping("/actualizar")
@@ -85,16 +83,15 @@ public class UsuarioController {
         String correo = authentication.getName();
 
         Usuario usuario = usuarioRepository.findByCorreo(correo)
-            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         return new DatosUsuarioEmpleadoInfo(
-            usuario.getId_empleado().getNombre(),
-            usuario.getId_empleado().getApellido(),
-            usuario.getCorreo(),
-            usuario.getId_rol().getNombre(),
-            usuario.getClave_cambiada(),
-            usuario.getActivo()
-        );
+                usuario.getId_empleado().getNombre(),
+                usuario.getId_empleado().getApellido(),
+                usuario.getCorreo(),
+                usuario.getId_rol().getNombre(),
+                usuario.getClave_cambiada(),
+                usuario.getActivo());
     }
 
 }

@@ -1,10 +1,9 @@
 package com.neon.sve.controller.usuario;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,10 +20,9 @@ public class UsuarioEmpleadoController {
     private UsuarioEmpleadoService usuarioEmpleadoService;
 
     @GetMapping("/listar")
-    public ResponseEntity<Page<DatosListadoUsuarioEmpleado>> listarUsuarioEmpleados(
-            @PageableDefault(direction = Sort.Direction.ASC) Pageable paginacion) {
-        Page<DatosListadoUsuarioEmpleado> usuarioEmpleadoPage = usuarioEmpleadoService
-                .getAllUsuarioEmpleados(paginacion);
-        return ResponseEntity.ok(usuarioEmpleadoPage);
+    public ResponseEntity<List<DatosListadoUsuarioEmpleado>> listarUsuarioEmpleados() {
+        Pageable paginacion = Pageable.unpaged();
+        List<DatosListadoUsuarioEmpleado> usuarioEmpleados = usuarioEmpleadoService.getAllUsuarioEmpleados(paginacion).getContent();
+        return ResponseEntity.ok(usuarioEmpleados);
     }
 }

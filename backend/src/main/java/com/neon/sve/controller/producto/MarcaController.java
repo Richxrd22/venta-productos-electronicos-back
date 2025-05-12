@@ -1,12 +1,10 @@
 package com.neon.sve.controller.producto;
 
 import java.net.URI;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -35,11 +33,10 @@ public class MarcaController {
     private MarcaService marcaService;
 
     @GetMapping("/listar")
-    public ResponseEntity<Page<DatosListadoMarca>> listarMarca(
-            @PageableDefault(direction = Sort.Direction.ASC) Pageable paginacion) {
-
-        Page<DatosListadoMarca> marcaPage = marcaService.getAllMarca(paginacion);
-        return ResponseEntity.ok(marcaPage);
+    public ResponseEntity<List<DatosListadoMarca>> listarMarca() {
+        Pageable paginacion = Pageable.unpaged();
+        List<DatosListadoMarca> marcas = marcaService.getAllMarca(paginacion).getContent();
+        return ResponseEntity.ok(marcas);
     }
 
     @GetMapping("/buscar/{id}")

@@ -1,12 +1,10 @@
 package com.neon.sve.controller.producto;
 
 import java.net.URI;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -33,19 +31,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class ProveedorController {
 
     @Autowired
-    private ProveedorService proveedoreService;
+    private ProveedorService proveedorService;
 
     @GetMapping("/listar")
-    public ResponseEntity<Page<DatosListadoProveedor>> ListarProveedores(
-            @PageableDefault(direction = Sort.Direction.ASC) Pageable pagination) {
-        Page<DatosListadoProveedor> proveedoresPage = proveedoreService.getAllProveedores(pagination);
-        return ResponseEntity.ok(proveedoresPage);
+    public ResponseEntity<List<DatosListadoProveedor>> ListarProveedores() {
+        Pageable paginacion = Pageable.unpaged();
+        List<DatosListadoProveedor> proveedores = proveedorService.getAllProveedores(paginacion).getContent();
+        return ResponseEntity.ok(proveedores);
     }
 
     @GetMapping("/buscar/{id}")
     public ResponseEntity<?> buscarProveedor(@PathVariable Long id) {
         try {
-            DatosRespuestaProveedor proveedores = proveedoreService.getProveedroById(id);
+            DatosRespuestaProveedor proveedores = proveedorService.getProveedroById(id);
             return ResponseEntity.ok(proveedores);
         } catch (Exception e) {
             String mensajeError = "Error al obtener al proveedor con ID" + id;
@@ -58,7 +56,7 @@ public class ProveedorController {
     public ResponseEntity<DatosRespuestaProveedor> registroProveedor(
             @Valid @RequestBody DatosRegistroProveedor datosRegistroProveedores,
             UriComponentsBuilder uriComponentsBuilder) {
-        DatosRespuestaProveedor datosRespuestaProveedores = proveedoreService
+        DatosRespuestaProveedor datosRespuestaProveedores = proveedorService
                 .createProveedores(datosRegistroProveedores);
         URI url = uriComponentsBuilder.path("/buscar/{id}")
                 .buildAndExpand(datosRespuestaProveedores.id())
@@ -71,20 +69,20 @@ public class ProveedorController {
     @Transactional
     public ResponseEntity<DatosRespuestaProveedor> actualizarProveedor(
             @Valid @RequestBody DatosActualizarProveedor datosActualizarProveedores) {
-        DatosRespuestaProveedor datosRespuestaProveedores = proveedoreService
+        DatosRespuestaProveedor datosRespuestaProveedores = proveedorService
                 .updateProveedores(datosActualizarProveedores);
         return ResponseEntity.ok(datosRespuestaProveedores);
     }
 
     @PutMapping("/activar/{id}")
     public ResponseEntity<String> activarProveedor(@PathVariable Long id) {
-        proveedoreService.activarProveedor(id);
+        proveedorService.activarProveedor(id);
         return ResponseEntity.ok("Proveedor activado correctamente");
     }
 
     @PutMapping("/desactivar/{id}")
     public ResponseEntity<String> desactivarProveedor(@PathVariable Long id) {
-        proveedoreService.desactivarProveedor(id);
+        proveedorService.desactivarProveedor(id);
         return ResponseEntity.ok("Proveedor desactivado correctamente");
     }
 

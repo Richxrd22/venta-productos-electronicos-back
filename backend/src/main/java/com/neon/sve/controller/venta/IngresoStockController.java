@@ -1,12 +1,10 @@
 package com.neon.sve.controller.venta;
 
 import java.net.URI;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -35,10 +33,10 @@ public class IngresoStockController {
     private IngresoStockService ingresoStockService;
 
     @GetMapping("/listar")
-    public ResponseEntity<Page<DatosListadoIngresoStock>> listarIngresoStock(
-            @PageableDefault(direction = Sort.Direction.ASC) Pageable paginacion) {
-        Page<DatosListadoIngresoStock> ingresoStockPage = ingresoStockService.getAllIngresoStock(paginacion);
-        return ResponseEntity.ok(ingresoStockPage);
+    public ResponseEntity<List<DatosListadoIngresoStock>> listarIngresoStock() {
+        Pageable paginacion = Pageable.unpaged();
+        List<DatosListadoIngresoStock> listadoIngresoStocks = ingresoStockService.getAllIngresoStock(paginacion).getContent();
+        return ResponseEntity.ok(listadoIngresoStocks);
     }
 
     @GetMapping("/buscar/{id}")

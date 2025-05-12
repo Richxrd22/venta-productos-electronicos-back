@@ -1,12 +1,10 @@
 package com.neon.sve.controller.usuario;
 
 import java.net.URI;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +29,7 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/rol")
 public class RolController {
-    
+
     @Autowired
     private RolService rolService;
 
@@ -47,13 +45,12 @@ public class RolController {
     }
 
     @GetMapping("/listar")
-    public ResponseEntity<Page<DatosListadoRol>> listarRoles(
-            @PageableDefault(direction = Sort.Direction.ASC) Pageable paginacion ) {
-        Page<DatosListadoRol> proveedorPage = rolService.getAllRoles(paginacion);
-        return ResponseEntity.ok(proveedorPage);
+    public ResponseEntity<List<DatosListadoRol>> listarRoles() {
+        Pageable paginacion = Pageable.unpaged();
+        List<DatosListadoRol> roles = rolService.getAllRoles(paginacion).getContent();
+        return ResponseEntity.ok(roles);
     }
 
-    
     @PutMapping("/actualizar")
     @Transactional
     public ResponseEntity<DatosRespuestaRol> actualizarRol(
