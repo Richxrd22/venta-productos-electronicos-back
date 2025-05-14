@@ -60,7 +60,6 @@ public class Empleado {
         this.dni = datosRegistroEmpleado.dni();
         this.correo = datosRegistroEmpleado.correo();
         this.celular = datosRegistroEmpleado.celular();
-        this.activo = datosRegistroEmpleado.activo();
     }
 
     public void actualizar(@Valid DatosActualizarEmpleado datosActualizarEmpleado) {
@@ -69,7 +68,6 @@ public class Empleado {
         this.dni = datosActualizarEmpleado.dni();
         this.correo = datosActualizarEmpleado.correo();
         this.celular = datosActualizarEmpleado.celular();
-        this.activo = datosActualizarEmpleado.activo();
     }
 
 }

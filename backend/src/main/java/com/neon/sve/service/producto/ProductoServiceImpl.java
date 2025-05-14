@@ -128,6 +128,17 @@ public class ProductoServiceImpl implements ProductoService {
         if (Boolean.TRUE.equals(producto.getActivo())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El producto ya esta activado");
         }
+
+        if (!Boolean.TRUE.equals(producto.getId_marca().getActivo())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "No se puede activar el producto porque la marca asociada está desactivada");
+        }
+
+        if(!Boolean.TRUE.equals(producto.getId_subcategoria().getActivo())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "No se puede activar el producto porque la subcategoría asociada está desactivada");
+        }
+
         producto.setActivo(true);
         productoRepository.save(producto);
     }

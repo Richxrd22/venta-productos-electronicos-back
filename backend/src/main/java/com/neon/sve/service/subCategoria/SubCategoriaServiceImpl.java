@@ -89,6 +89,12 @@ public class SubCategoriaServiceImpl implements SubCategoriaService {
         if (Boolean.TRUE.equals(subCategoria.getActivo())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La SubCategoria ya esta activa");
         }
+
+        if (Boolean.FALSE.equals(subCategoria.getId_categoria().getActivo())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "No se puede activar la SubCategoría porque la Categoría está inactiva");
+        }
+
         subCategoria.setActivo(true);
         subCategoriaRepository.save(subCategoria);
     }
@@ -102,6 +108,15 @@ public class SubCategoriaServiceImpl implements SubCategoriaService {
         if (!subCategoria.getActivo()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La SubCategoria ya se encuentra desactivada");
         }
+
+        boolean tieneProductosActivos = subCategoria.getProductos().stream()
+                .anyMatch(producto -> Boolean.TRUE.equals(producto.getActivo()));
+
+        if (tieneProductosActivos) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "No se puede desactivar la SubCategoría porque tiene productos activos");
+        }
+        
         subCategoria.setActivo(false);
         subCategoriaRepository.save(subCategoria);
     }

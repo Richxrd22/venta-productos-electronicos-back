@@ -98,6 +98,14 @@ public class MarcaServiceImpl implements MarcaService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La Marca ya esta desactivada");
         }
 
+        boolean tieneProductosActivos = marca.getProductos().stream()
+                .anyMatch(producto -> Boolean.TRUE.equals(producto.getActivo()));
+
+        if (tieneProductosActivos) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "No se puede desactivar la marca, tiene productos activos asociados");
+        }
+
         marca.setActivo(false);
         marcaRepository.save(marca);
     }

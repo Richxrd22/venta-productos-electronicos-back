@@ -10,7 +10,6 @@ public record DatosRegistroUsuarioEmpleado(
     @NotBlank String dni,
     @Email String correo,
     @NotBlank String celular,
-    @NotNull Boolean activo,
     @NotNull Long id_rol
 ) {
     

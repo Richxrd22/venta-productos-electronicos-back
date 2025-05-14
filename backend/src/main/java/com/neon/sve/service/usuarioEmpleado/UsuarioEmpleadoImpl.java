@@ -13,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.neon.sve.dto.login.DatosRespuestaMensaje;
 import com.neon.sve.dto.usuarioEmpleado.DatosListadoUsuarioEmpleado;
 import com.neon.sve.dto.usuarioEmpleado.DatosRegistroUsuarioEmpleado;
+import com.neon.sve.dto.usuarioEmpleado.DatosRespuestaUsuarioEmpleado;
 import com.neon.sve.model.usuario.Empleado;
 import com.neon.sve.model.usuario.Rol;
 import com.neon.sve.model.usuario.Usuario;
@@ -32,7 +33,7 @@ public class UsuarioEmpleadoImpl implements UsuarioEmpleadoService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private RolRepository rolRepository;
- 
+
     @Autowired
     private EmailService emailService;
 
@@ -40,14 +41,15 @@ public class UsuarioEmpleadoImpl implements UsuarioEmpleadoService {
     public DatosRespuestaMensaje createUsuarioEmpleado(DatosRegistroUsuarioEmpleado datosRegistroUsuarioEmpleado) {
 
         Rol rol = rolRepository.findById(datosRegistroUsuarioEmpleado.id_rol())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Rol no encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Rol no encontrado"));
 
         List<Empleado> listaEmpleados = empleadoRepository.findAll();
         for (Empleado empleadoBD : listaEmpleados) {
             if (empleadoBD.getCorreo().equals(datosRegistroUsuarioEmpleado.correo()) ||
                     empleadoBD.getCelular().equals(datosRegistroUsuarioEmpleado.celular()) ||
                     empleadoBD.getDni().equals(datosRegistroUsuarioEmpleado.dni())) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El correo, celular o DNI ya están registrados en otro empleado.");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "El correo, celular o DNI ya están registrados en otro empleado.");
             }
         }
 
@@ -57,7 +59,7 @@ public class UsuarioEmpleadoImpl implements UsuarioEmpleadoService {
                 .dni(datosRegistroUsuarioEmpleado.dni())
                 .correo(datosRegistroUsuarioEmpleado.correo())
                 .celular(datosRegistroUsuarioEmpleado.celular())
-                .activo(datosRegistroUsuarioEmpleado.activo())
+                .activo(true)
                 .build();
 
         String inicialNombre = datosRegistroUsuarioEmpleado.nombre().substring(0, 1).toUpperCase();
@@ -69,20 +71,20 @@ public class UsuarioEmpleadoImpl implements UsuarioEmpleadoService {
                 .correo(correoUsuario)
                 .id_empleado(empleado)
                 .id_rol(rol)
+                .activo(true)
                 .clave_cambiada(false)
-                .activo(datosRegistroUsuarioEmpleado.activo())
                 .build();
 
         empleadoRepository.save(empleado);
         usuarioRepository.save(usuario);
-
 
         emailService.enviarCredenciales(
                 empleado.getCorreo(), // destinatario
                 usuario.getCorreo(), // correo de acceso al sistema
                 datosRegistroUsuarioEmpleado.dni() // contraseña sin codificar
         );
-        return new DatosRespuestaMensaje("Empleado y usuario creados con éxito. Las credenciales fueron enviadas por correo.");
+        return new DatosRespuestaMensaje(
+                "Empleado y usuario creados con éxito. Las credenciales fueron enviadas por correo.");
 
     }
 
@@ -90,6 +92,54 @@ public class UsuarioEmpleadoImpl implements UsuarioEmpleadoService {
     public Page<DatosListadoUsuarioEmpleado> getAllUsuarioEmpleados(Pageable pageable) {
         Page<Empleado> usuarioEmpleadoPage = empleadoRepository.findAll(pageable);
         return usuarioEmpleadoPage.map(DatosListadoUsuarioEmpleado::new);
+    }
+
+    @Override
+    public void activarUsuarioEmpleado(Long id_usuario) {
+        Usuario usuario = usuarioRepository.findById(id_usuario)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+
+        Empleado empleado = empleadoRepository.findByUsuarioId(id_usuario)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empleado no encontrado"));
+
+        if (Boolean.TRUE.equals(usuario.getActivo()) && Boolean.TRUE.equals(empleado.getActivo())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El usuario y el empleado ya están activos");
+        }
+
+        usuario.setActivo(true);
+        usuarioRepository.save(usuario);
+
+        empleado.setActivo(true);
+        empleadoRepository.save(empleado);
+    }
+
+    @Override
+    public void desactivarUsuarioEmpleado(Long id_usuario) {
+        Usuario usuario = usuarioRepository.findById(id_usuario)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+
+        Empleado empleado = empleadoRepository.findByUsuarioId(id_usuario)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empleado no encontrado"));
+
+        if (Boolean.FALSE.equals(usuario.getActivo()) && Boolean.FALSE.equals(empleado.getActivo())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El usuario y el empleado ya están inactivos");
+        }
+
+        usuario.setActivo(false);
+        usuarioRepository.save(usuario);
+
+        empleado.setActivo(false);
+        empleadoRepository.save(empleado);
+
+    }
+
+    @Override
+    public DatosRespuestaUsuarioEmpleado getUsuarioEmpleadoById(Long id_usuario) {
+
+        Empleado empleado = empleadoRepository.findByUsuarioId(id_usuario)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empleado no encontrado"));
+
+        return new DatosRespuestaUsuarioEmpleado(empleado);
     }
 
 }

@@ -9,7 +9,6 @@ public record DatosActualizarUsuario(
         @Email @NotBlank String correo,
         @NotNull Long id_empleado,
         @NotNull Long id_rol,
-        @NotNull Boolean clave_cambiada,
-        @NotNull Boolean activo
+        @NotNull Boolean clave_cambiada
         ) {
 }

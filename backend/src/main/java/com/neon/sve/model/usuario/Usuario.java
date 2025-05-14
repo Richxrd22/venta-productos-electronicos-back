@@ -75,7 +75,6 @@ public class Usuario implements UserDetails{
         this.id_rol = rol;
         this.id_empleado = empleado;
         this.clave_cambiada = datosRegistroUsuario.clave_cambiada();
-        this.activo = datosRegistroUsuario.activo();
     }
 
     public void actualizar(@Valid DatosActualizarUsuario datosActualizarUsuario,Empleado empleado,Rol rol) {
@@ -84,7 +83,6 @@ public class Usuario implements UserDetails{
         this.id_rol = rol;
         this.id_empleado = empleado;
         this.clave_cambiada = datosActualizarUsuario.clave_cambiada();
-        this.activo = datosActualizarUsuario.activo();
     }
 
     @Override
