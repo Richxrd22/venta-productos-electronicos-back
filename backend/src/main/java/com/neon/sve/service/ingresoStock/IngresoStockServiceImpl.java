@@ -5,7 +5,9 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.neon.sve.dto.ingresoStock.DatosActualizarIngresoStock;
 import com.neon.sve.dto.ingresoStock.DatosListadoIngresoStock;
@@ -58,22 +60,64 @@ public class IngresoStockServiceImpl implements IngresoStockService {
     @Override
     public DatosRespuestaIngresoStock createIngresoStock(DatosRegistroIngresoStock datosRegistroIngresoStock) {
 
-        Producto producto = productoRepository.getReferenceById(datosRegistroIngresoStock.id_producto());
-        Proveedor proveedor = proveedorRepository.getReferenceById(datosRegistroIngresoStock.id_proveedor());
-        Usuario usuario = usuarioRepository.getReferenceById(datosRegistroIngresoStock.id_usuario());
-        IngresoStock ingresoStock = ingresoStockRepository
-                .save(new IngresoStock(datosRegistroIngresoStock, producto, proveedor, usuario));
+        Producto producto = productoRepository.findById(datosRegistroIngresoStock.id_producto())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Producto no encontrado."));
+
+        if (datosRegistroIngresoStock.cantidad() < producto.getMin_stock()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "La cantidad a ingresar no puede ser menor al stock mínimo permitido (" + producto.getMin_stock()
+                            + ").");
+        }
+
+        if (datosRegistroIngresoStock.cantidad() > producto.getMax_stock()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "La cantidad a ingresar no puede ser mayor al stock máximo permitido (" + producto.getMax_stock()
+                            + ").");
+        }
+
+        Proveedor proveedor = proveedorRepository.findById(datosRegistroIngresoStock.id_proveedor())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Proveedor no encontrado."));
+
+        Usuario usuario = usuarioRepository.findById(datosRegistroIngresoStock.id_usuario())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuario no encontrado."));
+
+        String lote = generarLotePorProducto(producto.getId());
+
+        IngresoStock ingresoStock = new IngresoStock(
+                datosRegistroIngresoStock, producto, proveedor, usuario, lote);
+
+        ingresoStock = ingresoStockRepository.save(ingresoStock);
         return new DatosRespuestaIngresoStock(ingresoStock);
 
     }
 
     @Override
     public DatosRespuestaIngresoStock updateIngresoStock(DatosActualizarIngresoStock datosActualizarIngresoStock) {
-        Producto producto = productoRepository.getReferenceById(datosActualizarIngresoStock.id_producto());
-        Proveedor proveedor = proveedorRepository.getReferenceById(datosActualizarIngresoStock.id_proveedor());
-        Usuario usuario = usuarioRepository.getReferenceById(datosActualizarIngresoStock.id_usuario());
-        IngresoStock ingresoStock = ingresoStockRepository.getReferenceById(datosActualizarIngresoStock.id());
-        ingresoStock.actualizar(datosActualizarIngresoStock, producto, proveedor, usuario);
+
+        Proveedor proveedor = proveedorRepository.findById(datosActualizarIngresoStock.id_proveedor())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Proveedor no encontrado."));
+
+        Usuario usuario = usuarioRepository.findById(datosActualizarIngresoStock.id_usuario())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuario no encontrado."));
+
+        IngresoStock ingresoStock = ingresoStockRepository.findById(datosActualizarIngresoStock.id())
+                .orElseThrow(
+                        () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ingreso de stock no encontrado."));
+
+        Producto producto = ingresoStock.getId_producto();
+        if (datosActualizarIngresoStock.cantidad() < producto.getMin_stock()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "La cantidad a ingresar no puede ser menor al stock mínimo permitido (" + producto.getMin_stock()
+                            + ").");
+        }
+
+        if (datosActualizarIngresoStock.cantidad() > producto.getMax_stock()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "La cantidad a ingresar no puede ser mayor al stock máximo permitido (" + producto.getMax_stock()
+                            + ").");
+        }
+        ingresoStock.actualizar(datosActualizarIngresoStock, proveedor, usuario);
+        ingresoStock = ingresoStockRepository.save(ingresoStock);
         return new DatosRespuestaIngresoStock(ingresoStock);
     }
 
@@ -102,6 +146,12 @@ public class IngresoStockServiceImpl implements IngresoStockService {
             ingresoStock.setActivo(false);
             ingresoStockRepository.save(ingresoStock);
         }
+    }
+
+    private String generarLotePorProducto(Long idProducto) {
+        long cantidadIngresos = ingresoStockRepository.contarPorProducto(idProducto);
+        long siguienteNumero = cantidadIngresos + 1;
+        return "L-" + String.format("%03d", siguienteNumero);
     }
 
 }

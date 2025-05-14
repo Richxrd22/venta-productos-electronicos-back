@@ -40,11 +40,17 @@ public class Producto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 50, unique = true)
     private String sku;
     
-    @Column(nullable = false, unique = true, length = 50)
+    @Column(nullable = false, length = 50)
     private String nombre;
+
+    @Column(nullable = true, length = 50)
+    private String modelo;
+
+    @Column(nullable = true, length = 50)
+    private String color;
 
     @Column(nullable = false, length = 250)
     private String descripcion;
@@ -88,10 +94,11 @@ public class Producto {
     private List<IngresoStock> ingresoStocks;
 
     public Producto(@Valid DatosRegistroProducto datosRegistroProducto, Usuario usuario, SubCategoria subCategoria,
-            Marca marca) {
+            Marca marca,String sku) {
 
-        this.sku = datosRegistroProducto.sku();
         this.nombre = datosRegistroProducto.nombre();
+        this.modelo = datosRegistroProducto.modelo();
+        this.color = datosRegistroProducto.color();
         this.descripcion = datosRegistroProducto.descripcion();
         this.precio_venta = datosRegistroProducto.precio_venta();
         this.precio_compra = datosRegistroProducto.precio_compra();
@@ -101,6 +108,7 @@ public class Producto {
         this.id_usuario = usuario;
         this.id_subcategoria = subCategoria;
         this.id_marca = marca;
+        this.sku = sku;
 
     }
 
@@ -108,8 +116,9 @@ public class Producto {
             SubCategoria subCategoria,
             Marca marca) {
 
-        this.sku = datosActualizarProducto.sku();
         this.nombre = datosActualizarProducto.nombre();
+        this.modelo = datosActualizarProducto.modelo();
+        this.color = datosActualizarProducto.color();
         this.descripcion = datosActualizarProducto.descripcion();
         this.precio_venta = datosActualizarProducto.precio_venta();
         this.precio_compra = datosActualizarProducto.precio_compra();

@@ -9,6 +9,8 @@ public record DatosRespuestaProducto(
         Long id,
         String sku,
         String nombre,
+        String modelo,
+        String color,
         String descripcion,
         Double precio_venta,
         Double precio_compra,
@@ -17,17 +19,18 @@ public record DatosRespuestaProducto(
         int garantia_meses,
         int activo,
         Timestamp fecha_creacion,
-        String correo_usuario,
         String nombre_usuario,
-        String nombre_subcategoria,
-        String nombre_categoria,
-        String nombre_marca) {
+        Long id_subcategoria,
+        Long id_categoria,
+        Long id_marca) {
 
     public DatosRespuestaProducto(Producto producto) {
         this(
                 producto.getId(),
                 producto.getSku(),
                 producto.getNombre(),
+                producto.getModelo(),
+                producto.getColor(),
                 producto.getDescripcion(),
                 producto.getPrecio_venta(),
                 producto.getPrecio_compra(),
@@ -36,10 +39,10 @@ public record DatosRespuestaProducto(
                 producto.getGarantia_meses(),
                 producto.getActivo() != null && producto.getActivo() ? 1 : 0,
                 producto.getFecha_creacion(),
-                producto.getId_usuario().getCorreo(),
-                producto.getId_usuario().getId_empleado().getNombre(),
-                producto.getId_subcategoria().getNombre(),
-                producto.getId_subcategoria().getId_categoria().getNombre(),
-                producto.getId_marca().getNombre());
+                producto.getId_usuario().getId_empleado().getNombre() + " "
+                        + producto.getId_usuario().getId_empleado().getApellido(),
+                producto.getId_subcategoria().getId(),
+                producto.getId_subcategoria().getId_categoria().getId(),
+                producto.getId_marca().getId());
     }
 }

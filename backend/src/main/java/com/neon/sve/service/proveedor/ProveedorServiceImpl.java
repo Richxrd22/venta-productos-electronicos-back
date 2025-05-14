@@ -65,7 +65,7 @@ public class ProveedorServiceImpl implements ProveedorService {
 
         Optional<Proveedor> proveedorOptional = proveedorRepository
                 .findByRazon_social(datosActualizarProveedores.razon_social());
-
+        
         if (proveedorOptional.isPresent()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Ya existe un proveedor con la razon social ingresada: "

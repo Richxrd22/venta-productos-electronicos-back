@@ -8,7 +8,6 @@ CREATE TABLE ingreso_stocks (
     fecha_ingreso TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     activo BIT(1) NOT NULL,
     PRIMARY KEY (id),
-    UNIQUE (id_producto, lote),
     FOREIGN KEY (id_producto) REFERENCES productos(id),
     FOREIGN KEY (id_proveedor) REFERENCES proveedores(id),
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id)

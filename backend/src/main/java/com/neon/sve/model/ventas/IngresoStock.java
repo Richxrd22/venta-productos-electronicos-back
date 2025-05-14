@@ -18,7 +18,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -32,9 +31,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-@Table(name = "ingreso_stocks", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "producto_id", "lote" })
-})
+@Table(name = "ingreso_stocks")
 public class IngresoStock {
 
     @Id
@@ -67,16 +64,16 @@ public class IngresoStock {
     private Boolean activo = true;
 
     public IngresoStock(@Valid DatosRegistroIngresoStock datosRegistroIngresoStock, Producto producto,
-            Proveedor proveedor, Usuario usuario) {
+            Proveedor proveedor, Usuario usuario, String lote) {
         this.id_producto = producto;
         this.id_proveedor = proveedor;
         this.id_usuario = usuario;
         this.cantidad = datosRegistroIngresoStock.cantidad();
+        this.lote = lote;
     }
 
-    public void actualizar(@Valid DatosActualizarIngresoStock datosActualizarIngresoStock, Producto producto,
+    public void actualizar(@Valid DatosActualizarIngresoStock datosActualizarIngresoStock,
             Proveedor proveedor, Usuario usuario) {
-        this.id_producto = producto;
         this.id_proveedor = proveedor;
         this.id_usuario = usuario;
         this.cantidad = datosActualizarIngresoStock.cantidad();

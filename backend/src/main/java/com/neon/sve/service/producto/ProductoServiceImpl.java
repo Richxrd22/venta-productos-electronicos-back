@@ -49,7 +49,7 @@ public class ProductoServiceImpl implements ProductoService {
 
         } else {
 
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado, verifique ID ingresado");        
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado, verifique ID ingresado");
         }
     }
 
@@ -61,36 +61,59 @@ public class ProductoServiceImpl implements ProductoService {
 
     @Override
     public DatosRespuestaProducto createProducto(DatosRegistroProducto datosRegistroProducto) {
-        Optional<Producto> productOptional = productoRepository.findBySKU(datosRegistroProducto.sku());
-        if (productOptional.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Ya existe un producto con el SKU ingresado : " + datosRegistroProducto.sku());
 
-        }
-        Usuario usuario = usuarioRepository.getReferenceById(datosRegistroProducto.id_usuario());
-        SubCategoria subCategoria = subCategoriaRepository.getReferenceById(datosRegistroProducto.id_subcategoria());
-        Marca marca = marcaRepository.getReferenceById(datosRegistroProducto.id_marca());
-        Producto producto = productoRepository
-                .save(new Producto(datosRegistroProducto, usuario, subCategoria, marca));
+        Usuario usuario = usuarioRepository.findById(datosRegistroProducto.id_usuario())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+
+        SubCategoria subCategoria = subCategoriaRepository.findById(datosRegistroProducto.id_subcategoria())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Subcategoría no encontrada"));
+
+        Marca marca = marcaRepository.findById(datosRegistroProducto.id_marca())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Marca no encontrada"));
+
+        String skuTemporal = "TEMP-" + System.currentTimeMillis();
+
+        Producto producto = new Producto(datosRegistroProducto, usuario, subCategoria, marca, skuTemporal);
+        producto = productoRepository.save(producto);
+
+        String sku = generarSKU(
+                marca.getNombre(),
+                subCategoria.getNombre(),
+                datosRegistroProducto.modelo(),
+                datosRegistroProducto.color(),
+                producto.getId());
+
+        producto.setSku(sku);
+        producto = productoRepository.save(producto);
+
         return new DatosRespuestaProducto(producto);
-
     }
 
     @Override
     public DatosRespuestaProducto updateProducto(DatosActualizarProducto datosActualizarProducto) {
-        Optional<Producto> productOptional = productoRepository.findBySKU(datosActualizarProducto.sku());
-        /*
-        if (productOptional.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Ya existe un producto con el SKU ingresado : " + datosActualizarProducto.sku());
 
-        }
-        */
-        Usuario usuario = usuarioRepository.getReferenceById(datosActualizarProducto.id_usuario());
-        SubCategoria subCategoria = subCategoriaRepository.getReferenceById(datosActualizarProducto.id_subcategoria());
-        Marca marca = marcaRepository.getReferenceById(datosActualizarProducto.id_marca());
-        Producto producto = productoRepository.getReferenceById(datosActualizarProducto.id());
+        Producto producto = productoRepository.findById(datosActualizarProducto.id())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado"));
+
+        Usuario usuario = usuarioRepository.findById(datosActualizarProducto.id_usuario())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+
+        Marca marca = marcaRepository.findById(datosActualizarProducto.id_marca())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Marca no encontrada"));
+
+        SubCategoria subCategoria = subCategoriaRepository.findById(datosActualizarProducto.id_subcategoria())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Subcategoría no encontrada"));
+
         producto.actualizar(datosActualizarProducto, usuario, subCategoria, marca);
+
+        String nuevoSKU = generarSKU(
+                marca.getNombre(),
+                subCategoria.getNombre(),
+                datosActualizarProducto.modelo(),
+                datosActualizarProducto.color(),
+                producto.getId());
+        producto.setSku(nuevoSKU);
+
         producto = productoRepository.save(producto);
         return new DatosRespuestaProducto(producto);
 
@@ -122,4 +145,19 @@ public class ProductoServiceImpl implements ProductoService {
         productoRepository.save(producto);
     }
 
+    private String generarSKU(String marca, String subcategoria, String modelo, String color, Long id) {
+        String abrevMarca = abreviar(marca);
+        String abrevSubcat = abreviar(subcategoria);
+        String abrevModelo = (modelo != null && !modelo.isBlank()) ? abreviar(modelo) : "MOD";
+        String abrevColor = (color != null && !color.isBlank()) ? abreviar(color) : "COL";
+
+        return String.format("%s-%s-%s-%s-%03d", abrevMarca, abrevSubcat, abrevModelo, abrevColor, id);
+    }
+
+    private String abreviar(String texto) {
+        texto = texto.replaceAll("[^a-zA-Z0-9]", "");
+        return texto.length() >= 3
+                ? texto.substring(0, 3).toUpperCase()
+                : texto.toUpperCase();
+    }
 }

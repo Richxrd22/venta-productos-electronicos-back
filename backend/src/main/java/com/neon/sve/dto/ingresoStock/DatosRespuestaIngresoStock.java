@@ -8,6 +8,8 @@ public record DatosRespuestaIngresoStock(
 
         Long id,
         String nombre_producto,
+        String modelo_producto,
+        String color_producto,
         int min_stock,
         int max_stock,
         String razon_proveedor,
@@ -26,6 +28,8 @@ public record DatosRespuestaIngresoStock(
         this(
                 ingresoStock.getId(),
                 ingresoStock.getId_producto().getNombre(),
+                ingresoStock.getId_producto().getModelo(),
+                ingresoStock.getId_producto().getColor(),
                 ingresoStock.getId_producto().getMin_stock(),
                 ingresoStock.getId_producto().getMax_stock(),
                 ingresoStock.getId_proveedor().getRazon_social(),

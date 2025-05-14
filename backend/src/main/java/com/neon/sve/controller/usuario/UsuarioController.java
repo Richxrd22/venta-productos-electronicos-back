@@ -86,6 +86,7 @@ public class UsuarioController {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         return new DatosUsuarioEmpleadoInfo(
+                usuario.getId(),
                 usuario.getId_empleado().getNombre(),
                 usuario.getId_empleado().getApellido(),
                 usuario.getCorreo(),

@@ -6,8 +6,9 @@ import jakarta.validation.constraints.NotNull;
 public record DatosActualizarProducto(
 
         @NotNull Long id,
-        @NotBlank String sku,
         @NotBlank String nombre,
+        String modelo,
+        String color,
         @NotBlank String descripcion,
         @NotNull Double precio_venta,
         @NotNull Double precio_compra,
