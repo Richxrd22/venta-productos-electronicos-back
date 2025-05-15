@@ -25,121 +25,133 @@ import com.neon.sve.service.EmailService;
 @Service
 public class UsuarioEmpleadoImpl implements UsuarioEmpleadoService {
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
-    @Autowired
-    private EmpleadoRepository empleadoRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    private RolRepository rolRepository;
+        @Autowired
+        private UsuarioRepository usuarioRepository;
+        @Autowired
+        private EmpleadoRepository empleadoRepository;
+        @Autowired
+        private PasswordEncoder passwordEncoder;
+        @Autowired
+        private RolRepository rolRepository;
 
-    @Autowired
-    private EmailService emailService;
+        @Autowired
+        private EmailService emailService;
 
-    @Override
-    public DatosRespuestaMensaje createUsuarioEmpleado(DatosRegistroUsuarioEmpleado datosRegistroUsuarioEmpleado) {
+        @Override
+        public DatosRespuestaMensaje createUsuarioEmpleado(DatosRegistroUsuarioEmpleado datosRegistroUsuarioEmpleado) {
 
-        Rol rol = rolRepository.findById(datosRegistroUsuarioEmpleado.id_rol())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Rol no encontrado"));
+                Rol rol = rolRepository.findById(datosRegistroUsuarioEmpleado.id_rol())
+                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                                "Rol no encontrado"));
 
-        List<Empleado> listaEmpleados = empleadoRepository.findAll();
-        for (Empleado empleadoBD : listaEmpleados) {
-            if (empleadoBD.getCorreo().equals(datosRegistroUsuarioEmpleado.correo()) ||
-                    empleadoBD.getCelular().equals(datosRegistroUsuarioEmpleado.celular()) ||
-                    empleadoBD.getDni().equals(datosRegistroUsuarioEmpleado.dni())) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "El correo, celular o DNI ya están registrados en otro empleado.");
-            }
+                List<Empleado> listaEmpleados = empleadoRepository.findAll();
+                for (Empleado empleadoBD : listaEmpleados) {
+                        if (empleadoBD.getCorreo().equals(datosRegistroUsuarioEmpleado.correo()) ||
+                                        empleadoBD.getCelular().equals(datosRegistroUsuarioEmpleado.celular()) ||
+                                        empleadoBD.getDni().equals(datosRegistroUsuarioEmpleado.dni())) {
+                                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                                                "El correo, celular o DNI ya están registrados en otro empleado.");
+                        }
+                }
+
+                Empleado empleado = Empleado.builder()
+                                .nombre(datosRegistroUsuarioEmpleado.nombre())
+                                .apellido(datosRegistroUsuarioEmpleado.apellido())
+                                .dni(datosRegistroUsuarioEmpleado.dni())
+                                .correo(datosRegistroUsuarioEmpleado.correo())
+                                .celular(datosRegistroUsuarioEmpleado.celular())
+                                .activo(true)
+                                .build();
+
+                String inicialNombre = datosRegistroUsuarioEmpleado.nombre().substring(0, 1).toUpperCase();
+                String inicialApellido = datosRegistroUsuarioEmpleado.apellido().substring(0, 1).toUpperCase();
+                String correoUsuario = inicialNombre + inicialApellido + datosRegistroUsuarioEmpleado.dni()
+                                + "@neon.com";
+
+                Usuario usuario = Usuario.builder()
+                                .clave(passwordEncoder.encode(datosRegistroUsuarioEmpleado.dni()))
+                                .correo(correoUsuario)
+                                .id_empleado(empleado)
+                                .id_rol(rol)
+                                .activo(true)
+                                .clave_cambiada(false)
+                                .cuentaBloqueada(false)
+                                .intentosFallidos(0)
+                                .fechaBloqueo(null)
+                                .build();
+
+                empleadoRepository.save(empleado);
+                usuarioRepository.save(usuario);
+
+                emailService.enviarCredenciales(
+                                empleado.getCorreo(), // destinatario
+                                usuario.getCorreo(), // correo de acceso al sistema
+                                datosRegistroUsuarioEmpleado.dni() // contraseña sin codificar
+                );
+                return new DatosRespuestaMensaje(
+                                "Empleado y usuario creados con éxito. Las credenciales fueron enviadas por correo.");
+
         }
 
-        Empleado empleado = Empleado.builder()
-                .nombre(datosRegistroUsuarioEmpleado.nombre())
-                .apellido(datosRegistroUsuarioEmpleado.apellido())
-                .dni(datosRegistroUsuarioEmpleado.dni())
-                .correo(datosRegistroUsuarioEmpleado.correo())
-                .celular(datosRegistroUsuarioEmpleado.celular())
-                .activo(true)
-                .build();
-
-        String inicialNombre = datosRegistroUsuarioEmpleado.nombre().substring(0, 1).toUpperCase();
-        String inicialApellido = datosRegistroUsuarioEmpleado.apellido().substring(0, 1).toUpperCase();
-        String correoUsuario = inicialNombre + inicialApellido + datosRegistroUsuarioEmpleado.dni() + "@neon.com";
-
-        Usuario usuario = Usuario.builder()
-                .clave(passwordEncoder.encode(datosRegistroUsuarioEmpleado.dni()))
-                .correo(correoUsuario)
-                .id_empleado(empleado)
-                .id_rol(rol)
-                .activo(true)
-                .clave_cambiada(false)
-                .build();
-
-        empleadoRepository.save(empleado);
-        usuarioRepository.save(usuario);
-
-        emailService.enviarCredenciales(
-                empleado.getCorreo(), // destinatario
-                usuario.getCorreo(), // correo de acceso al sistema
-                datosRegistroUsuarioEmpleado.dni() // contraseña sin codificar
-        );
-        return new DatosRespuestaMensaje(
-                "Empleado y usuario creados con éxito. Las credenciales fueron enviadas por correo.");
-
-    }
-
-    @Override
-    public Page<DatosListadoUsuarioEmpleado> getAllUsuarioEmpleados(Pageable pageable) {
-        Page<Empleado> usuarioEmpleadoPage = empleadoRepository.findAll(pageable);
-        return usuarioEmpleadoPage.map(DatosListadoUsuarioEmpleado::new);
-    }
-
-    @Override
-    public void activarUsuarioEmpleado(Long id_usuario) {
-        Usuario usuario = usuarioRepository.findById(id_usuario)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
-
-        Empleado empleado = empleadoRepository.findByUsuarioId(id_usuario)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empleado no encontrado"));
-
-        if (Boolean.TRUE.equals(usuario.getActivo()) && Boolean.TRUE.equals(empleado.getActivo())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El usuario y el empleado ya están activos");
+        @Override
+        public Page<DatosListadoUsuarioEmpleado> getAllUsuarioEmpleados(Pageable pageable) {
+                Page<Empleado> usuarioEmpleadoPage = empleadoRepository.findAll(pageable);
+                return usuarioEmpleadoPage.map(DatosListadoUsuarioEmpleado::new);
         }
 
-        usuario.setActivo(true);
-        usuarioRepository.save(usuario);
+        @Override
+        public void activarUsuarioEmpleado(Long id_usuario) {
+                Usuario usuario = usuarioRepository.findById(id_usuario)
+                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                                "Usuario no encontrado"));
 
-        empleado.setActivo(true);
-        empleadoRepository.save(empleado);
-    }
+                Empleado empleado = empleadoRepository.findByUsuarioId(id_usuario)
+                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                                "Empleado no encontrado"));
 
-    @Override
-    public void desactivarUsuarioEmpleado(Long id_usuario) {
-        Usuario usuario = usuarioRepository.findById(id_usuario)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+                if (Boolean.TRUE.equals(usuario.getActivo()) && Boolean.TRUE.equals(empleado.getActivo())) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                                        "El usuario y el empleado ya están activos");
+                }
 
-        Empleado empleado = empleadoRepository.findByUsuarioId(id_usuario)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empleado no encontrado"));
+                usuario.setActivo(true);
+                usuarioRepository.save(usuario);
 
-        if (Boolean.FALSE.equals(usuario.getActivo()) && Boolean.FALSE.equals(empleado.getActivo())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El usuario y el empleado ya están inactivos");
+                empleado.setActivo(true);
+                empleadoRepository.save(empleado);
         }
 
-        usuario.setActivo(false);
-        usuarioRepository.save(usuario);
+        @Override
+        public void desactivarUsuarioEmpleado(Long id_usuario) {
+                Usuario usuario = usuarioRepository.findById(id_usuario)
+                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                                "Usuario no encontrado"));
 
-        empleado.setActivo(false);
-        empleadoRepository.save(empleado);
+                Empleado empleado = empleadoRepository.findByUsuarioId(id_usuario)
+                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                                "Empleado no encontrado"));
 
-    }
+                if (Boolean.FALSE.equals(usuario.getActivo()) && Boolean.FALSE.equals(empleado.getActivo())) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                                        "El usuario y el empleado ya están inactivos");
+                }
 
-    @Override
-    public DatosRespuestaUsuarioEmpleado getUsuarioEmpleadoById(Long id_usuario) {
+                usuario.setActivo(false);
+                usuarioRepository.save(usuario);
 
-        Empleado empleado = empleadoRepository.findByUsuarioId(id_usuario)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empleado no encontrado"));
+                empleado.setActivo(false);
+                empleadoRepository.save(empleado);
 
-        return new DatosRespuestaUsuarioEmpleado(empleado);
-    }
+        }
+
+        @Override
+        public DatosRespuestaUsuarioEmpleado getUsuarioEmpleadoById(Long id_usuario) {
+
+                Empleado empleado = empleadoRepository.findByUsuarioId(id_usuario)
+                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                                "Empleado no encontrado"));
+
+                return new DatosRespuestaUsuarioEmpleado(empleado);
+        }
 
 }

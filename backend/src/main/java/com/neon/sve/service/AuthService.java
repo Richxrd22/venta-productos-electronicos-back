@@ -1,5 +1,7 @@
 package com.neon.sve.service;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,10 +54,46 @@ public class AuthService {
     private PasswordEncoder passwordEncoder;
 
     public DatosRespuestaLoginUsuario login(DatosLoginUsuario request) {
+
+        Usuario usuario = usuarioRepository.findByCorreo(request.correo())
+                .orElseThrow(
+                        () -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Correo o contraseña incorrectos"));
+
+        if (usuario.isCuentaBloqueada()) {
+            LocalDateTime ahora = LocalDateTime.now();
+            if (usuario.getFechaBloqueo() != null && ahora.isBefore(usuario.getFechaBloqueo().plusMinutes(5))) {
+                throw new ResponseStatusException(HttpStatus.LOCKED,
+                        "La cuenta está bloqueada. Intenta nuevamente después de 5 minutos.");
+            } else {
+                usuario.setCuentaBloqueada(false);
+                usuario.setIntentosFallidos(0);
+                usuario.setFechaBloqueo(null);
+                usuarioRepository.save(usuario);
+            }
+        }
+
         try {
+            // Autenticación real (esto lanza excepción si falla)
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.correo(), request.clave()));
+
+            // Si fue exitosa: reiniciar contador
+            usuario.setIntentosFallidos(0);
+            usuario.setCuentaBloqueada(false);
+            usuario.setFechaBloqueo(null);
+            usuarioRepository.save(usuario);
+
         } catch (Exception ex) {
+            // Sumar intento fallido
+            int nuevosIntentos = usuario.getIntentosFallidos() + 1;
+            usuario.setIntentosFallidos(nuevosIntentos);
+
+            if (nuevosIntentos >= 3) {
+                usuario.setCuentaBloqueada(true);
+                usuario.setFechaBloqueo(LocalDateTime.now());
+            }
+
+            usuarioRepository.save(usuario);
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Correo o contraseña incorrectos");
         }
 
@@ -67,15 +105,7 @@ public class AuthService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "El usuario no está activo");
         }
 
-        UserDetails usuarioDetails = usuarioRepository.findByCorreo(request.correo())
-                .orElseThrow(
-                        () -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Correo o contraseña incorrectos"));
-
-        Usuario usuario = usuarioRepository.findByCorreo(request.correo())
-                .orElseThrow(
-                        () -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Correo o contraseña incorrectos"));
-
-        String token = jwtService.getToken(usuarioDetails);
+        String token = jwtService.getToken(usuario);
 
         return new DatosRespuestaLoginUsuario(token, usuario.getClave_cambiada());
     }

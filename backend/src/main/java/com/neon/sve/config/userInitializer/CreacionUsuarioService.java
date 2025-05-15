@@ -46,14 +46,14 @@ public class CreacionUsuarioService {
 
 
         // Paso 2: Crear un Empleado
-        Optional<Empleado> empleadoOptional = empleadoRepository.findByCorreo("admin@gmail.com");
+        Optional<Empleado> empleadoOptional = empleadoRepository.findByCorreo("jorge.tolentino@gmail.com");
         Empleado empleado;
         if (empleadoOptional.isEmpty()) {
             empleado = new Empleado();
-            empleado.setNombre("Admin");
-            empleado.setApellido("Admin");
+            empleado.setNombre("Jorge");
+            empleado.setApellido("Tolentino");
             empleado.setDni("12345678");
-            empleado.setCorreo("admin@gmail.com");
+            empleado.setCorreo("jorge.tolentino@gmail.com");
             empleado.setCelular("923456789");
             empleado.setActivo(true);
             empleadoRepository.save(empleado);
@@ -74,6 +74,9 @@ public class CreacionUsuarioService {
             usuario.setId_empleado(empleado); // Asignar el empleado
             usuario.setClave(contrasenaEncriptada);
             usuario.setActivo(true);
+            usuario.setCuentaBloqueada(false);
+            usuario.setIntentosFallidos(0);
+            usuario.setFechaBloqueo(null);
             usuarioRepository.save(usuario);
 
             System.out.println("Usuario creado.");

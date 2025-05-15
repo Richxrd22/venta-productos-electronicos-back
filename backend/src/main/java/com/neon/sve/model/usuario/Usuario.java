@@ -1,5 +1,7 @@
 package com.neon.sve.model.usuario;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -53,6 +55,14 @@ public class Usuario implements UserDetails{
 
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private Boolean activo;
+
+    @Column(nullable = false)
+    private int intentosFallidos;
+
+    @Column(nullable = false, columnDefinition = "TINYINT(1) DEFAULT 0")
+    private boolean cuentaBloqueada;
+
+    private LocalDateTime fechaBloqueo;
 
     @OneToMany(mappedBy = "id_usuario")
     private List<Producto> productos;

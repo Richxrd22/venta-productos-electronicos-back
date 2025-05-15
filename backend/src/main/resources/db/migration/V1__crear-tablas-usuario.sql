@@ -24,6 +24,9 @@ CREATE TABLE usuarios (
     id_rol BIGINT NOT NULL,
     clave_cambiada BIT(1) NOT NULL DEFAULT 0,
     activo BIT(1) NOT NULL DEFAULT 1,
+    intentos_fallidos INT DEFAULT 0,
+    cuenta_bloqueada BIT(1) DEFAULT 0,
+    fecha_bloqueo DATETIME DEFAULT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (id_empleado) REFERENCES empleados(id),
     FOREIGN KEY (id_rol) REFERENCES roles(id)
