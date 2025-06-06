@@ -74,11 +74,11 @@ public class CategoriaServiceImpl implements CategoriaService {
         Categoria categoria = categoriaRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "Categoría no encontrada con el ID ingresado: " + id));
-        
-                        if (Boolean.TRUE.equals(categoria.getActivo()))
+
+        if (Boolean.TRUE.equals(categoria.getActivo()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La categoría ya está activa");
-        
-            categoria.setActivo(true);
+
+        categoria.setActivo(true);
         categoriaRepository.save(categoria);
     }
 
@@ -91,14 +91,6 @@ public class CategoriaServiceImpl implements CategoriaService {
         if (!categoria.getActivo()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "La categoría ya se encuentra desactivada");
-        }
-
-        boolean tieneSubcategoriasActivas = categoria.getSubcategorias().stream()
-                .anyMatch(subcategoria -> Boolean.TRUE.equals(subcategoria.getActivo()));
-
-        if (tieneSubcategoriasActivas) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "No se puede desactivar la categoría porque tiene subcategorías activas");
         }
 
         categoria.setActivo(false);

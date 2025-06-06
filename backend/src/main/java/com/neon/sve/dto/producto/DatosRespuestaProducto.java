@@ -20,7 +20,6 @@ public record DatosRespuestaProducto(
         int activo,
         Timestamp fecha_creacion,
         String nombre_usuario,
-        Long id_subcategoria,
         Long id_categoria,
         Long id_marca) {
 
@@ -41,8 +40,7 @@ public record DatosRespuestaProducto(
                 producto.getFecha_creacion(),
                 producto.getId_usuario().getId_empleado().getNombre() + " "
                         + producto.getId_usuario().getId_empleado().getApellido(),
-                producto.getId_subcategoria().getId(),
-                producto.getId_subcategoria().getId_categoria().getId(),
+                producto.getId_categoria().getId(),
                 producto.getId_marca().getId());
     }
 }

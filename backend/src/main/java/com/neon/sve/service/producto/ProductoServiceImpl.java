@@ -13,13 +13,13 @@ import com.neon.sve.dto.producto.DatosActualizarProducto;
 import com.neon.sve.dto.producto.DatosListadoProducto;
 import com.neon.sve.dto.producto.DatosRegistroProducto;
 import com.neon.sve.dto.producto.DatosRespuestaProducto;
+import com.neon.sve.model.producto.Categoria;
 import com.neon.sve.model.producto.Marca;
 import com.neon.sve.model.producto.Producto;
-import com.neon.sve.model.producto.SubCategoria;
 import com.neon.sve.model.usuario.Usuario;
+import com.neon.sve.repository.CategoriaRepository;
 import com.neon.sve.repository.MarcaRepository;
 import com.neon.sve.repository.ProductoRepository;
-import com.neon.sve.repository.SubCategoriaRepository;
 import com.neon.sve.repository.UsuarioRepository;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -34,8 +34,7 @@ public class ProductoServiceImpl implements ProductoService {
     private UsuarioRepository usuarioRepository;
 
     @Autowired
-    private SubCategoriaRepository subCategoriaRepository;
-
+    private CategoriaRepository categoriaRepository;
     @Autowired
     private MarcaRepository marcaRepository;
 
@@ -65,20 +64,20 @@ public class ProductoServiceImpl implements ProductoService {
         Usuario usuario = usuarioRepository.findById(datosRegistroProducto.id_usuario())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
 
-        SubCategoria subCategoria = subCategoriaRepository.findById(datosRegistroProducto.id_subcategoria())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Subcategoría no encontrada"));
+        Categoria categoria = categoriaRepository.findById(datosRegistroProducto.id_categoria())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoria no encontrada"));
 
         Marca marca = marcaRepository.findById(datosRegistroProducto.id_marca())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Marca no encontrada"));
 
         String skuTemporal = "TEMP-" + System.currentTimeMillis();
 
-        Producto producto = new Producto(datosRegistroProducto, usuario, subCategoria, marca, skuTemporal);
+        Producto producto = new Producto(datosRegistroProducto, usuario, categoria, marca, skuTemporal);
         producto = productoRepository.save(producto);
 
         String sku = generarSKU(
                 marca.getNombre(),
-                subCategoria.getNombre(),
+                categoria.getNombre(),
                 datosRegistroProducto.modelo(),
                 datosRegistroProducto.color(),
                 producto.getId());
@@ -101,14 +100,14 @@ public class ProductoServiceImpl implements ProductoService {
         Marca marca = marcaRepository.findById(datosActualizarProducto.id_marca())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Marca no encontrada"));
 
-        SubCategoria subCategoria = subCategoriaRepository.findById(datosActualizarProducto.id_subcategoria())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Subcategoría no encontrada"));
+        Categoria categoria = categoriaRepository.findById(datosActualizarProducto.id_categoria())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoria no encontrada"));
 
-        producto.actualizar(datosActualizarProducto, usuario, subCategoria, marca);
+        producto.actualizar(datosActualizarProducto, usuario, categoria, marca);
 
         String nuevoSKU = generarSKU(
                 marca.getNombre(),
-                subCategoria.getNombre(),
+                categoria.getNombre(),
                 datosActualizarProducto.modelo(),
                 datosActualizarProducto.color(),
                 producto.getId());
@@ -134,7 +133,7 @@ public class ProductoServiceImpl implements ProductoService {
                     "No se puede activar el producto porque la marca asociada está desactivada");
         }
 
-        if(!Boolean.TRUE.equals(producto.getId_subcategoria().getActivo())) {
+        if(!Boolean.TRUE.equals(producto.getId_categoria().getActivo())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "No se puede activar el producto porque la subcategoría asociada está desactivada");
         }

@@ -16,7 +16,7 @@ public record DatosActualizarProducto(
         @NotNull int max_stock,
         @NotNull int garantia_meses,
         @NotNull Long id_usuario,
-        @NotNull Long id_subcategoria,
+        @NotNull Long id_categoria,
         @NotNull Long id_marca) {
 
 }

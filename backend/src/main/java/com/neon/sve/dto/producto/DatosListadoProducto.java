@@ -20,7 +20,6 @@ public record DatosListadoProducto(
         int activo,
         Timestamp fecha_creacion,
         String nombre_usuario,
-        String nombre_subcategoria,
         String nombre_categoria,
         String nombre_marca
 
@@ -43,8 +42,7 @@ public record DatosListadoProducto(
                 producto.getFecha_creacion(),
                 producto.getId_usuario().getId_empleado().getNombre() + " "
                         + producto.getId_usuario().getId_empleado().getApellido(),
-                producto.getId_subcategoria().getNombre(),
-                producto.getId_subcategoria().getId_categoria().getNombre(),
+                producto.getId_categoria().getNombre(),
                 producto.getId_marca().getNombre());
     }
 

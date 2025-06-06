@@ -1,18 +1,4 @@
-INSERT INTO categorias (nombre) VALUES 
-('Audio'),
-('Computadoras'),
-('Consolas'),
-('Accesorios');
 
-INSERT INTO subcategorias (nombre, id_categoria) VALUES 
-('Auriculares', 1),
-('Parlantes', 1),
-('Laptops', 2),
-('Teclados', 2),
-('PlayStation', 3),
-('Xbox', 3),
-('Cables USB', 4),
-('Cargadores', 4);
 
 INSERT INTO marcas (nombre) VALUES 
 ('Sony'),

@@ -38,9 +38,10 @@ public class Categoria {
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private Boolean activo = true;
 
-    @JsonIgnore
+
+       @JsonIgnore
     @OneToMany(mappedBy = "id_categoria")
-    private List<SubCategoria> subcategorias;
+    private List<Producto> productos;
 
     public Categoria(@Valid DatosRegistroCategoria datosRegistroCategoria) {
         this.nombre = datosRegistroCategoria.nombre();

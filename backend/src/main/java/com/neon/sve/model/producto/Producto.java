@@ -68,6 +68,9 @@ public class Producto {
     private int max_stock;
 
     @Column(nullable = false)
+    private int stock_actual = 0;
+
+    @Column(nullable = false)
     private int garantia_meses;
 
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
@@ -82,8 +85,8 @@ public class Producto {
     private Usuario id_usuario;
 
     @ManyToOne
-    @JoinColumn(name = "id_subcategoria", nullable = false)
-    private SubCategoria id_subcategoria;
+    @JoinColumn(name = "id_categoria", nullable = false)
+    private Categoria id_categoria;
 
     @ManyToOne
     @JoinColumn(name = "id_marca", nullable = false)
@@ -93,7 +96,7 @@ public class Producto {
     @OneToMany(mappedBy = "id_producto")
     private List<IngresoStock> ingresoStocks;
 
-    public Producto(@Valid DatosRegistroProducto datosRegistroProducto, Usuario usuario, SubCategoria subCategoria,
+    public Producto(@Valid DatosRegistroProducto datosRegistroProducto, Usuario usuario, Categoria categoria,
             Marca marca,String sku) {
 
         this.nombre = datosRegistroProducto.nombre();
@@ -106,14 +109,14 @@ public class Producto {
         this.max_stock = datosRegistroProducto.max_stock();
         this.garantia_meses = datosRegistroProducto.garantia_meses();
         this.id_usuario = usuario;
-        this.id_subcategoria = subCategoria;
+        this.id_categoria = categoria;
         this.id_marca = marca;
         this.sku = sku;
 
     }
 
     public void actualizar(@Valid DatosActualizarProducto datosActualizarProducto, Usuario usuario,
-            SubCategoria subCategoria,
+            Categoria categoria,
             Marca marca) {
 
         this.nombre = datosActualizarProducto.nombre();
@@ -126,7 +129,7 @@ public class Producto {
         this.max_stock = datosActualizarProducto.max_stock();
         this.garantia_meses = datosActualizarProducto.garantia_meses();
         this.id_usuario = usuario;
-        this.id_subcategoria = subCategoria;
+        this.id_categoria = categoria;
         this.id_marca = marca;
 
     }
