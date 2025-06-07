@@ -46,14 +46,13 @@ public class CreacionUsuarioService {
 
 
         // Paso 2: Crear un Empleado
-        Optional<Empleado> empleadoOptional = empleadoRepository.findByCorreo("jorge.tolentino@gmail.com");
+        Optional<Empleado> empleadoOptional = empleadoRepository.findByUsuarioCorreo("jorge.tolentino@gmail.com");
         Empleado empleado;
         if (empleadoOptional.isEmpty()) {
             empleado = new Empleado();
             empleado.setNombre("Jorge");
             empleado.setApellido("Tolentino");
             empleado.setDni("12345678");
-            empleado.setCorreo("jorge.tolentino@gmail.com");
             empleado.setCelular("923456789");
             empleado.setActivo(true);
             empleadoRepository.save(empleado);
@@ -63,10 +62,10 @@ public class CreacionUsuarioService {
             System.out.println("El empleado ya existe.");
         }
         // Paso 3: Crear un Usuario y asignar rol y empleado
-        Optional<Usuario> usuarioOptional = usuarioRepository.findByCorreo("SU12345678@neon.com");
+        Optional<Usuario> usuarioOptional = usuarioRepository.findByCorreo("jorge.tolentino@gmail.com");
         if (usuarioOptional.isEmpty()) {
             Usuario usuario = new Usuario();
-            usuario.setCorreo("SU12345678@neon.com");
+            usuario.setCorreo("jorge.tolentino@gmail.com");
             usuario.setClave_cambiada(true);
             String contrasenaSinEncriptar = "12345"; // Usualmente esta vendría del cliente
             String contrasenaEncriptada = passwordEncoder.encode(contrasenaSinEncriptar);

@@ -10,12 +10,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.neon.sve.dto.login.DatosRespuestaMensaje;
+import com.neon.sve.dto.usuarioEmpleado.DatosActualizarUsuarioEmpleado;
 import com.neon.sve.dto.usuarioEmpleado.DatosListadoUsuarioEmpleado;
 import com.neon.sve.dto.usuarioEmpleado.DatosRespuestaUsuarioEmpleado;
 import com.neon.sve.service.usuarioEmpleado.UsuarioEmpleadoService;
+
+import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/usuario-empleado")
@@ -27,7 +31,8 @@ public class UsuarioEmpleadoController {
     @GetMapping("/listar")
     public ResponseEntity<List<DatosListadoUsuarioEmpleado>> listarUsuarioEmpleados() {
         Pageable paginacion = Pageable.unpaged();
-        List<DatosListadoUsuarioEmpleado> usuarioEmpleados = usuarioEmpleadoService.getAllUsuarioEmpleados(paginacion).getContent();
+        List<DatosListadoUsuarioEmpleado> usuarioEmpleados = usuarioEmpleadoService.getAllUsuarioEmpleados(paginacion)
+                .getContent();
         return ResponseEntity.ok(usuarioEmpleados);
     }
 
@@ -53,4 +58,13 @@ public class UsuarioEmpleadoController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensajeError);
         }
     }
+
+    @PutMapping("/actualizar")
+    public ResponseEntity<DatosRespuestaMensaje> actualizarUsuarioEmpleado(
+            @Valid @RequestBody DatosActualizarUsuarioEmpleado datosActualizarUsuarioEmpleado) {
+
+        DatosRespuestaMensaje respuesta = usuarioEmpleadoService.updateUsuarioEmpleado(datosActualizarUsuarioEmpleado);
+        return ResponseEntity.ok(respuesta);
+    }
+
 }

@@ -17,7 +17,7 @@ public record DatosRespuestaEmpleado(
                 empleado.getNombre(),
                 empleado.getApellido(),
                 empleado.getDni(),
-                empleado.getCorreo(),
+                empleado.getUsuario().getCorreo(),
                 empleado.getCelular(),
                 empleado.getActivo() != null && empleado.getActivo() ? 1 : 0  // Convertir a 0 o 1
                 );

@@ -1,7 +1,5 @@
 package com.neon.sve.service.usuarioEmpleado;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.neon.sve.dto.login.DatosRespuestaMensaje;
+import com.neon.sve.dto.usuarioEmpleado.DatosActualizarUsuarioEmpleado;
 import com.neon.sve.dto.usuarioEmpleado.DatosListadoUsuarioEmpleado;
 import com.neon.sve.dto.usuarioEmpleado.DatosRegistroUsuarioEmpleado;
 import com.neon.sve.dto.usuarioEmpleado.DatosRespuestaUsuarioEmpleado;
@@ -44,33 +43,17 @@ public class UsuarioEmpleadoImpl implements UsuarioEmpleadoService {
                                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                                                 "Rol no encontrado"));
 
-                List<Empleado> listaEmpleados = empleadoRepository.findAll();
-                for (Empleado empleadoBD : listaEmpleados) {
-                        if (empleadoBD.getCorreo().equals(datosRegistroUsuarioEmpleado.correo()) ||
-                                        empleadoBD.getCelular().equals(datosRegistroUsuarioEmpleado.celular()) ||
-                                        empleadoBD.getDni().equals(datosRegistroUsuarioEmpleado.dni())) {
-                                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                                                "El correo, celular o DNI ya están registrados en otro empleado.");
-                        }
-                }
-
                 Empleado empleado = Empleado.builder()
                                 .nombre(datosRegistroUsuarioEmpleado.nombre())
                                 .apellido(datosRegistroUsuarioEmpleado.apellido())
                                 .dni(datosRegistroUsuarioEmpleado.dni())
-                                .correo(datosRegistroUsuarioEmpleado.correo())
                                 .celular(datosRegistroUsuarioEmpleado.celular())
                                 .activo(true)
                                 .build();
 
-                String inicialNombre = datosRegistroUsuarioEmpleado.nombre().substring(0, 1).toUpperCase();
-                String inicialApellido = datosRegistroUsuarioEmpleado.apellido().substring(0, 1).toUpperCase();
-                String correoUsuario = inicialNombre + inicialApellido + datosRegistroUsuarioEmpleado.dni()
-                                + "@neon.com";
-
                 Usuario usuario = Usuario.builder()
                                 .clave(passwordEncoder.encode(datosRegistroUsuarioEmpleado.dni()))
-                                .correo(correoUsuario)
+                                .correo(datosRegistroUsuarioEmpleado.correo())
                                 .id_empleado(empleado)
                                 .id_rol(rol)
                                 .activo(true)
@@ -84,7 +67,7 @@ public class UsuarioEmpleadoImpl implements UsuarioEmpleadoService {
                 usuarioRepository.save(usuario);
 
                 emailService.enviarCredenciales(
-                                empleado.getCorreo(), // destinatario
+                                empleado.getUsuario().getCorreo(), // destinatario
                                 usuario.getCorreo(), // correo de acceso al sistema
                                 datosRegistroUsuarioEmpleado.dni() // contraseña sin codificar
                 );
@@ -152,6 +135,51 @@ public class UsuarioEmpleadoImpl implements UsuarioEmpleadoService {
                                                 "Empleado no encontrado"));
 
                 return new DatosRespuestaUsuarioEmpleado(empleado);
+        }
+
+        @Override
+        public DatosRespuestaMensaje updateUsuarioEmpleado(
+                        DatosActualizarUsuarioEmpleado datosActualizarUsuarioEmpleado) {
+                Empleado empleado = empleadoRepository.findById(datosActualizarUsuarioEmpleado.id_empleado())
+                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                                "Empleado no encontrado"));
+
+                Rol rol = rolRepository.findById(datosActualizarUsuarioEmpleado.id_rol())
+                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                                "Rol no encontrado"));
+
+                Usuario usuario = usuarioRepository.findByEmpleado(empleado)
+                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                                "Usuario asociado no encontrado"));
+
+                empleadoRepository.findByDni(datosActualizarUsuarioEmpleado.dni())
+                                .ifPresent(otroEmpleado -> {
+                                        if (!otroEmpleado.getId()
+                                                        .equals(datosActualizarUsuarioEmpleado.id_empleado())) {
+                                                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                                                                "El DNI ya está en uso por otro empleado");
+                                        }
+                                });
+
+                empleadoRepository.findByUsuarioCorreo(datosActualizarUsuarioEmpleado.correo())
+                                .ifPresent(encontrado -> {
+                                        if (!encontrado.getId().equals(datosActualizarUsuarioEmpleado.id_empleado())) {
+                                                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                                                                "El correo ya está en uso por otro empleado");
+                                        }
+                                });
+
+                empleadoRepository.findByCelular(datosActualizarUsuarioEmpleado.celular()).ifPresent(encontrado -> {
+                        if (!encontrado.getId().equals(datosActualizarUsuarioEmpleado.id_empleado())) {
+                                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                                                "El celular ya está en uso por otro empleado");
+                        }
+                });
+                empleado.actualizar(datosActualizarUsuarioEmpleado);
+                usuario.actualizar(datosActualizarUsuarioEmpleado, empleado, rol);
+                empleadoRepository.save(empleado);
+                usuarioRepository.save(usuario);
+                return new DatosRespuestaMensaje("Usuario y empleado actualizados con éxito.");
         }
 
 }

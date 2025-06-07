@@ -1,9 +1,9 @@
 package com.neon.sve.model.usuario;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.neon.sve.dto.empleado.DatosActualizarEmpleado;
 import com.neon.sve.dto.empleado.DatosRegistroEmpleado;
+import com.neon.sve.dto.usuarioEmpleado.DatosActualizarUsuarioEmpleado;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,15 +19,15 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-@Data 
+@Data
 @Builder
 @Entity
-@NoArgsConstructor 
-@AllArgsConstructor 
+@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 @Table(name = "empleados")
 public class Empleado {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -41,9 +41,6 @@ public class Empleado {
     @Column(unique = true, nullable = false, length = 9)
     private String celular;
 
-    @Column(unique = true, nullable = false)
-    private String correo;
-
     @Column(unique = true, nullable = false, length = 8)
     private String dni;
 
@@ -54,11 +51,10 @@ public class Empleado {
     @OneToOne(mappedBy = "id_empleado")
     private Usuario usuario;
 
-     public Empleado(@Valid DatosRegistroEmpleado datosRegistroEmpleado) {
+    public Empleado(@Valid DatosRegistroEmpleado datosRegistroEmpleado) {
         this.nombre = datosRegistroEmpleado.nombre();
         this.apellido = datosRegistroEmpleado.apellido();
         this.dni = datosRegistroEmpleado.dni();
-        this.correo = datosRegistroEmpleado.correo();
         this.celular = datosRegistroEmpleado.celular();
     }
 
@@ -66,8 +62,15 @@ public class Empleado {
         this.nombre = datosActualizarEmpleado.nombre();
         this.apellido = datosActualizarEmpleado.apellido();
         this.dni = datosActualizarEmpleado.dni();
-        this.correo = datosActualizarEmpleado.correo();
         this.celular = datosActualizarEmpleado.celular();
+    }
+
+    public void actualizar(@Valid DatosActualizarUsuarioEmpleado datosActualizarUsuarioEmpleado) {
+        this.nombre = datosActualizarUsuarioEmpleado.nombre();
+        this.apellido = datosActualizarUsuarioEmpleado.apellido();
+        this.dni = datosActualizarUsuarioEmpleado.dni();
+        this.celular = datosActualizarUsuarioEmpleado.celular();
+
     }
 
 }

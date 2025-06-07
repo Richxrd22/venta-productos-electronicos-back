@@ -3,7 +3,6 @@ CREATE TABLE empleados (
     nombre VARCHAR(50) NOT NULL,
     apellido VARCHAR(50) NOT NULL,
     dni VARCHAR(8) NOT NULL UNIQUE,
-    correo VARCHAR(50) NOT NULL UNIQUE,
     celular VARCHAR(9) NOT NULL UNIQUE,
     activo BIT(1) NOT NULL DEFAULT 1,
     PRIMARY KEY (id)

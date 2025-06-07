@@ -6,8 +6,7 @@ public record DatosListadoUsuarioEmpleado(
         Long id_empleado,
         String nombre_apellido,
         String dni,
-        String correo_empleado,
-        String correo_empresarial,
+        String correo,
         String celular,
         int activo,
         String nombre_rol) {
@@ -16,7 +15,6 @@ public record DatosListadoUsuarioEmpleado(
                 empleado.getId(),
                 empleado.getNombre() + " " + empleado.getApellido(),
                 empleado.getDni(),
-                empleado.getCorreo(),
                 empleado.getUsuario().getCorreo(),
                 empleado.getCelular(),
                 empleado.getActivo() != null && empleado.getActivo() ? 1 : 0,

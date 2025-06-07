@@ -1,6 +1,5 @@
 package com.neon.sve.model.usuario;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -12,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.neon.sve.dto.usuario.DatosActualizarUsuario;
 import com.neon.sve.dto.usuario.DatosRegistroUsuario;
+import com.neon.sve.dto.usuarioEmpleado.DatosActualizarUsuarioEmpleado;
 import com.neon.sve.model.producto.Producto;
 import com.neon.sve.model.ventas.IngresoStock;
 
@@ -93,6 +93,12 @@ public class Usuario implements UserDetails{
         this.id_rol = rol;
         this.id_empleado = empleado;
         this.clave_cambiada = datosActualizarUsuario.clave_cambiada();
+    }
+
+    public void actualizar(@Valid DatosActualizarUsuarioEmpleado datosActualizarUsuarioEmpleado,Empleado empleado,Rol rol) {
+        this.correo = datosActualizarUsuarioEmpleado.correo();
+        this.id_rol = rol;
+        this.id_empleado = empleado;
     }
 
     @Override

@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.neon.sve.dto.login.DatosRespuestaMensaje;
+import com.neon.sve.dto.usuarioEmpleado.DatosActualizarUsuarioEmpleado;
 import com.neon.sve.dto.usuarioEmpleado.DatosListadoUsuarioEmpleado;
 import com.neon.sve.dto.usuarioEmpleado.DatosRegistroUsuarioEmpleado;
 import com.neon.sve.dto.usuarioEmpleado.DatosRespuestaUsuarioEmpleado;
@@ -13,6 +14,8 @@ public interface UsuarioEmpleadoService {
     DatosRespuestaUsuarioEmpleado getUsuarioEmpleadoById(Long id_usuario);
 
     DatosRespuestaMensaje createUsuarioEmpleado(DatosRegistroUsuarioEmpleado datosRegistroUsuarioEmpleado);
+    
+    DatosRespuestaMensaje updateUsuarioEmpleado(DatosActualizarUsuarioEmpleado datosActualizarUsuarioEmpleado);
 
     Page<DatosListadoUsuarioEmpleado> getAllUsuarioEmpleados(Pageable pageable);
 

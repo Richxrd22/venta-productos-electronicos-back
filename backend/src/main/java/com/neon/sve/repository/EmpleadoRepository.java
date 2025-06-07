@@ -10,8 +10,6 @@ import com.neon.sve.model.usuario.Empleado;
 
 @Repository
 public interface EmpleadoRepository extends JpaRepository<Empleado, Long> {
-    @Query("SELECT u FROM Empleado u WHERE u.correo = :correo")
-    Optional<Empleado> findByCorreo(String correo);
 
     @Query("SELECT e FROM Empleado e WHERE e.usuario.correo = :correo")
     Optional<Empleado> findByUsuarioCorreo(String correo);
@@ -19,4 +17,7 @@ public interface EmpleadoRepository extends JpaRepository<Empleado, Long> {
     @Query("SELECT e FROM Empleado e WHERE e.usuario.id = :idUsuario")
     Optional<Empleado> findByUsuarioId(Long idUsuario);
 
+    Optional<Empleado> findByDni(String string);
+
+    Optional<Empleado> findByCelular(String string);
 }
