@@ -16,10 +16,12 @@ import com.neon.sve.dto.producto.DatosRespuestaProducto;
 import com.neon.sve.model.producto.Categoria;
 import com.neon.sve.model.producto.Marca;
 import com.neon.sve.model.producto.Producto;
+import com.neon.sve.model.producto.Proveedor;
 import com.neon.sve.model.usuario.Usuario;
 import com.neon.sve.repository.CategoriaRepository;
 import com.neon.sve.repository.MarcaRepository;
 import com.neon.sve.repository.ProductoRepository;
+import com.neon.sve.repository.ProveedorRepository;
 import com.neon.sve.repository.UsuarioRepository;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -35,6 +37,10 @@ public class ProductoServiceImpl implements ProductoService {
 
     @Autowired
     private CategoriaRepository categoriaRepository;
+
+    @Autowired
+    private ProveedorRepository proveedorRepository;
+
     @Autowired
     private MarcaRepository marcaRepository;
 
@@ -70,9 +76,12 @@ public class ProductoServiceImpl implements ProductoService {
         Marca marca = marcaRepository.findById(datosRegistroProducto.id_marca())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Marca no encontrada"));
 
+        Proveedor proveedor = proveedorRepository.findById(datosRegistroProducto.id_proveedor())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "proveedor no encontrado"));
+
         String skuTemporal = "TEMP-" + System.currentTimeMillis();
 
-        Producto producto = new Producto(datosRegistroProducto, usuario, categoria, marca, skuTemporal);
+        Producto producto = new Producto(datosRegistroProducto, usuario, categoria, marca, skuTemporal, proveedor);
         producto = productoRepository.save(producto);
 
         String sku = generarSKU(
@@ -103,7 +112,10 @@ public class ProductoServiceImpl implements ProductoService {
         Categoria categoria = categoriaRepository.findById(datosActualizarProducto.id_categoria())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoria no encontrada"));
 
-        producto.actualizar(datosActualizarProducto, usuario, categoria, marca);
+        Proveedor proveedor = proveedorRepository.findById(datosActualizarProducto.id_proveedor())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "proveedor no encontrado"));
+
+        producto.actualizar(datosActualizarProducto, usuario, categoria, marca, proveedor);
 
         String nuevoSKU = generarSKU(
                 marca.getNombre(),
@@ -133,7 +145,7 @@ public class ProductoServiceImpl implements ProductoService {
                     "No se puede activar el producto porque la marca asociada está desactivada");
         }
 
-        if(!Boolean.TRUE.equals(producto.getId_categoria().getActivo())) {
+        if (!Boolean.TRUE.equals(producto.getId_categoria().getActivo())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "No se puede activar el producto porque la subcategoría asociada está desactivada");
         }

@@ -8,8 +8,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.neon.sve.dto.producto.DatosActualizarProducto;
 import com.neon.sve.dto.producto.DatosRegistroProducto;
+import com.neon.sve.model.stock.IngresoStock;
 import com.neon.sve.model.usuario.Usuario;
-import com.neon.sve.model.ventas.IngresoStock;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -52,7 +52,7 @@ public class Producto {
     @Column(nullable = true, length = 50)
     private String color;
 
-    @Column(nullable = false, length = 250)
+    @Column(nullable = false, length = 500)
     private String descripcion;
 
     @Column(nullable = false)
@@ -92,12 +92,12 @@ public class Producto {
     @JoinColumn(name = "id_marca", nullable = false)
     private Marca id_marca;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "id_producto")
-    private List<IngresoStock> ingresoStocks;
+    @ManyToOne
+    @JoinColumn(name = "id_proveedor", nullable = false)
+    private Proveedor id_proveedor;
 
     public Producto(@Valid DatosRegistroProducto datosRegistroProducto, Usuario usuario, Categoria categoria,
-            Marca marca,String sku) {
+            Marca marca,String sku, Proveedor proveedor) {
 
         this.nombre = datosRegistroProducto.nombre();
         this.modelo = datosRegistroProducto.modelo();
@@ -111,13 +111,14 @@ public class Producto {
         this.id_usuario = usuario;
         this.id_categoria = categoria;
         this.id_marca = marca;
+        this.id_proveedor = proveedor;
         this.sku = sku;
 
     }
 
     public void actualizar(@Valid DatosActualizarProducto datosActualizarProducto, Usuario usuario,
             Categoria categoria,
-            Marca marca) {
+            Marca marca, Proveedor proveedor) {
 
         this.nombre = datosActualizarProducto.nombre();
         this.modelo = datosActualizarProducto.modelo();
@@ -131,6 +132,7 @@ public class Producto {
         this.id_usuario = usuario;
         this.id_categoria = categoria;
         this.id_marca = marca;
+        this.id_proveedor = proveedor;
 
     }
 
