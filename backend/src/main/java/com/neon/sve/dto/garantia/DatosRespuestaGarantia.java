@@ -1,5 +1,6 @@
 package com.neon.sve.dto.garantia;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 
@@ -10,7 +11,7 @@ public record DatosRespuestaGarantia(
         Long id,
         String producto,
         int cantidad,
-        double total,
+        BigDecimal total,
         Timestamp fechaCreacion,
         LocalDate inicioGarantia,
         LocalDate finGarantia,

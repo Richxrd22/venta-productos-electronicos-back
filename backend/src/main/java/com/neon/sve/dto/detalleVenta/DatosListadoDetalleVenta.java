@@ -1,5 +1,6 @@
 package com.neon.sve.dto.detalleVenta;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 import com.neon.sve.model.ventas.DetalleVenta;
@@ -9,8 +10,8 @@ public record DatosListadoDetalleVenta(
     Long id,
         String nombreProducto,
         int cantidad,
-        double precioUnitario,
-        double total,
+        BigDecimal precioUnitario,
+        BigDecimal total,
         Timestamp fechaCreacion,
         int activo
         ) {

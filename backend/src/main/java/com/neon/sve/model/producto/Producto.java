@@ -1,14 +1,11 @@
 package com.neon.sve.model.producto;
 
 import java.sql.Timestamp;
-import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.neon.sve.dto.producto.DatosActualizarProducto;
 import com.neon.sve.dto.producto.DatosRegistroProducto;
-import com.neon.sve.model.stock.IngresoStock;
 import com.neon.sve.model.usuario.Usuario;
 
 import jakarta.persistence.Column;
@@ -18,7 +15,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;

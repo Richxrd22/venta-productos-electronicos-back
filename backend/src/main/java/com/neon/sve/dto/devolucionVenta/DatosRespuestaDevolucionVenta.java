@@ -1,5 +1,6 @@
 package com.neon.sve.dto.devolucionVenta;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 import com.neon.sve.model.ventas.DevolucionVenta;
@@ -7,7 +8,7 @@ import com.neon.sve.model.ventas.DevolucionVenta;
 public record DatosRespuestaDevolucionVenta(
 
         Long id,
-        double totalVenta,
+        BigDecimal totalVenta,
         Timestamp fecha,
         int cantidad,
         String motivo,

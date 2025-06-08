@@ -1,5 +1,6 @@
 package com.neon.sve.model.ventas;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -17,7 +18,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -35,7 +35,7 @@ import java.util.List;
 @Table(name = "registro_ventas")
 
 public class RegistroVenta {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -44,21 +44,21 @@ public class RegistroVenta {
     @CreationTimestamp
     private Timestamp fecha;
 
-    @Column(name = "igv_porcentaje", nullable = false)
-    private double igvPorcentaje;
+    @Column(name = "igv_porcentaje", nullable = false, precision = 5, scale = 2)
+    private BigDecimal igvPorcentaje;
 
-    @Column(nullable = false)
-    private double subtotal;
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal subtotal;
 
-    @Column(name = "igv_total", nullable = false)
-    private double igvTotal;
+    @Column(name = "igv_total", nullable = false, precision = 10, scale = 2)
+    private BigDecimal igvTotal;
 
-    @Column(nullable = true) // Puede ser nulo si no hay descuento
-    private Double descuento;
+    @Column(nullable = true, precision = 10, scale = 2) // Puede ser nulo si no hay descuento
+    private BigDecimal descuento;
 
-    @Column(nullable = false)
-    private double total;
-
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal total;
+    
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private Boolean cancelado;
 
@@ -87,18 +87,20 @@ public class RegistroVenta {
 
     // Constructor para el registro
     /*
-    public RegistroVenta(@Valid DatosRegistroVenta datosRegistroVenta, Usuario usuario, Cliente cliente, MetodoPago metodoPago, Cupon cupon) {
-        this.igvPorcentaje = datosRegistroVenta.igvPorcentaje();
-        this.subtotal = datosRegistroVenta.subtotal();
-        this.igvTotal = datosRegistroVenta.igvTotal();
-        this.descuento = datosRegistroVenta.descuento();
-        this.total = datosRegistroVenta.total();
-        this.cancelado = datosRegistroVenta.cancelado();
-        this.usuario = usuario;
-        this.cliente = cliente;
-        this.metodoPago = metodoPago;
-        this.cupon = cupon;
-        this.activo = true; // Por defecto activo
-    }*/
+     * public RegistroVenta(@Valid DatosRegistroVenta datosRegistroVenta, Usuario
+     * usuario, Cliente cliente, MetodoPago metodoPago, Cupon cupon) {
+     * this.igvPorcentaje = datosRegistroVenta.igvPorcentaje();
+     * this.subtotal = datosRegistroVenta.subtotal();
+     * this.igvTotal = datosRegistroVenta.igvTotal();
+     * this.descuento = datosRegistroVenta.descuento();
+     * this.total = datosRegistroVenta.total();
+     * this.cancelado = datosRegistroVenta.cancelado();
+     * this.usuario = usuario;
+     * this.cliente = cliente;
+     * this.metodoPago = metodoPago;
+     * this.cupon = cupon;
+     * this.activo = true; // Por defecto activo
+     * }
+     */
 
 }

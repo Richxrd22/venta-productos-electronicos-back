@@ -10,7 +10,7 @@ public record DatosRespuestaDevolucionProducto(
         Long id,
         String numeroSerieProducto, // Para mostrar el número de serie si es una devolución por serie
         String codigo_lote,
-        double precio_uni,
+        BigDecimal precio_uni,
         int cantidad,
         Timestamp fechaDevolucion,
         String motivo,

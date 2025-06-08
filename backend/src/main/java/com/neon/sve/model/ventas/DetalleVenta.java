@@ -1,5 +1,6 @@
 package com.neon.sve.model.ventas;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -7,7 +8,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.neon.sve.model.producto.Producto;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,7 +18,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -44,11 +43,11 @@ public class DetalleVenta {
     @Column(nullable = false)
     private int cantidad;
 
-    @Column(name = "precio_unitario", nullable = false)
-    private double precioUnitario;
+    @Column(name = "precio_unitario", nullable = false, precision = 10, scale = 2)
+    private BigDecimal precioUnitario;
 
-    @Column(nullable = false)
-    private double total;
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal total;
 
     @Column(name = "fecha_creacion", updatable = false)
     @CreationTimestamp

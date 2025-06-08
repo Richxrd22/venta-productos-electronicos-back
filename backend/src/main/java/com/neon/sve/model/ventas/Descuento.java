@@ -1,6 +1,5 @@
 package com.neon.sve.model.ventas;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.neon.sve.dto.descuento.DatosActualizarDescuento;
 import com.neon.sve.dto.descuento.DatosRegistroDescuento;
 import com.neon.sve.model.producto.Categoria;
@@ -10,7 +9,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ForeignKey;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -23,7 +21,6 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 
-import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Getter

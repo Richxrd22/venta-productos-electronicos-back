@@ -1,5 +1,6 @@
 package com.neon.sve.dto.devolucionProducto;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 import com.neon.sve.model.stock.DevolucionProducto;
@@ -9,7 +10,7 @@ public record DatosListadoDevolucionProducto(
         Long id,
         String numeroSerieProducto,
         String codigo_lote,
-        double precio_uni,
+        BigDecimal precio_uni,
         int cantidad,
         Timestamp fechaDevolucion,
         String motivo,

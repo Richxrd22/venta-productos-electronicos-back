@@ -1,5 +1,6 @@
 package com.neon.sve.dto.registroVenta;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 import com.neon.sve.model.ventas.RegistroVenta;
@@ -8,17 +9,18 @@ public record DatosListadoRegistroVenta(
 
         Long id,
         Timestamp fecha,
-        double igvPorcentaje,
-        double subtotal,
-        double igvTotal,
-        Double descuento,
-        double total,
+        BigDecimal igvPorcentaje,
+        BigDecimal subtotal,
+        BigDecimal igvTotal,
+        BigDecimal descuento,
+        BigDecimal total,
         Boolean cancelado,
         int activo,
         String nombreUsuario,
         String nombreCliente,
         String nombreMetodoPago,
         String codigoCupon) {
+
     public DatosListadoRegistroVenta(RegistroVenta registroVenta) {
         this(
                 registroVenta.getId(),

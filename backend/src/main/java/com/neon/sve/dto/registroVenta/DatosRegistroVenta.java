@@ -1,6 +1,5 @@
 package com.neon.sve.dto.registroVenta;
 
-import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 

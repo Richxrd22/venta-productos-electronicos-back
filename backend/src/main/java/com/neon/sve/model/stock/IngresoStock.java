@@ -77,7 +77,7 @@ public class IngresoStock {
     private Usuario id_usuario;
 
     @JsonIgnore // Ignorar en serialización JSON para evitar bucles infinitos
-    @OneToMany(mappedBy = "ingresoStock", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "id_ingresoStock", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DetalleIngreso> detallesIngreso;
 
     public IngresoStock(@Valid DatosRegistroIngresoStock datosRegistroIngresoStock, Producto producto,

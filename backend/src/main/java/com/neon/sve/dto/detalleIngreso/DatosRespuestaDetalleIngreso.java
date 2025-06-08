@@ -1,7 +1,7 @@
 package com.neon.sve.dto.detalleIngreso;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.stream.Collectors;
 
 import com.neon.sve.model.stock.DetalleIngreso;
 
@@ -13,8 +13,8 @@ public record DatosRespuestaDetalleIngreso(
         String modelo,
         String codigoLote,
         int cantidad,
-        double precioUnitario,
-        double subtotal
+        BigDecimal precioUnitario,
+        BigDecimal subtotal
 
 ) {
     public DatosRespuestaDetalleIngreso(DetalleIngreso detalleIngreso) {
