@@ -6,12 +6,16 @@ public record DatosListadoCategoria(
 
         Long id,
         String nombre,
+        Long id_padre,
+        int nivel,
         int activo) {
 
     public DatosListadoCategoria(Categoria categoria) {
         this(
                 categoria.getId(),
                 categoria.getNombre(),
+                categoria.getId_categoria_padre(),
+                categoria.getNivel(),
                 categoria.getActivo() != null && categoria.getActivo() ? 1 : 0);
     }
 

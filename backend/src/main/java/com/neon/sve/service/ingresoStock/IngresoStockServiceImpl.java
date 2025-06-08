@@ -15,8 +15,8 @@ import com.neon.sve.dto.ingresoStock.DatosRegistroIngresoStock;
 import com.neon.sve.dto.ingresoStock.DatosRespuestaIngresoStock;
 import com.neon.sve.model.producto.Producto;
 import com.neon.sve.model.producto.Proveedor;
+import com.neon.sve.model.stock.IngresoStock;
 import com.neon.sve.model.usuario.Usuario;
-import com.neon.sve.model.ventas.IngresoStock;
 import com.neon.sve.repository.IngresoStockRepository;
 import com.neon.sve.repository.ProductoRepository;
 import com.neon.sve.repository.ProveedorRepository;
@@ -116,7 +116,7 @@ public class IngresoStockServiceImpl implements IngresoStockService {
                     "La cantidad a ingresar no puede ser mayor al stock máximo permitido (" + producto.getMax_stock()
                             + ").");
         }
-        ingresoStock.actualizar(datosActualizarIngresoStock, proveedor, usuario);
+        ingresoStock.actualizar(datosActualizarIngresoStock, proveedor, usuario, producto);
         ingresoStock = ingresoStockRepository.save(ingresoStock);
         return new DatosRespuestaIngresoStock(ingresoStock);
     }

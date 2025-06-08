@@ -6,7 +6,8 @@ import jakarta.validation.constraints.NotNull;
 public record DatosActualizarCategoria(
 
         @NotNull Long id,
-        @NotBlank String nombre
-        ) {
+        @NotBlank String nombre,
+        @NotNull Long id_padre,
+        @NotNull int nivel) {
 
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.neon.sve.dto.categoria.DatosActualizarCategoria;
 import com.neon.sve.dto.categoria.DatosRegistroCategoria;
+import com.neon.sve.model.ventas.Descuento;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -35,20 +36,33 @@ public class Categoria {
     @Column(unique = true, nullable = false)
     private String nombre;
 
+    @Column(nullable = true)
+    private Long id_categoria_padre;
+
+    @Column(nullable = false)
+    private int nivel;
+
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private Boolean activo = true;
 
-
-       @JsonIgnore
+    @JsonIgnore
     @OneToMany(mappedBy = "id_categoria")
     private List<Producto> productos;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "id_categoria")
+    private List<Descuento> descuentos;
+
     public Categoria(@Valid DatosRegistroCategoria datosRegistroCategoria) {
         this.nombre = datosRegistroCategoria.nombre();
+        this.id_categoria_padre = datosRegistroCategoria.id_padre();
+        this.nivel = datosRegistroCategoria.nivel();
     }
 
     public void actualizar(@Valid DatosActualizarCategoria datosActualizarCategoria) {
         this.nombre = datosActualizarCategoria.nombre();
+        this.id_categoria_padre = datosActualizarCategoria.id_padre();
+        this.nivel = datosActualizarCategoria.nivel();
     }
 
 }

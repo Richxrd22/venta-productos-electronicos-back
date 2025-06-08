@@ -1,0 +1,15 @@
+package com.neon.sve.dto.garantia;
+
+import java.time.LocalDate;
+
+import jakarta.validation.constraints.NotNull;
+
+public record DatosRegistroGarantia(
+
+    @NotNull Long id_detalleVenta,
+    @NotNull LocalDate inicioGarantia,
+    @NotNull LocalDate finGarantia
+
+) {
+    
+}

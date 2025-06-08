@@ -2,7 +2,7 @@ package com.neon.sve.dto.ingresoStock;
 
 import java.sql.Timestamp;
 
-import com.neon.sve.model.ventas.IngresoStock;
+import com.neon.sve.model.stock.IngresoStock;
 
 public record DatosListadoIngresoStock(
 

@@ -13,7 +13,10 @@ import com.neon.sve.dto.usuario.DatosActualizarUsuario;
 import com.neon.sve.dto.usuario.DatosRegistroUsuario;
 import com.neon.sve.dto.usuarioEmpleado.DatosActualizarUsuarioEmpleado;
 import com.neon.sve.model.producto.Producto;
-import com.neon.sve.model.ventas.IngresoStock;
+import com.neon.sve.model.stock.DevolucionProducto;
+import com.neon.sve.model.stock.IngresoStock;
+import com.neon.sve.model.ventas.DevolucionVenta;
+import com.neon.sve.model.ventas.RegistroVenta;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -64,9 +67,6 @@ public class Usuario implements UserDetails{
 
     private LocalDateTime fechaBloqueo;
 
-    @OneToMany(mappedBy = "id_usuario")
-    private List<Producto> productos;
-
     @ManyToOne
     @JoinColumn(name = "id_rol")
     private Rol id_rol;
@@ -78,6 +78,20 @@ public class Usuario implements UserDetails{
     @JsonIgnore
     @OneToMany(mappedBy = "id_usuario")
     private List<IngresoStock> ingresoStocks;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "id_usuario")
+    private List<DevolucionVenta> devolucionVentas;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "id_usuario")
+    private List<RegistroVenta> registroVentas;
+
+    @OneToMany(mappedBy = "id_usuario")
+    private List<Producto> productos;
+
+    @OneToMany(mappedBy = "id_usuario")
+    private List<DevolucionProducto> devolucionProductos;
 
     public Usuario(@Valid DatosRegistroUsuario datosRegistroUsuario,Empleado empleado, Rol rol ) {
         this.correo = datosRegistroUsuario.correo();

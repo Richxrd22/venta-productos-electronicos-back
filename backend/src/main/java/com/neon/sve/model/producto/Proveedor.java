@@ -5,7 +5,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.neon.sve.dto.proveedor.DatosActualizarProveedor;
 import com.neon.sve.dto.proveedor.DatosRegistroProveedor;
-import com.neon.sve.model.ventas.IngresoStock;
+import com.neon.sve.model.stock.IngresoStock;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -50,6 +50,10 @@ public class Proveedor {
     @JsonIgnore
     @OneToMany(mappedBy = "id_proveedor")
     private List<IngresoStock> ingresoStocks;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "id_proveedor")
+    private List<Producto> productos;
 
     public Proveedor(@Valid DatosRegistroProveedor datosRegistroProveedores) {
         this.razon_social = datosRegistroProveedores.razon_social();
