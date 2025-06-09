@@ -22,6 +22,7 @@ import com.neon.sve.dto.ingresoStock.DatosActualizarIngresoStock;
 import com.neon.sve.dto.ingresoStock.DatosListadoIngresoStock;
 import com.neon.sve.dto.ingresoStock.DatosRegistroIngresoStock;
 import com.neon.sve.dto.ingresoStock.DatosRespuestaIngresoStock;
+import com.neon.sve.dto.login.DatosRespuestaMensaje;
 import com.neon.sve.service.ingresoStock.IngresoStockService;
 
 import jakarta.validation.Valid;
@@ -36,7 +37,8 @@ public class IngresoStockController {
     @GetMapping("/listar")
     public ResponseEntity<List<DatosListadoIngresoStock>> listarIngresoStock() {
         Pageable paginacion = Pageable.unpaged();
-        List<DatosListadoIngresoStock> listadoIngresoStocks = ingresoStockService.getAllIngresoStock(paginacion).getContent();
+        List<DatosListadoIngresoStock> listadoIngresoStocks = ingresoStockService.getAllIngresoStock(paginacion)
+                .getContent();
         return ResponseEntity.ok(listadoIngresoStocks);
     }
 
@@ -53,16 +55,11 @@ public class IngresoStockController {
     }
 
     @PostMapping("/registrar")
-    public ResponseEntity<DatosRespuestaIngresoStock> registrarIngresoStock(
-            @Valid @RequestBody DatosRegistroIngresoStock datosRegistroIngresoStock,
-            UriComponentsBuilder uriComponentsBuilder) {
-
-        DatosRespuestaIngresoStock datosRespuestaIngresoStock = ingresoStockService
+    public ResponseEntity<DatosRespuestaMensaje> registrarIngresoStock(
+            @Valid @RequestBody DatosRegistroIngresoStock datosRegistroIngresoStock) {
+        DatosRespuestaMensaje respuesta = ingresoStockService
                 .createIngresoStock(datosRegistroIngresoStock);
-        URI url = uriComponentsBuilder.path("/buscar/{id}")
-                .buildAndExpand(datosRespuestaIngresoStock.id())
-                .toUri();
-        return ResponseEntity.created(url).body(datosRespuestaIngresoStock);
+        return new ResponseEntity<>(respuesta, HttpStatus.CREATED);
     }
 
     @PutMapping("/actualizar")

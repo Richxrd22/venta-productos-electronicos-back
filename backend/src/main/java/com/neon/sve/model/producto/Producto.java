@@ -55,9 +55,6 @@ public class Producto {
     private double precio_venta;
 
     @Column(nullable = false)
-    private double precio_compra;
-
-    @Column(nullable = false)
     private int min_stock;
 
     @Column(nullable = false)
@@ -77,7 +74,7 @@ public class Producto {
     private Timestamp fecha_creacion;
 
     @ManyToOne
-    @JoinColumn(name = "id_usuario", nullable = false)
+    @JoinColumn(name = "id_usuario", nullable = true)
     private Usuario id_usuario;
 
     @ManyToOne
@@ -88,47 +85,41 @@ public class Producto {
     @JoinColumn(name = "id_marca", nullable = false)
     private Marca id_marca;
 
-    @ManyToOne
-    @JoinColumn(name = "id_proveedor", nullable = false)
-    private Proveedor id_proveedor;
+  
 
     public Producto(@Valid DatosRegistroProducto datosRegistroProducto, Usuario usuario, Categoria categoria,
-            Marca marca,String sku, Proveedor proveedor) {
+            Marca marca,String sku ) {
 
         this.nombre = datosRegistroProducto.nombre();
         this.modelo = datosRegistroProducto.modelo();
         this.color = datosRegistroProducto.color();
         this.descripcion = datosRegistroProducto.descripcion();
         this.precio_venta = datosRegistroProducto.precio_venta();
-        this.precio_compra = datosRegistroProducto.precio_compra();
         this.min_stock = datosRegistroProducto.min_stock();
         this.max_stock = datosRegistroProducto.max_stock();
         this.garantia_meses = datosRegistroProducto.garantia_meses();
         this.id_usuario = usuario;
         this.id_categoria = categoria;
         this.id_marca = marca;
-        this.id_proveedor = proveedor;
         this.sku = sku;
 
     }
 
     public void actualizar(@Valid DatosActualizarProducto datosActualizarProducto, Usuario usuario,
             Categoria categoria,
-            Marca marca, Proveedor proveedor) {
+            Marca marca) {
 
         this.nombre = datosActualizarProducto.nombre();
         this.modelo = datosActualizarProducto.modelo();
         this.color = datosActualizarProducto.color();
         this.descripcion = datosActualizarProducto.descripcion();
         this.precio_venta = datosActualizarProducto.precio_venta();
-        this.precio_compra = datosActualizarProducto.precio_compra();
         this.min_stock = datosActualizarProducto.min_stock();
         this.max_stock = datosActualizarProducto.max_stock();
         this.garantia_meses = datosActualizarProducto.garantia_meses();
         this.id_usuario = usuario;
         this.id_categoria = categoria;
         this.id_marca = marca;
-        this.id_proveedor = proveedor;
 
     }
 

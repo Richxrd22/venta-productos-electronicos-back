@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore; // Importa JsonIgnore
+import com.neon.sve.dto.serie.DatosRegistroSerie;
 import com.neon.sve.model.ventas.DetalleVentaSeries;
 
 import jakarta.persistence.Column;
@@ -18,7 +19,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,6 +29,7 @@ import lombok.Setter;
 
 import java.util.List;
 
+@Builder
 @Entity
 @Getter
 @Setter
@@ -48,7 +52,7 @@ public class SerieProducto {
 
     @Enumerated(EnumType.STRING) // Mapea el Enum a un String en la BD
     @Column(nullable = false, length = 20)
-    private EstadoSerie estado = EstadoSerie.ACTIVO; // Valor por defecto
+    private EstadoSerie estado; // Valor por defecto
 
     @Column(name = "fecha_registro", updatable = false)
     @CreationTimestamp // Genera la fecha al crear el registro
@@ -66,13 +70,11 @@ public class SerieProducto {
     private List<DevolucionProducto> devolucionesProducto;
 
     // Constructor para el registro
-    /*
-     * public SerieProducto(@Valid DatosRegistroSerieProducto
-     * datosRegistroSerieProducto, DetalleIngreso detalleIngreso) {
-     * this.detalleIngreso = detalleIngreso;
-     * this.numeroSerie = datosRegistroSerieProducto.numeroSerie();
-     * // El estado por defecto ya se establece arriba
-     * }
-     */
+
+    public SerieProducto(@Valid DatosRegistroSerie datosRegistroSerie, DetalleIngreso detalleIngreso) {
+        this.id_detalle_ingreso = detalleIngreso;
+        this.numeroSerie = datosRegistroSerie.numeroSerie();
+        // El estado por defecto ya se establece arriba
+    }
 
 }

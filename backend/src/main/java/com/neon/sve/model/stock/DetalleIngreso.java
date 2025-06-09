@@ -1,7 +1,9 @@
 package com.neon.sve.model.stock;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.neon.sve.dto.detalleIngreso.DatosRegistroDetalleIngreso;
 import com.neon.sve.model.producto.Producto;
+import com.neon.sve.model.usuario.Empleado;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -12,8 +14,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +27,7 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.util.List;
 
+@Builder
 @Entity
 @Getter
 @Setter
@@ -36,7 +42,7 @@ public class DetalleIngreso {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "id_ingreso", nullable = false)
     private IngresoStock id_ingresoStock; // Relación con la entidad IngresoStock
 
@@ -51,28 +57,24 @@ public class DetalleIngreso {
     private int cantidad;
 
     @Column(name = "precio_unitario", nullable = false, precision = 10, scale = 2)
-    private BigDecimal precioUnitario;
+    private BigDecimal precio_unitario;
 
-    @Column(name = "subtotal", nullable = false, precision = 10, scale = 2)
+    @Column(name = "subtotal", insertable = false, updatable = false, nullable = false, precision = 12, scale = 2)
     private BigDecimal subtotal;
+
+    @Column(nullable = false, columnDefinition = "TINYINT(1)")
+    private Boolean activo;
 
     @JsonIgnore
     @OneToMany(mappedBy = "id_detalle_ingreso", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SerieProducto> seriesProductos;
 
-    // Constructor para el registro
-    /*
-     * public DetalleIngreso(@Valid DatosRegistroDetalleIngreso
-     * datosRegistroDetalleIngreso, IngresoStock ingresoStock, Producto producto) {
-     * this.ingresoStock = ingresoStock;
-     * this.producto = producto;
-     * this.codigoLote = datosRegistroDetalleIngreso.codigoLote();
-     * this.cantidad = datosRegistroDetalleIngreso.cantidad();
-     * this.precioUnitario = datosRegistroDetalleIngreso.precioUnitario();
-     * // El subtotal se calcularía en el servicio o se dejaría que la BD lo genere
-     * this.subtotal = this.cantidad * this.precioUnitario; // Cálculo simple para
-     * el lado de la aplicación
-     * }
-     */
+    public DetalleIngreso(@Valid DatosRegistroDetalleIngreso datosRegistroDetalleIngreso, IngresoStock ingresoStock,
+            Producto producto) {
+        this.id_ingresoStock = ingresoStock;
+        this.id_producto = producto;
+        this.cantidad = datosRegistroDetalleIngreso.cantidad();
+        this.precio_unitario = datosRegistroDetalleIngreso.precio_unitario();
+    }
 
 }

@@ -9,10 +9,9 @@ public record DatosListadoDetalleIngreso(
 
         Long id,
         Timestamp fecha_ingreso,
-        String lote,
         String nombreProducto,
         String modelo,
-        String codigoLote,
+        String lote,
         int cantidad,
         BigDecimal precioUnitario,
         BigDecimal subtotal
@@ -24,12 +23,11 @@ public record DatosListadoDetalleIngreso(
         this(
                 detalleIngreso.getId(),
                 detalleIngreso.getId_ingresoStock().getFecha_ingreso(),
-                detalleIngreso.getId_ingresoStock().getLote(),
                 detalleIngreso.getId_producto().getNombre(),
                 detalleIngreso.getId_producto().getModelo(),
                 detalleIngreso.getCodigoLote(),
                 detalleIngreso.getCantidad(),
-                detalleIngreso.getPrecioUnitario(),
+                detalleIngreso.getPrecio_unitario(),
                 detalleIngreso.getSubtotal());
     }
 

@@ -17,6 +17,7 @@ CREATE TABLE detalle_ingresos (
     cantidad INT NOT NULL CHECK (cantidad >= 0),
     precio_unitario DECIMAL(10, 2) NOT NULL,
     subtotal DECIMAL(12, 2) GENERATED ALWAYS AS (cantidad * precio_unitario) STORED,
+    activo BIT(1) NOT NULL DEFAULT 1,
     PRIMARY KEY (id),
     FOREIGN KEY (id_ingreso) REFERENCES ingreso_stocks(id),
     FOREIGN KEY (id_producto) REFERENCES productos(id)

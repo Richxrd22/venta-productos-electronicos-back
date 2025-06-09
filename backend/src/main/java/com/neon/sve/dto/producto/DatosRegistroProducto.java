@@ -10,14 +10,12 @@ public record DatosRegistroProducto(
         String color,
         @NotBlank String descripcion,
         @NotNull Double precio_venta,
-        @NotNull Double precio_compra,
         @NotNull int min_stock,
         @NotNull int max_stock,
         @NotNull int garantia_meses,
         @NotNull Long id_usuario,
         @NotNull Long id_categoria,
-        @NotNull Long id_marca,
-        @NotNull Long id_proveedor
+        @NotNull Long id_marca
 
 ) {
 

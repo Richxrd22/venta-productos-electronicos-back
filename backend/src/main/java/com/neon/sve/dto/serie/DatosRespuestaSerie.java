@@ -18,7 +18,7 @@ public record DatosRespuestaSerie(
                 serieProducto.getId(),
                 serieProducto.getId_detalle_ingreso().getCodigoLote(),
                 serieProducto.getId_detalle_ingreso().getCantidad(),
-                serieProducto.getId_detalle_ingreso().getPrecioUnitario(),
+                serieProducto.getId_detalle_ingreso().getPrecio_unitario(),
                 serieProducto.getNumeroSerie(),
                 serieProducto.getEstado().name(),
                 serieProducto.getFechaRegistro());

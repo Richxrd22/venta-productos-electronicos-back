@@ -1,5 +1,7 @@
 package com.neon.sve.dto.detalleIngreso;
 
+import java.math.BigDecimal;
+
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -11,8 +13,7 @@ public record DatosRegistroDetalleIngreso(
         @NotNull Long id_producto,
         @NotBlank String codigoLote,
         @NotNull @Min(1) int cantidad,
-        @NotNull @Positive double precioUnitario,
-        @NotNull double subtotal
+        @NotNull @Positive BigDecimal precio_unitario
 
 ) {
 
