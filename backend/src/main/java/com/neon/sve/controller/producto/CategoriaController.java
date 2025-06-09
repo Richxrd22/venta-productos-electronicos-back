@@ -20,6 +20,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.neon.sve.dto.MensajeRespuesta;
 import com.neon.sve.dto.categoria.DatosActualizarCategoria;
 import com.neon.sve.dto.categoria.DatosListadoCategoria;
+import com.neon.sve.dto.categoria.DatosListadoCategoriaNivel;
 import com.neon.sve.dto.categoria.DatosRegistroCategoria;
 import com.neon.sve.dto.categoria.DatosRespuestaCategoria;
 import com.neon.sve.service.categoria.CategoriaService;
@@ -82,6 +83,12 @@ public class CategoriaController {
     public ResponseEntity<MensajeRespuesta> desactivarCategoria(@PathVariable Long id) {
         categoriaService.desactivarCategoria(id);
         return ResponseEntity.ok(new MensajeRespuesta("Categoría desactivada correctamente"));
+    }
+
+    @GetMapping("/listar/nivel/{nivel}")
+    public ResponseEntity<List<DatosListadoCategoriaNivel>> listarCategoriasPorNivel(@PathVariable int nivel) {
+        List<DatosListadoCategoriaNivel> categorias = categoriaService.getCategoriasByNivel(nivel);
+        return ResponseEntity.ok(categorias);
     }
 
 }

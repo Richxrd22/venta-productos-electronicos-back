@@ -35,7 +35,7 @@ public class ProductoController {
 
     @GetMapping("/listar")
     public ResponseEntity<List<DatosListadoProducto>> listarProducto() {
-        Pageable paginacion = Pageable.unpaged(); 
+        Pageable paginacion = Pageable.unpaged();
         List<DatosListadoProducto> productos = productoService.getAllProducto(paginacion).getContent();
         return ResponseEntity.ok(productos);
     }

@@ -185,4 +185,8 @@ public class ProductoServiceImpl implements ProductoService {
                                 ? texto.substring(0, 3).toUpperCase()
                                 : texto.toUpperCase();
         }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> main

@@ -38,7 +38,7 @@ public class Producto {
 
     @Column(nullable = false, length = 50, unique = true)
     private String sku;
-    
+
     @Column(nullable = false, length = 50)
     private String nombre;
 
@@ -85,10 +85,15 @@ public class Producto {
     @JoinColumn(name = "id_marca", nullable = false)
     private Marca id_marca;
 
+<<<<<<< HEAD
+    public Producto(@Valid DatosRegistroProducto datosRegistroProducto, Usuario usuario, Categoria categoria,
+            Marca marca, String sku) {
+=======
   
 
     public Producto(@Valid DatosRegistroProducto datosRegistroProducto, Usuario usuario, Categoria categoria,
             Marca marca,String sku ) {
+>>>>>>> main
 
         this.nombre = datosRegistroProducto.nombre();
         this.modelo = datosRegistroProducto.modelo();
