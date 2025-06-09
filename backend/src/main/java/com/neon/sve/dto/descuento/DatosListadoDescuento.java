@@ -8,25 +8,24 @@ import com.neon.sve.model.ventas.Descuento;
 public record DatosListadoDescuento(
 
     Long id,
-    String nombreCategoria,
-    double porcentaje,
-    LocalDate fecha_inicio,
-    LocalDate fecha_final,
-    boolean activo
-
+        Long id_categoria,
+        String nombreCategoria,
+        double porcentaje,
+        LocalDate fechaInicio,
+        LocalDate fechaFinal,
+        int activo
 
 ) {
 
-    public DatosListadoDescuento(Descuento descuento){
-
+    public DatosListadoDescuento(Descuento descuento) {
         this(
-        descuento.getId(),
-        descuento.getId_categoria().getNombre(),
-        descuento.getPorcentaje(),
-        descuento.getFecha_inicio(),
-        descuento.getFecha_fin(),
-        descuento.getActivo());
-
+                descuento.getId(),
+                descuento.getId_categoria().getId(),
+                descuento.getId_categoria().getNombre(),
+                descuento.getPorcentaje(),
+                descuento.getFecha_inicio(),
+                descuento.getFecha_fin(),
+                descuento.getActivo() != null && descuento.getActivo() ? 1 : 0);
     }
     
 }

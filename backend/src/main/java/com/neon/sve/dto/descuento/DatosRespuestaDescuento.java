@@ -7,6 +7,7 @@ import com.neon.sve.model.ventas.Descuento;
 public record DatosRespuestaDescuento(
 
         Long id,
+        Long id_categoria,
         String nombreCategoria,
         double porcentaje,
         LocalDate fechaInicio,
@@ -18,6 +19,7 @@ public record DatosRespuestaDescuento(
     public DatosRespuestaDescuento(Descuento descuento) {
         this(
                 descuento.getId(),
+                descuento.getId_categoria().getId(),
                 descuento.getId_categoria().getNombre(),
                 descuento.getPorcentaje(),
                 descuento.getFecha_inicio(),

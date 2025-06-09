@@ -36,7 +36,7 @@ public class Categoria {
     @Column(unique = true, nullable = false)
     private String nombre;
 
-    @Column(nullable = true)
+    @Column
     private Long id_categoria_padre;
 
     @Column(nullable = false)
@@ -55,13 +55,13 @@ public class Categoria {
 
     public Categoria(@Valid DatosRegistroCategoria datosRegistroCategoria) {
         this.nombre = datosRegistroCategoria.nombre();
-        this.id_categoria_padre = datosRegistroCategoria.id_padre();
+        this.id_categoria_padre = datosRegistroCategoria.id_categoria_padre();
         this.nivel = datosRegistroCategoria.nivel();
     }
 
     public void actualizar(@Valid DatosActualizarCategoria datosActualizarCategoria) {
         this.nombre = datosActualizarCategoria.nombre();
-        this.id_categoria_padre = datosActualizarCategoria.id_padre();
+        this.id_categoria_padre = datosActualizarCategoria.id_categoria_padre();
         this.nivel = datosActualizarCategoria.nivel();
     }
 
