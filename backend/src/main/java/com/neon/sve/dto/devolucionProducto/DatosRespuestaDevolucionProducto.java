@@ -1,6 +1,7 @@
 package com.neon.sve.dto.devolucionProducto;
 
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 import com.neon.sve.model.stock.DevolucionProducto;

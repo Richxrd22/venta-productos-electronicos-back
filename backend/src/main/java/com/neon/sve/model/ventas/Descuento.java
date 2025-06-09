@@ -52,14 +52,14 @@ public class Descuento {
 
     public Descuento(@Valid DatosRegistroDescuento datosRegistroDescuento, Categoria categoria) {
         this.id_categoria = categoria;
-        this.porcentaje = datosRegistroDescuento.procentaje();
+        this.porcentaje = datosRegistroDescuento.porcentaje();
         this.fecha_inicio = datosRegistroDescuento.fecha_inicio();
         this.fecha_fin = datosRegistroDescuento.fecha_fin();
     }
 
     public void actualizar(@Valid DatosActualizarDescuento datosActualizarDescuento, Categoria categoria) {
         this.id_categoria = categoria;
-        this.porcentaje = datosActualizarDescuento.procentaje();
+        this.porcentaje = datosActualizarDescuento.porcentaje();
         this.fecha_inicio = datosActualizarDescuento.fecha_inicio();
         this.fecha_fin = datosActualizarDescuento.fecha_fin();
     }

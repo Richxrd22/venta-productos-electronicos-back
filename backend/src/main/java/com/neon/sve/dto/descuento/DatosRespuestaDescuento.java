@@ -1,5 +1,28 @@
 package com.neon.sve.dto.descuento;
 
-public class DatosRespuestaDescuento {
-    
+import java.time.LocalDate;
+
+import com.neon.sve.model.ventas.Descuento;
+
+public record DatosRespuestaDescuento(
+
+        Long id,
+        String nombreCategoria,
+        double porcentaje,
+        LocalDate fechaInicio,
+        LocalDate fechaFinal,
+        int activo
+
+) {
+
+    public DatosRespuestaDescuento(Descuento descuento) {
+        this(
+                descuento.getId(),
+                descuento.getId_categoria().getNombre(),
+                descuento.getPorcentaje(),
+                descuento.getFecha_inicio(),
+                descuento.getFecha_fin(),
+                descuento.getActivo() != null && descuento.getActivo() ? 1 : 0);
+    }
+
 }

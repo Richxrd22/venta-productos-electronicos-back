@@ -1,6 +1,8 @@
 package com.neon.sve.service.categoria;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.neon.sve.dto.categoria.DatosActualizarCategoria;
 import com.neon.sve.dto.categoria.DatosListadoCategoria;
+import com.neon.sve.dto.categoria.DatosListadoCategoriaNivel;
 import com.neon.sve.dto.categoria.DatosRegistroCategoria;
 import com.neon.sve.dto.categoria.DatosRespuestaCategoria;
 import com.neon.sve.model.producto.Categoria;
@@ -49,6 +52,16 @@ public class CategoriaServiceImpl implements CategoriaService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Ya existe una categoría con el nombre ingresado: " + datosRegistroCategoria.nombre());
         }
+
+        // Long idPadre = datosRegistroCategoria.id_padre();
+        Categoria categoriaPadre = null;
+
+        // Si la categoría padre está inactiva, no se permite añadir hijos
+        if (Boolean.FALSE.equals(categoriaPadre.getActivo())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "No se puede crear una categoría bajo una categoría padre inactiva.");
+        }
+
         Categoria categoria = categoriaRepository.save(new Categoria(datosRegistroCategoria));
         return new DatosRespuestaCategoria(categoria);
     }
@@ -75,9 +88,9 @@ public class CategoriaServiceImpl implements CategoriaService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "Categoría no encontrada con el ID ingresado: " + id));
 
-        if (Boolean.TRUE.equals(categoria.getActivo()))
+        if (Boolean.TRUE.equals(categoria.getActivo())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La categoría ya está activa");
-
+        }
         categoria.setActivo(true);
         categoriaRepository.save(categoria);
     }
@@ -95,6 +108,14 @@ public class CategoriaServiceImpl implements CategoriaService {
 
         categoria.setActivo(false);
         categoriaRepository.save(categoria);
+    }
+
+    @Override
+    public List<DatosListadoCategoriaNivel> getCategoriasByNivel(int nivel) {
+        List<Categoria> categorias = categoriaRepository.findByNivel(nivel);
+        return categorias.stream()
+                .map(DatosListadoCategoriaNivel::new)
+                .collect(Collectors.toList());
     }
 
 }
