@@ -3,7 +3,6 @@ package com.neon.sve.model.stock;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.neon.sve.dto.detalleIngreso.DatosRegistroDetalleIngreso;
 import com.neon.sve.model.producto.Producto;
-import com.neon.sve.model.usuario.Empleado;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
