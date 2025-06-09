@@ -80,14 +80,9 @@ public class ProductoServiceImpl implements ProductoService {
                                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                                                 "Marca no encontrada"));
 
-                Proveedor proveedor = proveedorRepository.findById(datosRegistroProducto.id_proveedor())
-                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                                                "proveedor no encontrado"));
-
                 String skuTemporal = "TEMP-" + System.currentTimeMillis();
 
-                Producto producto = new Producto(datosRegistroProducto, usuario, categoria, marca, skuTemporal,
-                                proveedor);
+                Producto producto = new Producto(datosRegistroProducto, usuario, categoria, marca, skuTemporal);
                 producto = productoRepository.save(producto);
 
                 String sku = generarSKU(
@@ -122,11 +117,7 @@ public class ProductoServiceImpl implements ProductoService {
                                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                                                 "Categoria no encontrada"));
 
-                Proveedor proveedor = proveedorRepository.findById(datosActualizarProducto.id_proveedor())
-                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                                                "proveedor no encontrado"));
-
-                producto.actualizar(datosActualizarProducto, usuario, categoria, marca, proveedor);
+                producto.actualizar(datosActualizarProducto, usuario, categoria, marca);
 
                 String nuevoSKU = generarSKU(
                                 marca.getNombre(),
