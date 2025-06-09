@@ -61,4 +61,8 @@ INSERT INTO productos (
 ('SON-HED-MDR-BLK-007', 'MDR ZX110', 'MDR', 'Negro', 'Audífonos Sony con cancelación de ruido', 199.99, 10, 60, 0, 6, 1, NULL, 9, 3),
 ('SAM-TAB-GAL-BLU-008', 'Galaxy Tab S7', 'Galaxy', 'Azul', 'Tablet Samsung con S-Pen', 2299.00, 5, 30, 0, 12, 1, NULL, 3, 1),
 ('ASU-LAP-VIV-GRY-009', 'VivoBook 15', 'VivoBook', 'Gris', 'Laptop Asus para estudiantes', 2599.00, 5, 40, 0, 12, 1, NULL, 3, 9),
+<<<<<<< HEAD
 ('HP-LAP-ENV-BLK-010', 'Envy 13', 'Envy', 'Negro', 'Laptop HP ultraligera y potente', 4399.00, 5, 20, 0, 24, 1, NULL, 3, 4);
+=======
+('HP-LAP-ENV-BLK-010', 'Envy 13', 'Envy', 'Negro', 'Laptop HP ultraligera y potente', 4399.00, 5, 20, 0, 24, 1, NULL, 3, 4);
+>>>>>>> main

@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 public record DatosRegistroProducto(
 
+<<<<<<< HEAD
                 @NotBlank String nombre,
                 String modelo,
                 String color,
@@ -16,6 +17,19 @@ public record DatosRegistroProducto(
                 @NotNull Long id_usuario,
                 @NotNull Long id_categoria,
                 @NotNull Long id_marca
+=======
+        @NotBlank String nombre,
+        String modelo,
+        String color,
+        @NotBlank String descripcion,
+        @NotNull Double precio_venta,
+        @NotNull int min_stock,
+        @NotNull int max_stock,
+        @NotNull int garantia_meses,
+        @NotNull Long id_usuario,
+        @NotNull Long id_categoria,
+        @NotNull Long id_marca
+>>>>>>> main
 
 ) {
 

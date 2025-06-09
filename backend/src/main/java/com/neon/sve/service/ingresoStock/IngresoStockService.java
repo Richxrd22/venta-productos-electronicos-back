@@ -7,6 +7,7 @@ import com.neon.sve.dto.ingresoStock.DatosActualizarIngresoStock;
 import com.neon.sve.dto.ingresoStock.DatosListadoIngresoStock;
 import com.neon.sve.dto.ingresoStock.DatosRegistroIngresoStock;
 import com.neon.sve.dto.ingresoStock.DatosRespuestaIngresoStock;
+import com.neon.sve.dto.login.DatosRespuestaMensaje;
 
 public interface IngresoStockService {
     
@@ -14,12 +15,14 @@ public interface IngresoStockService {
 
     Page<DatosListadoIngresoStock> getAllIngresoStock(Pageable pageable);
 
-    DatosRespuestaIngresoStock createIngresoStock(DatosRegistroIngresoStock datosRegistroIngresoStock);
+    DatosRespuestaMensaje createIngresoStock(DatosRegistroIngresoStock datosRegistroIngresoStock);
 
     DatosRespuestaIngresoStock updateIngresoStock(DatosActualizarIngresoStock datosActualizarIngresoStock);
 
     void activarIngresoStock(Long id);
 
     void desactivarIngresoStock(Long id);
+
+    
 
 }

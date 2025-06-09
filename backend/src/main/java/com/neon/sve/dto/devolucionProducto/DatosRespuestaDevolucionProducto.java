@@ -26,7 +26,7 @@ public record DatosRespuestaDevolucionProducto(
                 devolucionProducto.getId(),
                 devolucionProducto.getId_serie_producto().getNumeroSerie(),
                 devolucionProducto.getId_detalle_ingreso().getCodigoLote(),
-                devolucionProducto.getId_detalle_ingreso().getPrecioUnitario(),
+                devolucionProducto.getId_detalle_ingreso().getPrecio_unitario(),
                 devolucionProducto.getCantidad(),
                 devolucionProducto.getFechaDevolucion(),
                 devolucionProducto.getMotivo(),

@@ -51,9 +51,7 @@ public class Proveedor {
     @OneToMany(mappedBy = "id_proveedor")
     private List<IngresoStock> ingresoStocks;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "id_proveedor")
-    private List<Producto> productos;
+  
 
     public Proveedor(@Valid DatosRegistroProveedor datosRegistroProveedores) {
         this.razon_social = datosRegistroProveedores.razon_social();
