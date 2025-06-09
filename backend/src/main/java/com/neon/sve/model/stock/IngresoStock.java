@@ -68,7 +68,7 @@ public class IngresoStock {
     @OneToOne(mappedBy = "id_ingresoStock")
     private DetalleIngreso detallesIngreso;
 
-    public IngresoStock(@Valid DatosRegistroIngresoStock datosRegistroIngresoStock, Producto producto,
+    public IngresoStock(@Valid DatosRegistroIngresoStock datosRegistroIngresoStock, 
             Proveedor proveedor, Usuario usuario) {
 
         this.id_proveedor = proveedor;
@@ -80,7 +80,7 @@ public class IngresoStock {
     }
 
     public void actualizar(@Valid DatosActualizarIngresoStock datosActualizarIngresoStock,
-            Proveedor proveedor, Usuario usuario, Producto producto) {
+            Proveedor proveedor, Usuario usuario) {
         this.id_proveedor = proveedor;
         this.tipo_documento = datosActualizarIngresoStock.tipo_documento();
         this.numero_documento = datosActualizarIngresoStock.numero_documento();

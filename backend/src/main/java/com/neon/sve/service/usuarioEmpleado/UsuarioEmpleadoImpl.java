@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.neon.sve.dto.login.DatosRespuestaMensaje;
@@ -36,6 +37,7 @@ public class UsuarioEmpleadoImpl implements UsuarioEmpleadoService {
         @Autowired
         private EmailService emailService;
 
+        @Transactional
         @Override
         public DatosRespuestaMensaje createUsuarioEmpleado(DatosRegistroUsuarioEmpleado datosRegistroUsuarioEmpleado) {
 
@@ -67,10 +69,9 @@ public class UsuarioEmpleadoImpl implements UsuarioEmpleadoService {
                 usuarioRepository.save(usuario);
 
                 emailService.enviarCredenciales(
-                                empleado.getUsuario().getCorreo(), // destinatario
-                                usuario.getCorreo(), // correo de acceso al sistema
-                                datosRegistroUsuarioEmpleado.dni() // contraseña sin codificar
-                );
+                                usuario.getCorreo(), // destinatario
+                                usuario.getCorreo(), // correo de acceso
+                                datosRegistroUsuarioEmpleado.dni());
                 return new DatosRespuestaMensaje(
                                 "Empleado y usuario creados con éxito. Las credenciales fueron enviadas por correo.");
 

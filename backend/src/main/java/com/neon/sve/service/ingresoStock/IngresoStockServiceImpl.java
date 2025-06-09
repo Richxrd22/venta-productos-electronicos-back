@@ -76,8 +76,12 @@ public class IngresoStockServiceImpl implements IngresoStockService {
         return ingresoStockPage.map(DatosListadoIngresoStock::new);
     }
 
+    @Transactional
     @Override
     public DatosRespuestaIngresoStock updateIngresoStock(DatosActualizarIngresoStock datosActualizarIngresoStock) {
+
+        IngresoStock ingresoStock = ingresoStockRepository.findById(datosActualizarIngresoStock.id_ingreso())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ingreso no encontrado."));
 
         Proveedor proveedor = proveedorRepository.findById(datosActualizarIngresoStock.id_proveedor())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Proveedor no encontrado."));
@@ -85,24 +89,17 @@ public class IngresoStockServiceImpl implements IngresoStockService {
         Usuario usuario = usuarioRepository.findById(datosActualizarIngresoStock.id_usuario())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuario no encontrado."));
 
-        IngresoStock ingresoStock = ingresoStockRepository.findById(datosActualizarIngresoStock.id())
-                .orElseThrow(
-                        () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ingreso de stock no encontrado."));
+        DetalleIngreso detalle = ingresoStock.getDetallesIngreso(); 
 
-        Producto producto = ingresoStock.getDetallesIngreso().getId_producto();
-        if (datosActualizarIngresoStock.cantidad() < producto.getMin_stock()) {
+        if (detalle.getSeriesProductos() != null && !detalle.getSeriesProductos().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "La cantidad a ingresar no puede ser menor al stock mínimo permitido (" + producto.getMin_stock()
-                            + ").");
+                    "No se puede modificar la cantidad porque ya hay series de productos asociadas.");
         }
 
-        if (datosActualizarIngresoStock.cantidad() > producto.getMax_stock()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "La cantidad a ingresar no puede ser mayor al stock máximo permitido (" + producto.getMax_stock()
-                            + ").");
-        }
-        ingresoStock.actualizar(datosActualizarIngresoStock, proveedor, usuario, producto);
-        ingresoStock = ingresoStockRepository.save(ingresoStock);
+        ingresoStock.actualizar(datosActualizarIngresoStock, proveedor, usuario);
+
+        detalle.setCantidad(datosActualizarIngresoStock.cantidad_producto());
+
         return new DatosRespuestaIngresoStock(ingresoStock);
     }
 
@@ -142,7 +139,7 @@ public class IngresoStockServiceImpl implements IngresoStockService {
 
         ingresoStock.setActivo(false);
 
-        DetalleIngreso detalle = ingresoStock.getDetallesIngreso(); 
+        DetalleIngreso detalle = ingresoStock.getDetallesIngreso();
         if (detalle != null) {
             detalle.setActivo(false);
         }
@@ -252,4 +249,5 @@ public class IngresoStockServiceImpl implements IngresoStockService {
             serieProductoRepository.save(serie);
         }
     }
+
 }

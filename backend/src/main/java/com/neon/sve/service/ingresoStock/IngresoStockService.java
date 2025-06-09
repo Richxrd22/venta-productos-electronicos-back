@@ -1,5 +1,7 @@
 package com.neon.sve.service.ingresoStock;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -14,7 +16,7 @@ public interface IngresoStockService {
     DatosRespuestaIngresoStock getIngresoStockById(Long id);
 
     Page<DatosListadoIngresoStock> getAllIngresoStock(Pageable pageable);
-
+    
     DatosRespuestaMensaje createIngresoStock(DatosRegistroIngresoStock datosRegistroIngresoStock);
 
     DatosRespuestaIngresoStock updateIngresoStock(DatosActualizarIngresoStock datosActualizarIngresoStock);
