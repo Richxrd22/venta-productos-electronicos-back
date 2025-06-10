@@ -69,7 +69,7 @@ public class IngresoStock {
     private DetalleIngreso detallesIngreso;
 
     public IngresoStock(@Valid DatosRegistroIngresoStock datosRegistroIngresoStock, 
-            Proveedor proveedor, Usuario usuario) {
+            Proveedor proveedor, Usuario usuario, Producto producto) {
 
         this.id_proveedor = proveedor;
         this.tipo_documento = datosRegistroIngresoStock.tipo_documento();
