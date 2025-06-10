@@ -1,6 +1,9 @@
 package com.neon.sve.model.ventas;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.neon.sve.dto.metodoPago.DatosActualizarMetodoPago;
+import com.neon.sve.dto.metodoPago.DatosRegistroMetodoPago;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -8,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -40,10 +44,12 @@ public class MetodoPago {
     @OneToMany(mappedBy = "id_metodo_pago")
     private List<RegistroVenta> registroVentas;
 
-    // Constructor para registro
-    /*
     public MetodoPago(@Valid DatosRegistroMetodoPago datosRegistroMetodoPago) {
         this.metodo = datosRegistroMetodoPago.metodo();
-    }*/
+    }
+
+    public void actualizar(@Valid DatosActualizarMetodoPago datosActualizarMetodoPago) {
+        this.metodo = datosActualizarMetodoPago.metodo();
+    }
 
 }
