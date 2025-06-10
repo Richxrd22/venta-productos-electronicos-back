@@ -21,5 +21,6 @@ public interface DescuentoService {
     void activarDescuento(Long id);
 
     void desactivarDescuento(Long id);
+    
 
 }
