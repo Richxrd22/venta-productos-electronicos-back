@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.neon.sve.model.stock.DetalleIngreso;
 import com.neon.sve.model.stock.EstadoSerie;
 import com.neon.sve.model.stock.SerieProducto;
 
@@ -20,6 +21,10 @@ public interface SerieProductoRepository extends JpaRepository<SerieProducto, Lo
     @Query("SELECT s.numeroSerie FROM SerieProducto s WHERE s.numeroSerie IN :series AND s.estado = 'ACTIVO'")
     List<String> findActiveSeriesByNumeroSerieIn(@Param("series") List<String> series);
 
-    boolean existsByNumeroSerieAndEstado(String numeroSerie, EstadoSerie estado);
+    boolean existsByNumeroSerieAndEstadoIn(String numeroSerie, List<EstadoSerie> estados);
 
+    @Query("SELECT COUNT(s) FROM SerieProducto s WHERE s.id_detalle_ingreso = :detalleIngreso")
+    long contarPorDetalleIngreso(@Param("detalleIngreso") DetalleIngreso detalleIngreso);
+
+    // List<SerieProducto> findByIdDetalleIngresoId(Long idDetalleIngreso);
 }

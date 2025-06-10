@@ -5,7 +5,11 @@ import java.sql.Timestamp;
 import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore; // Importa JsonIgnore
+import com.neon.sve.dto.ingresoStock.DatosActualizarIngresoStock;
+import com.neon.sve.dto.serie.DatosActualizarSerie;
 import com.neon.sve.dto.serie.DatosRegistroSerie;
+import com.neon.sve.model.producto.Proveedor;
+import com.neon.sve.model.usuario.Usuario;
 import com.neon.sve.model.ventas.DetalleVentaSeries;
 
 import jakarta.persistence.Column;
@@ -73,8 +77,13 @@ public class SerieProducto {
 
     public SerieProducto(@Valid DatosRegistroSerie datosRegistroSerie, DetalleIngreso detalleIngreso) {
         this.id_detalle_ingreso = detalleIngreso;
-        this.numeroSerie = datosRegistroSerie.numeroSerie();
-        // El estado por defecto ya se establece arriba
+        this.numeroSerie = datosRegistroSerie.numero_serie();
+        this.estado = datosRegistroSerie.estado();
     }
 
+    public void actualizar(@Valid DatosActualizarSerie datosActualizarSerie, DetalleIngreso detalleIngreso) {
+        this.id_detalle_ingreso = detalleIngreso;
+        this.numeroSerie = datosActualizarSerie.numero_serie();
+        this.estado = datosActualizarSerie.estado();
+    }
 }
