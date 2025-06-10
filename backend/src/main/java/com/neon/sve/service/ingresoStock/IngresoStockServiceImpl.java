@@ -89,16 +89,35 @@ public class IngresoStockServiceImpl implements IngresoStockService {
         Usuario usuario = usuarioRepository.findById(datosActualizarIngresoStock.id_usuario())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuario no encontrado."));
 
-        DetalleIngreso detalle = ingresoStock.getDetallesIngreso(); 
+        DetalleIngreso detalle = ingresoStock.getDetallesIngreso();
+        Producto producto = detalle.getId_producto();
 
         if (detalle.getSeriesProductos() != null && !detalle.getSeriesProductos().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "No se puede modificar la cantidad porque ya hay series de productos asociadas.");
         }
 
-        ingresoStock.actualizar(datosActualizarIngresoStock, proveedor, usuario);
+        int cantidadAnterior = detalle.getCantidad();
+        int cantidadNueva = datosActualizarIngresoStock.cantidad_producto();
+        int diferencia = cantidadNueva - cantidadAnterior;
 
-        detalle.setCantidad(datosActualizarIngresoStock.cantidad_producto());
+        int nuevoStock = producto.getStock_actual() + diferencia;
+
+        if (nuevoStock < 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "El stock del producto no puede quedar en negativo.");
+        }
+
+        if (nuevoStock > producto.getMax_stock()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "El stock del producto superaría el máximo permitido.");
+        }
+
+        producto.setStock_actual(nuevoStock);
+
+        ingresoStock.actualizar(datosActualizarIngresoStock, proveedor, usuario);
+        detalle.setCantidad(cantidadNueva);
+        detalle.setPrecio_unitario(datosActualizarIngresoStock.precio_unitario());
 
         return new DatosRespuestaIngresoStock(ingresoStock);
     }

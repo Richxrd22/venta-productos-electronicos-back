@@ -7,7 +7,9 @@ import com.neon.sve.model.stock.IngresoStock;
 public record DatosRespuestaIngresoStock(
 
         Long id,
+        Long id_producto,
         String producto,
+        Long id_proveedor,
         String proveedor,
         Timestamp fecha_ingreso,
         String lote,
@@ -21,7 +23,9 @@ public record DatosRespuestaIngresoStock(
     public DatosRespuestaIngresoStock(IngresoStock ingresoStock) {
         this(
                 ingresoStock.getId(),
+                ingresoStock.getDetallesIngreso().getId_producto().getId(),
                 ingresoStock.getDetallesIngreso().getId_producto().getNombre(),
+                ingresoStock.getId_proveedor().getId(),
                 ingresoStock.getId_proveedor().getRazon_social(),
                 ingresoStock.getFecha_ingreso(),
                 ingresoStock.getDetallesIngreso().getCodigoLote(),
