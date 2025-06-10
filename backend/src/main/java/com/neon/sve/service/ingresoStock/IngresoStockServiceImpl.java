@@ -242,6 +242,12 @@ public class IngresoStockServiceImpl implements IngresoStockService {
                             ") no coincide con la cantidad de productos (" + datos.cantidad_producto() + ").");
         }
 
+        List<EstadoSerie> estadosOcupados = List.of(
+                EstadoSerie.ACTIVO,
+                EstadoSerie.VENDIDO,
+                EstadoSerie.DEVUELTO,
+                EstadoSerie.REPARACION);
+
         Set<String> unicos = new HashSet<>();
         for (String serieInd : series) {
             if (unicos.contains(serieInd)) {
@@ -250,7 +256,7 @@ public class IngresoStockServiceImpl implements IngresoStockService {
             }
 
             // Validar en la base de datos si la serie ya existe y está activa
-            boolean existe = serieProductoRepository.existsByNumeroSerieAndEstado(serieInd, EstadoSerie.ACTIVO);
+            boolean existe = serieProductoRepository.existsByNumeroSerieAndEstadoIn(serieInd, estadosOcupados);
             if (existe) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                         "La serie " + serieInd + " ya está en uso y activa.");

@@ -9,7 +9,7 @@ public record DatosActualizarSerie(
 
     @NotNull Long id,
     @NotNull Long id_detalle_ingreso,
-    @NotBlank String numeroSerie,
+    @NotBlank String numero_serie,
     @NotNull EstadoSerie estado
 
     ) {
