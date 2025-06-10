@@ -11,7 +11,7 @@ public record DatosRespuestaCliente(
         String dni,
         String celular,
         String correo,
-        Timestamp fechaCreacion,
+        Timestamp fecha_creacion,
         int activo) {
     public DatosRespuestaCliente(Cliente cliente) {
         this(
@@ -21,7 +21,7 @@ public record DatosRespuestaCliente(
                 cliente.getDni(),
                 cliente.getCelular(),
                 cliente.getCorreo(),
-                cliente.getFechaCreacion(),
+                cliente.getFecha_creacion(),
                 cliente.getActivo() != null && cliente.getActivo() ? 1 : 0);
     }
 
