@@ -7,7 +7,7 @@ public record DatosActualizarCategoria(
 
         @NotNull Long id,
         @NotBlank String nombre,
-        Long id_padre,
+        Long id_categoria_padre,
         @NotNull int nivel) {
 
 }

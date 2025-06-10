@@ -47,23 +47,17 @@ public class CategoriaServiceImpl implements CategoriaService {
 
     @Override
     public DatosRespuestaCategoria createCategoria(DatosRegistroCategoria datosRegistroCategoria) {
+        // Verificar si ya existe una categoría con el mismo nombre
         Optional<Categoria> categoriaOptional = categoriaRepository.findByNombre(datosRegistroCategoria.nombre());
         if (categoriaOptional.isPresent()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Ya existe una categoría con el nombre ingresado: " + datosRegistroCategoria.nombre());
         }
 
-        // Long idPadre = datosRegistroCategoria.id_padre();
-        Categoria categoriaPadre = null;
-
-        // Si la categoría padre está inactiva, no se permite añadir hijos
-        if (Boolean.FALSE.equals(categoriaPadre.getActivo())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "No se puede crear una categoría bajo una categoría padre inactiva.");
-        }
-
+        // Crear la nueva categoría
         Categoria categoria = categoriaRepository.save(new Categoria(datosRegistroCategoria));
         return new DatosRespuestaCategoria(categoria);
+
     }
 
     @Override
