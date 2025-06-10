@@ -1,4 +1,4 @@
-package com.neon.sve.controller.venta;
+package com.neon.sve.controller.stock;
 
 import java.net.URI;
 import java.util.List;
@@ -21,7 +21,6 @@ import com.neon.sve.dto.serie.DatosActualizarSerie;
 import com.neon.sve.dto.serie.DatosListadoSerie;
 import com.neon.sve.dto.serie.DatosRegistroSerie;
 import com.neon.sve.dto.serie.DatosRespuestaSerie;
-import com.neon.sve.model.stock.SerieProducto;
 import com.neon.sve.service.serieProducto.SerieProductoService;
 
 import jakarta.validation.Valid;

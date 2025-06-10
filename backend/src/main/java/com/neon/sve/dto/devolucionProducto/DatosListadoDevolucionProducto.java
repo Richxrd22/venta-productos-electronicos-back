@@ -1,37 +1,34 @@
 package com.neon.sve.dto.devolucionProducto;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.neon.sve.model.stock.DevolucionProducto;
 
 public record DatosListadoDevolucionProducto(
 
-        Long id,
-        String numeroSerieProducto,
+        Long id_devolucion_producto,
         String codigo_lote,
-        BigDecimal precio_uni,
         int cantidad,
-        Timestamp fechaDevolucion,
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy") Timestamp fecha_devolucion,
         String motivo,
         String observaciones,
-        String correoUsuario,
-        Boolean reposicionAplicada
+        int reposicion_aplicada,
+        int estado
 
 ) {
 
     public DatosListadoDevolucionProducto(DevolucionProducto devolucionProducto) {
         this(
                 devolucionProducto.getId(),
-                devolucionProducto.getId_serie_producto().getNumeroSerie(),
                 devolucionProducto.getId_detalle_ingreso().getCodigoLote(),
-                devolucionProducto.getId_detalle_ingreso().getPrecio_unitario(),
                 devolucionProducto.getCantidad(),
                 devolucionProducto.getFechaDevolucion(),
                 devolucionProducto.getMotivo(),
                 devolucionProducto.getObservaciones(),
-                devolucionProducto.getId_usuario().getCorreo(),
-                devolucionProducto.getReposicionAplicada());
+                devolucionProducto.getReposicionAplicada() != null && devolucionProducto.getReposicionAplicada() ? 1
+                        : 0,
+                devolucionProducto.getActivo() != null && devolucionProducto.getActivo() ? 1 : 0);
     }
 
 }

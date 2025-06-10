@@ -38,7 +38,7 @@ CREATE TABLE devolucion_productos (
     id BIGINT NOT NULL AUTO_INCREMENT,
     -- Una de estas dos columnas debe tener valor, pero no ambas:
     id_serie_producto BIGINT DEFAULT NULL,  -- Devolución por serie
-    id_detalle_ingreso BIGINT DEFAULT NULL, -- Devolución por lote (sin serie)
+    id_detalle_ingreso BIGINT NOT NULL, -- Devolución por lote (sin serie)
     
     cantidad INT NOT NULL CHECK (cantidad > 0),
     fecha_devolucion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -46,17 +46,10 @@ CREATE TABLE devolucion_productos (
     observaciones TEXT,
     id_usuario BIGINT NOT NULL,
     reposicion_aplicada BOOLEAN DEFAULT FALSE,
-    
+    activo BIT(1) NOT NULL DEFAULT 1,
     PRIMARY KEY (id),
     FOREIGN KEY (id_serie_producto) REFERENCES serie_productos(id),
     FOREIGN KEY (id_detalle_ingreso) REFERENCES detalle_ingresos(id),
-    FOREIGN KEY (id_usuario) REFERENCES usuarios(id),
-
-    -- Restricción para que solo una de las dos columnas sea no nula
-    CHECK (
-        (id_serie_producto IS NOT NULL AND id_detalle_ingreso IS NULL)
-        OR 
-        (id_serie_producto IS NULL AND id_detalle_ingreso IS NOT NULL)
-    )
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
 );
 

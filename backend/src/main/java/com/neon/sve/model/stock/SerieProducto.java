@@ -5,11 +5,8 @@ import java.sql.Timestamp;
 import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore; // Importa JsonIgnore
-import com.neon.sve.dto.ingresoStock.DatosActualizarIngresoStock;
 import com.neon.sve.dto.serie.DatosActualizarSerie;
 import com.neon.sve.dto.serie.DatosRegistroSerie;
-import com.neon.sve.model.producto.Proveedor;
-import com.neon.sve.model.usuario.Usuario;
 import com.neon.sve.model.ventas.DetalleVentaSeries;
 
 import jakarta.persistence.Column;
