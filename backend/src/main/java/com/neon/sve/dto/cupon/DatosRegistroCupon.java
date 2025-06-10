@@ -11,12 +11,12 @@ public record DatosRegistroCupon(
 
     @NotBlank String codigo,
     String descripcion,
-    @NotNull TipoDescuentoCupon tipoDescuento,
-    @PositiveOrZero Double descuentoPorcentaje,
-    @PositiveOrZero Double descuentoMonto,
-    @NotNull LocalDate fechaInicio,
-    @NotNull LocalDate fechaFin,
-    @NotNull int maxUsos
+    @NotNull TipoDescuentoCupon tipo_descuento,
+    Double descuento_porcentaje,
+    Double descuento_monto,
+    @NotNull LocalDate fecha_inicio,
+    @NotNull LocalDate fecha_fin,
+    @NotNull int max_usos
 
 ) {
     

@@ -6,6 +6,8 @@ import java.time.LocalDate; // Para fechas de inicio y fin
 import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.neon.sve.dto.cupon.DatosActualizarCupon;
+import com.neon.sve.dto.cupon.DatosRegistroCupon;
 import com.neon.sve.model.ventas.Tipos.TipoDescuentoCupon;
 
 import jakarta.persistence.Column;
@@ -17,6 +19,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -78,18 +81,26 @@ public class Cupon {
     @OneToMany(mappedBy = "id_cupon")
     private List<RegistroVenta> registroVentas;
 
-    // Constructor para el registro
-    /*
-     * public Cupon(@Valid DatosRegistroCupon datosRegistroCupon) {
-     * this.codigo = datosRegistroCupon.codigo();
-     * this.descripcion = datosRegistroCupon.descripcion();
-     * this.tipoDescuento = datosRegistroCupon.tipoDescuento();
-     * this.descuentoPorcentaje = datosRegistroCupon.descuentoPorcentaje();
-     * this.descuentoMonto = datosRegistroCupon.descuentoMonto();
-     * this.fechaInicio = datosRegistroCupon.fechaInicio();
-     * this.fechaFin = datosRegistroCupon.fechaFin();
-     * this.maxUsos = datosRegistroCupon.maxUsos();
-     * }
-     */
+    public Cupon(@Valid DatosRegistroCupon datosRegistroCupon) {
+        this.codigo = datosRegistroCupon.codigo();
+        this.descripcion = datosRegistroCupon.descripcion();
+        this.tipoDescuentoCupon = datosRegistroCupon.tipo_descuento();
+        this.descuentoPorcentaje = datosRegistroCupon.descuento_porcentaje();
+        this.descuentoMonto = datosRegistroCupon.descuento_monto();
+        this.fechaInicio = datosRegistroCupon.fecha_inicio();
+        this.fechaFin = datosRegistroCupon.fecha_fin();
+        this.maxUsos = datosRegistroCupon.max_usos();
+    }
+
+    public void actualizar(@Valid DatosActualizarCupon datosActualizarCupon) {
+        this.codigo = datosActualizarCupon.codigo();
+        this.descripcion = datosActualizarCupon.descripcion();
+        this.tipoDescuentoCupon = datosActualizarCupon.tipo_descuento();
+        this.descuentoPorcentaje = datosActualizarCupon.descuento_porcentaje();
+        this.descuentoMonto = datosActualizarCupon.descuento_monto();
+        this.fechaInicio = datosActualizarCupon.fecha_inicio();
+        this.fechaFin = datosActualizarCupon.fecha_fin();
+        this.maxUsos = datosActualizarCupon.max_usos();
+    }
 
 }
