@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.neon.sve.dto.detalleVenta.DatosListadoDetalleVenta;
 import com.neon.sve.dto.detalleVenta.DatosRegistroDetalleVenta;
 import com.neon.sve.dto.detalleVenta.DatosRespuestDetalleVenta;
-import com.neon.sve.model.ventas.DetalleVenta;
 import com.neon.sve.service.detalleVenta.DetalleVentaService;
 
 import jakarta.validation.Valid;

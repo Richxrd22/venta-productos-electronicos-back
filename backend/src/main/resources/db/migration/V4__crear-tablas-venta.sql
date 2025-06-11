@@ -46,7 +46,7 @@ CREATE TABLE registro_ventas (
     total DOUBLE NOT NULL CHECK (total >= 0),
     cancelado BIT(1) NOT NULL,
     activo BIT(1) NOT NULL DEFAULT 1,
-    id_usuario BIGINT NOT NULL,
+    id_usuario BIGINT NULL,
     id_cliente BIGINT NOT NULL,
     id_metodo_pago BIGINT NOT NULL,
     id_cupon BIGINT DEFAULT NULL,
@@ -94,12 +94,12 @@ CREATE TABLE detalle_venta_series (
 
 CREATE TABLE garantias (
     id BIGINT NOT NULL AUTO_INCREMENT,
-    id_detalle BIGINT NOT NULL, -- Relación directa con producto vendido
+    id_detalle_venta BIGINT NOT NULL, -- Relación directa con producto vendido
     inicio_garantia DATE NOT NULL, -- Se define por la fecha de la venta
     fin_garantia DATE NOT NULL,    -- Se calcula según la duración en meses
     activo BIT(1) NOT NULL DEFAULT 1, -- Permite desactivar garantía si se revoca
     PRIMARY KEY (id),
-    FOREIGN KEY (id_detalle) REFERENCES detalle_ventas(id)
+    FOREIGN KEY (id_detalle_venta) REFERENCES detalle_ventas(id)
 );
 
 CREATE TABLE reclamo_garantias (
@@ -115,12 +115,12 @@ CREATE TABLE reclamo_garantias (
 
 CREATE TABLE devoluciones_venta (
     id BIGINT AUTO_INCREMENT,
-    id_detalle BIGINT NOT NULL,
+    id_detalle_venta BIGINT NOT NULL,
     fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     cantidad INT NOT NULL CHECK (cantidad > 0),
     motivo TEXT,
     id_usuario BIGINT NOT NULL,
     PRIMARY KEY (id),
-    FOREIGN KEY (id_detalle) REFERENCES detalle_ventas(id),
+    FOREIGN KEY (id_detalle_venta) REFERENCES detalle_ventas(id),
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
 );

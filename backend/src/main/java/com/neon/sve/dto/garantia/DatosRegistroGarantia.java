@@ -6,9 +6,9 @@ import jakarta.validation.constraints.NotNull;
 
 public record DatosRegistroGarantia(
 
-    @NotNull Long id_detalleVenta,
-    @NotNull LocalDate inicioGarantia,
-    @NotNull LocalDate finGarantia
+    @NotNull Long id_detalle_venta,
+    @NotNull LocalDate inicio_garantia,
+    @NotNull LocalDate fin_garantia
 
 ) {
     

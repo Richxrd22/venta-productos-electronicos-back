@@ -70,7 +70,7 @@ public class RegistroVenta {
     private Boolean activo = true;
 
     @ManyToOne
-    @JoinColumn(name = "id_usuario", nullable = false)
+    @JoinColumn(name = "id_usuario", nullable = true)
     private Usuario id_usuario; // Relación con Usuario
 
     @ManyToOne

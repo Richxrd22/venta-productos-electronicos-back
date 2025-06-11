@@ -17,7 +17,6 @@ import com.neon.sve.dto.cupon.DatosActualizarCupon;
 import com.neon.sve.dto.cupon.DatosListadoCupon;
 import com.neon.sve.dto.cupon.DatosRegistroCupon;
 import com.neon.sve.dto.cupon.DatosRespuestaCupon;
-import com.neon.sve.model.ventas.Cupon;
 import com.neon.sve.service.cupon.CuponService;
 
 import jakarta.validation.Valid;

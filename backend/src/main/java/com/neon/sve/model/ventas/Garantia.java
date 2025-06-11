@@ -3,6 +3,9 @@ package com.neon.sve.model.ventas;
 import java.time.LocalDate; // Para las fechas de inicio y fin
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.neon.sve.dto.garantia.DatosActualizarGarantia;
+import com.neon.sve.dto.garantia.DatosRegistroGarantia;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,6 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -35,7 +39,7 @@ public class Garantia {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "id_detalle", nullable = false)
+    @JoinColumn(name = "id_detalle_venta", nullable = false)
     private DetalleVenta id_detalle_venta;
 
     @Column(name = "inicio_garantia", nullable = false)
@@ -51,13 +55,16 @@ public class Garantia {
     @OneToMany(mappedBy = "id_garantia")
     private List<ReclamoGarantia> reclamosGarantia;
 
-    // Constructor para registro
-    /*
     public Garantia(@Valid DatosRegistroGarantia datosRegistro, DetalleVenta detalleVenta) {
-        this.detalleVenta = detalleValla;
-        this.inicioGarantia = datosRegistro.inicioGarantia();
-        this.finGarantia = datosRegistro.finGarantia();
-        this.activo = true; // Por defecto activo
-    }*/
+        this.id_detalle_venta = detalleVenta;
+        this.inicioGarantia = datosRegistro.inicio_garantia();
+        this.finGarantia = datosRegistro.fin_garantia();
+        }
 
+    public void actualizar(@Valid DatosActualizarGarantia datosActualizarGarantia,DetalleVenta detalleVenta) {
+        this.id = datosActualizarGarantia.id_garantia();
+        this.id_detalle_venta = detalleVenta;
+        this.inicioGarantia = datosActualizarGarantia.inicio_garantia();
+        this.finGarantia = datosActualizarGarantia.fin_garantia();
+    }
 }

@@ -14,7 +14,7 @@ public record DatosRespuestaIngresoStock(
         String proveedor,
         Timestamp fecha_ingreso,
         String lote,
-        int cantidad,
+        int cantidad_producto,
         BigDecimal  precio_unitario,
         String tipo_documento,
         String numero_documento,
