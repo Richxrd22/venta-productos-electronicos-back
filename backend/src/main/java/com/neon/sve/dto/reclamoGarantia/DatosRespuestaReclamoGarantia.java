@@ -7,16 +7,18 @@ import com.neon.sve.model.ventas.ReclamoGarantia;
 
 public record DatosRespuestaReclamoGarantia(
 
-        Long id,
-        LocalDate inicioGarantia,
-        LocalDate finalGarantia,
+        Long id_reclamo_garantia,
+        Long id_garantia,
+        LocalDate inicio_garantia,
+        LocalDate final_garantia,
         String descripcion,
         String estado,
         int activo,
-        Timestamp fechaReclamo) {
+        Timestamp fecha_reclamo) {
     public DatosRespuestaReclamoGarantia(ReclamoGarantia reclamoGarantia) {
         this(
                 reclamoGarantia.getId(),
+                reclamoGarantia.getId_garantia().getId(),
                 reclamoGarantia.getId_garantia().getInicioGarantia(),
                 reclamoGarantia.getId_garantia().getFinGarantia(),
                 reclamoGarantia.getDescripcion(),

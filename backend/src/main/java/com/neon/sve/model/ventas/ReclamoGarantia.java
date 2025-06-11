@@ -4,6 +4,8 @@ import java.sql.Timestamp;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.neon.sve.dto.reclamoGarantia.DatosActualizarReclamoGarantia;
+import com.neon.sve.dto.reclamoGarantia.DatosRegistroReclamoGarantia;
 import com.neon.sve.model.ventas.Tipos.EstadoReclamo;
 
 import jakarta.persistence.Column;
@@ -16,6 +18,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -54,13 +57,16 @@ public class ReclamoGarantia {
     @CreationTimestamp
     private Timestamp fechaReclamo;
 
-    // Constructor para registro
-    /*
     public ReclamoGarantia(@Valid DatosRegistroReclamoGarantia datosRegistro, Garantia garantia) {
-        this.garantia = garantia;
+        this.id_garantia = garantia;
         this.descripcion = datosRegistro.descripcion();
-        // Estado por defecto ya se establece
-        this.activo = true; // Por defecto activo
-    }*/
+    }
+
+    public void actualizar(@Valid DatosActualizarReclamoGarantia datosActualizarReclamo, Garantia garantia) {
+        this.id = datosActualizarReclamo.id_reclamo_garantia();
+        this.id_garantia = garantia;
+        this.descripcion = datosActualizarReclamo.descripcion();
+        this.estado = datosActualizarReclamo.estado();
+    }
 
 }

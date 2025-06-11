@@ -10,14 +10,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.neon.sve.dto.empleado.DatosListadoEmpleado;
+import com.neon.sve.dto.empleado.DatosRespuestaEmpleado;
 import com.neon.sve.dto.garantia.DatosActualizarGarantia;
 import com.neon.sve.dto.garantia.DatosListadoGarantia;
 import com.neon.sve.dto.garantia.DatosRegistroGarantia;
 import com.neon.sve.dto.garantia.DatosRespuestaGarantia;
+import com.neon.sve.model.usuario.Empleado;
+import com.neon.sve.model.ventas.Descuento;
 import com.neon.sve.model.ventas.DetalleVenta;
 import com.neon.sve.model.ventas.Garantia;
 import com.neon.sve.repository.DetalleVentaRepository;
 import com.neon.sve.repository.GarantiaRepository;
+import com.neon.sve.repository.ReclamoGarantiaRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -29,6 +34,9 @@ public class GarantiaServiceImpl implements GarantiaService {
 
     @Autowired
     private DetalleVentaRepository detalleVentaRepository;
+
+    @Autowired
+    private ReclamoGarantiaRepository reclamoGarantiaRepository;
 
     @Override
     public DatosRespuestaGarantia createGarantia(DatosRegistroGarantia datosRegistro) {
@@ -92,7 +100,15 @@ public class GarantiaServiceImpl implements GarantiaService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La garantía ya está desactivada.");
         }
 
+        // Validar que no existan reclamos asociados
+        boolean tieneReclamos = reclamoGarantiaRepository.existsByGarantiaId(id);
+        if (tieneReclamos) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "No se puede desactivar una garantía con reclamos generados.");
+        }
+
         garantia.setActivo(false);
+        garantiaRepository.save(garantia);
     }
 
 }

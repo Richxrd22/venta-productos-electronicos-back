@@ -6,10 +6,9 @@ import jakarta.validation.constraints.NotNull;
 
 public record DatosActualizarReclamoGarantia(
 
-    @NotNull Long id,
-    String descripcion,
-    EstadoReclamo estado
-    
-) {
-    
+        @NotNull Long id_reclamo_garantia,
+        @NotNull Long id_garantia,
+        String descripcion,
+        EstadoReclamo estado) {
+
 }
