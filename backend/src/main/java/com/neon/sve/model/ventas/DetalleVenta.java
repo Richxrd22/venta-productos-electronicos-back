@@ -6,6 +6,7 @@ import java.sql.Timestamp;
 import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.neon.sve.dto.detalleVenta.DatosRegistroDetalleVenta;
 import com.neon.sve.model.producto.Producto;
 
 import jakarta.persistence.Column;
@@ -18,6 +19,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -44,14 +46,14 @@ public class DetalleVenta {
     private int cantidad;
 
     @Column(name = "precio_unitario", nullable = false, precision = 10, scale = 2)
-    private BigDecimal precioUnitario;
+    private BigDecimal precio_unitario;
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal total;
 
     @Column(name = "fecha_creacion", updatable = false)
     @CreationTimestamp
-    private Timestamp fechaCreacion;
+    private Timestamp fecha_creacion;
 
     @ManyToOne
     @JoinColumn(name = "id_producto", nullable = false)
@@ -76,17 +78,13 @@ public class DetalleVenta {
     @OneToMany(mappedBy = "id_detalle_venta")
     private List<DevolucionVenta> devolucionesVenta;
 
-    // Constructor para registro
-    /*
-     * public DetalleVenta(@Valid DatosRegistroDetalleVenta datosRegistro,
-     * RegistroVenta registroVenta, Producto producto) {
-     * this.cantidad = datosRegistro.cantidad();
-     * this.precioUnitario = datosRegistro.precioUnitario();
-     * this.total = datosRegistro.total(); // Se calcularía en el servicio
-     * this.registroVenta = registroVenta;
-     * this.producto = producto;
-     * this.activo = true;
-     * }
-     */
+    public DetalleVenta(@Valid DatosRegistroDetalleVenta datosRegistro,
+            RegistroVenta registroVenta, Producto producto) {
+        this.cantidad = datosRegistro.cantidad();
+        this.precio_unitario = datosRegistro.precio_unitario();
+        this.total = datosRegistro.total(); // Se calcularía en el servicio
+        this.id_producto = producto;
+        this.id_registro_venta = registroVenta;
+    }
 
 }

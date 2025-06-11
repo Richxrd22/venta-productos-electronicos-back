@@ -6,6 +6,8 @@ import java.sql.Timestamp;
 import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.neon.sve.dto.registroVenta.DatosActualizarRegistroVenta;
+import com.neon.sve.dto.registroVenta.DatosRegistroVenta;
 import com.neon.sve.model.usuario.Usuario;
 
 import jakarta.persistence.CascadeType;
@@ -18,6 +20,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -45,20 +49,20 @@ public class RegistroVenta {
     private Timestamp fecha;
 
     @Column(name = "igv_porcentaje", nullable = false, precision = 5, scale = 2)
-    private BigDecimal igvPorcentaje;
+    private BigDecimal igv_porcentaje;
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal subtotal;
 
     @Column(name = "igv_total", nullable = false, precision = 10, scale = 2)
-    private BigDecimal igvTotal;
+    private BigDecimal igv_total;
 
     @Column(nullable = true, precision = 10, scale = 2) // Puede ser nulo si no hay descuento
     private BigDecimal descuento;
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal total;
-    
+
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private Boolean cancelado;
 
@@ -78,29 +82,45 @@ public class RegistroVenta {
     private MetodoPago id_metodo_pago; // Relación con MetodoPago
 
     @ManyToOne
-    @JoinColumn(name = "id_cupon", nullable = true) // Puede ser nulo
+    @JoinColumn(name = "id_cupon") // Puede ser nulo
     private Cupon id_cupon; // Relación con Cupon
 
     @JsonIgnore
     @OneToMany(mappedBy = "id_registro_venta", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DetalleVenta> detallesVenta;
 
-    // Constructor para el registro
-    /*
-     * public RegistroVenta(@Valid DatosRegistroVenta datosRegistroVenta, Usuario
-     * usuario, Cliente cliente, MetodoPago metodoPago, Cupon cupon) {
-     * this.igvPorcentaje = datosRegistroVenta.igvPorcentaje();
-     * this.subtotal = datosRegistroVenta.subtotal();
-     * this.igvTotal = datosRegistroVenta.igvTotal();
-     * this.descuento = datosRegistroVenta.descuento();
-     * this.total = datosRegistroVenta.total();
-     * this.cancelado = datosRegistroVenta.cancelado();
-     * this.usuario = usuario;
-     * this.cliente = cliente;
-     * this.metodoPago = metodoPago;
-     * this.cupon = cupon;
-     * this.activo = true; // Por defecto activo
-     * }
-     */
+    public RegistroVenta(@Valid DatosRegistroVenta datosRegistroVenta, Usuario usuario, Cliente cliente,
+            MetodoPago metodoPago, Cupon cupon) {
+        this.igv_porcentaje = datosRegistroVenta.igv_porcentaje();
+        this.subtotal = datosRegistroVenta.subtotal();
+        this.igv_total = datosRegistroVenta.igv_total();
+        this.descuento = datosRegistroVenta.descuento();
+        this.total = datosRegistroVenta.total();
+        this.cancelado = datosRegistroVenta.cancelado();
+        this.id_usuario = usuario;
+        this.id_cliente = cliente;
+        this.id_metodo_pago = metodoPago;
+        this.id_cupon = cupon;
+    }
+
+    public void actualizar(@Valid DatosActualizarRegistroVenta datosActualizarRegistroVenta, Usuario usuario,
+            Cliente cliente,
+            MetodoPago metodoPago, Cupon cupon) {
+        this.igv_porcentaje = datosActualizarRegistroVenta.igv_porcentaje();
+        this.subtotal = datosActualizarRegistroVenta.subtotal();
+        this.igv_total = datosActualizarRegistroVenta.igv_total();
+        this.descuento = datosActualizarRegistroVenta.descuento();
+        this.total = datosActualizarRegistroVenta.total();
+        this.cancelado = datosActualizarRegistroVenta.cancelado();
+        this.id_usuario = usuario;
+        this.id_cliente = cliente;
+        this.id_metodo_pago = metodoPago;
+        this.id_cupon = cupon;
+    }
+
+    public RegistroVenta(BigDecimal subtotal2, double doubleValue, double doubleValue2, BigDecimal total2,
+            Boolean cancelado2, Usuario usuario, Cliente cliente, MetodoPago metodoPago, Cupon cupon) {
+        //TODO Auto-generated constructor stub
+    }
 
 }

@@ -20,9 +20,9 @@ public record DatosListadoDetalleVenta(
                 detalleVenta.getId(),
                 detalleVenta.getId_producto().getNombre(),
                 detalleVenta.getCantidad(),
-                detalleVenta.getPrecioUnitario(),
+                detalleVenta.getPrecio_unitario(),
                 detalleVenta.getTotal(),
-                detalleVenta.getFechaCreacion(),
+                detalleVenta.getFecha_creacion(),
                 detalleVenta.getActivo() != null && detalleVenta.getActivo() ? 1 : 0
         );
     }

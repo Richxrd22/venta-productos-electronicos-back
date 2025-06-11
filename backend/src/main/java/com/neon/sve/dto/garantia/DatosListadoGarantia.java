@@ -22,7 +22,7 @@ public record DatosListadoGarantia(
                 garantia.getId_detalle_venta().getId_producto().getNombre(),
                 garantia.getId_detalle_venta().getCantidad(),
                 garantia.getId_detalle_venta().getTotal(),
-                garantia.getId_detalle_venta().getFechaCreacion(),
+                garantia.getId_detalle_venta().getFecha_creacion(),
                 garantia.getInicioGarantia(),
                 garantia.getFinGarantia(),
                 garantia.getActivo() != null && garantia.getActivo() ? 1 : 0);
