@@ -196,43 +196,53 @@ public class DevolucionProductoServiceImpl implements DevolucionProductoService 
         DevolucionProducto devolucion = devolucionProductoRepository.findById(datos.id_devolucion_producto())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Devolución no encontrada"));
 
-        if (devolucion.getId_serie_producto() != null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "No se puede actualizar devoluciones con Series.");
-        }
-
         Usuario usuario = usuarioRepository.findById(datos.id_usuario())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
 
-        if (datos.cantidad() <= 0) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La cantidad debe ser mayor a cero.");
+        boolean tieneSerie = devolucion.getId_serie_producto() != null;
+
+        // Validaciones
+        if (!tieneSerie) {
+            if (datos.cantidad() <= 0) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La cantidad debe ser mayor a cero.");
+            }
+
+            int cantidadAnterior = devolucion.getCantidad();
+            int nuevaCantidad = datos.cantidad();
+            int diferencia = nuevaCantidad - cantidadAnterior;
+
+            DetalleIngreso detalleIngreso = devolucion.getId_detalle_ingreso();
+
+            if (nuevaCantidad > detalleIngreso.getCantidad()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La cantidad supera el total ingresado.");
+            }
+
+            Producto producto = detalleIngreso.getId_producto();
+            int nuevoStock = producto.getStock_actual() - diferencia;
+
+            if (nuevoStock < 0) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Stock insuficiente para aplicar esta actualización.");
+            }
+
+            // Actualiza stock si no tiene serie
+            producto.setStock_actual(nuevoStock);
+            productoRepository.save(producto);
+
+            // Actualiza TODO si no tiene serie
+            devolucion.actualizar(datos, usuario);
+
+        } else {
+            // Si tiene serie, no permite cambiar la cantidad
+            if (datos.cantidad() != devolucion.getCantidad()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "No se puede cambiar la cantidad en devoluciones con Series.");
+            }
+
+            // Actualiza solo otros campos (según lógica del método `actualizar`)
+            devolucion.actualizar(datos, usuario);
         }
 
-        int cantidadAnterior = devolucion.getCantidad();
-        int nuevaCantidad = datos.cantidad();
-        int diferencia = nuevaCantidad - cantidadAnterior;
-
-        DetalleIngreso detalleIngreso = devolucion.getId_detalle_ingreso();
-
-        if (nuevaCantidad > detalleIngreso.getCantidad()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La cantidad supera el total ingresado.");
-        }
-
-        Producto producto = detalleIngreso.getId_producto();
-
-        // ⚠️ Diferencia se RESTA del stock actual (si aumenta la devolución, se reduce
-        // el stock)
-        int nuevoStock = producto.getStock_actual() - diferencia;
-
-        if (nuevoStock < 0) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Stock insuficiente para aplicar esta actualización.");
-        }
-
-        producto.setStock_actual(nuevoStock);
-        productoRepository.save(producto);
-
-        devolucion.actualizar(datos, usuario);
         devolucionProductoRepository.save(devolucion);
 
         return new DatosRespuestaMensaje("Devolución actualizada correctamente");

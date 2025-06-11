@@ -1,5 +1,6 @@
 package com.neon.sve.dto.ingresoStock;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 import com.neon.sve.model.stock.IngresoStock;
@@ -14,6 +15,7 @@ public record DatosRespuestaIngresoStock(
         Timestamp fecha_ingreso,
         String lote,
         int cantidad,
+        BigDecimal  precio_unitario,
         String tipo_documento,
         String numero_documento,
         String observaciones
@@ -30,6 +32,7 @@ public record DatosRespuestaIngresoStock(
                 ingresoStock.getFecha_ingreso(),
                 ingresoStock.getDetallesIngreso().getCodigoLote(),
                 ingresoStock.getDetallesIngreso().getCantidad(),
+                ingresoStock.getDetallesIngreso().getPrecio_unitario(),
                 ingresoStock.getTipo_documento(),
                 ingresoStock.getNumero_documento(),
                 ingresoStock.getObservaciones());

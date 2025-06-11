@@ -19,7 +19,7 @@ public record DatosRegistroIngresoStock(
         @NotNull
         @DecimalMin(value = "0.01", message = "El precio unitario debe ser mayor a cero")
         BigDecimal precio_unitario,
-
+        
          // NUEVOS CAMPOS PARA SERIES
         @NotBlank
         String tipo_serie,  // "SIN_SERIE","CON_SERIE"

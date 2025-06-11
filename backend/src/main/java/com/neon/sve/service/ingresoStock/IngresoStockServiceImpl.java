@@ -92,31 +92,35 @@ public class IngresoStockServiceImpl implements IngresoStockService {
         DetalleIngreso detalle = ingresoStock.getDetallesIngreso();
         Producto producto = detalle.getId_producto();
 
-        if (detalle.getSeriesProductos() != null && !detalle.getSeriesProductos().isEmpty()) {
+        int cantidadAnterior = detalle.getCantidad();
+        int cantidadNueva = datosActualizarIngresoStock.cantidad_producto();
+
+        boolean tieneSeries = detalle.getSeriesProductos() != null && !detalle.getSeriesProductos().isEmpty();
+
+        if (tieneSeries && cantidadNueva != cantidadAnterior) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "No se puede modificar la cantidad porque ya hay series de productos asociadas.");
         }
 
-        int cantidadAnterior = detalle.getCantidad();
-        int cantidadNueva = datosActualizarIngresoStock.cantidad_producto();
-        int diferencia = cantidadNueva - cantidadAnterior;
+        if (!tieneSeries && cantidadNueva != cantidadAnterior) {
+            int diferencia = cantidadNueva - cantidadAnterior;
+            int nuevoStock = producto.getStock_actual() + diferencia;
 
-        int nuevoStock = producto.getStock_actual() + diferencia;
+            if (nuevoStock < 0) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "El stock del producto no puede quedar en negativo.");
+            }
 
-        if (nuevoStock < 0) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "El stock del producto no puede quedar en negativo.");
+            if (nuevoStock > producto.getMax_stock()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "El stock del producto superaría el máximo permitido.");
+            }
+
+            producto.setStock_actual(nuevoStock);
+            detalle.setCantidad(cantidadNueva); 
         }
-
-        if (nuevoStock > producto.getMax_stock()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "El stock del producto superaría el máximo permitido.");
-        }
-
-        producto.setStock_actual(nuevoStock);
 
         ingresoStock.actualizar(datosActualizarIngresoStock, proveedor, usuario);
-        detalle.setCantidad(cantidadNueva);
         detalle.setPrecio_unitario(datosActualizarIngresoStock.precio_unitario());
 
         return new DatosRespuestaIngresoStock(ingresoStock);
@@ -139,6 +143,24 @@ public class IngresoStockServiceImpl implements IngresoStockService {
         DetalleIngreso detalle = ingresoStock.getDetallesIngreso();
         if (detalle != null) {
             detalle.setActivo(true);
+
+            Producto producto = detalle.getId_producto();
+            int nuevoStock = producto.getStock_actual() + detalle.getCantidad();
+
+            if (nuevoStock > producto.getMax_stock()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Activar este ingreso superaría el stock máximo permitido.");
+            }
+
+            producto.setStock_actual(nuevoStock);
+            productoRepository.save(producto);
+
+            if (detalle.getSeriesProductos() != null) {
+                detalle.getSeriesProductos().forEach(serie -> {
+                    serie.setEstado(EstadoSerie.ACTIVO);
+                    serieProductoRepository.save(serie);
+                });
+            }
         }
 
         ingresoStockRepository.save(ingresoStock);
@@ -153,14 +175,44 @@ public class IngresoStockServiceImpl implements IngresoStockService {
 
         if (Boolean.FALSE.equals(ingresoStock.getActivo())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "El ingreso de stock ya se encuentra desactivado.");
+                    "El ingreso de stock ya está desactivado.");
         }
 
-        ingresoStock.setActivo(false);
-
         DetalleIngreso detalle = ingresoStock.getDetallesIngreso();
+
         if (detalle != null) {
+            List<SerieProducto> series = detalle.getSeriesProductos();
+            if (series != null && !series.isEmpty()) {
+                boolean tieneSeriesComprometidas = series.stream()
+                        .anyMatch(serie -> serie.getEstado() == EstadoSerie.VENDIDO ||
+                                serie.getEstado() == EstadoSerie.REPARACION ||
+                                serie.getEstado() == EstadoSerie.DEVUELTO);
+
+                if (tieneSeriesComprometidas) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                            "No se puede desactivar este ingreso porque una o más series están en estado VENDIDO, REPARACION o DEVUELTO.");
+                }
+            }
+
             detalle.setActivo(false);
+            ingresoStock.setActivo(false);
+            Producto producto = detalle.getId_producto();
+            int nuevoStock = producto.getStock_actual() - detalle.getCantidad();
+
+            if (nuevoStock < 0) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "No se puede desactivar este ingreso porque el stock actual es menor que la cantidad ingresada.");
+            }
+
+            producto.setStock_actual(nuevoStock);
+            productoRepository.save(producto);
+
+            if (series != null && !series.isEmpty()) {
+                series.forEach(serie -> {
+                    serie.setEstado(EstadoSerie.INACTIVO);
+                    serieProductoRepository.save(serie);
+                });
+            }
         }
 
         ingresoStockRepository.save(ingresoStock);
@@ -222,7 +274,7 @@ public class IngresoStockServiceImpl implements IngresoStockService {
         detalleIngresoRepository.save(detalleIngreso);
 
         String tipoSerie = datosRegistroIngresoStock.tipo_serie();
-        if ("SERIE".equalsIgnoreCase(tipoSerie)) {
+        if ("CON_SERIE".equalsIgnoreCase(tipoSerie)) {
             procesarSerieIndividual(datosRegistroIngresoStock, detalleIngreso);
         }
         return new DatosRespuestaMensaje("Ingreso de stock registrado con éxito.");
