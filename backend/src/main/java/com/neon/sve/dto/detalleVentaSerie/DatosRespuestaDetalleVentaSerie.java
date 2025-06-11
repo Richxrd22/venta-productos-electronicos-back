@@ -17,7 +17,7 @@ public record DatosRespuestaDetalleVentaSerie(
                 detalleVentaSerie.getId(),
                 detalleVentaSerie.getId_detalle_venta().getCantidad(),
                 detalleVentaSerie.getId_detalle_venta().getTotal(),
-                detalleVentaSerie.getId_detalle_venta().getFechaCreacion(),
+                detalleVentaSerie.getId_detalle_venta().getFecha_creacion(),
                 detalleVentaSerie.getId_serie_producto().getNumeroSerie());
     }
 
