@@ -10,14 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.neon.sve.dto.empleado.DatosListadoEmpleado;
-import com.neon.sve.dto.empleado.DatosRespuestaEmpleado;
 import com.neon.sve.dto.garantia.DatosActualizarGarantia;
 import com.neon.sve.dto.garantia.DatosListadoGarantia;
 import com.neon.sve.dto.garantia.DatosRegistroGarantia;
 import com.neon.sve.dto.garantia.DatosRespuestaGarantia;
-import com.neon.sve.model.usuario.Empleado;
-import com.neon.sve.model.ventas.Descuento;
 import com.neon.sve.model.ventas.DetalleVenta;
 import com.neon.sve.model.ventas.Garantia;
 import com.neon.sve.repository.DetalleVentaRepository;
