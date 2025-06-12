@@ -2,7 +2,10 @@ package com.neon.sve.dto.registroVenta;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import com.neon.sve.dto.detalleVenta.DatosListadoDetalleVenta;
 import com.neon.sve.model.ventas.RegistroVenta;
 
 public record DatosRespuestaRegistroVenta(
@@ -22,7 +25,8 @@ public record DatosRespuestaRegistroVenta(
         Long id_metodo_pago,
         String nombreMetodoPago,
         Long id_cupon,
-        String codigoCupon) {
+        String codigoCupon,
+        List<DatosListadoDetalleVenta> detallesVenta) {
 
     public DatosRespuestaRegistroVenta(RegistroVenta registroVenta) {
         this(
@@ -42,6 +46,10 @@ public record DatosRespuestaRegistroVenta(
                 registroVenta.getId_metodo_pago().getId(),
                 registroVenta.getId_metodo_pago().getMetodo(),
                 registroVenta.getId_cupon() != null ? registroVenta.getId_cupon().getId() : null,
-                registroVenta.getId_cupon() != null ? registroVenta.getId_cupon().getCodigo() : null);
+                registroVenta.getId_cupon() != null ? registroVenta.getId_cupon().getCodigo() : null,
+                // Mapea la lista de DetalleVenta a DatosListadoDetalleVenta
+                registroVenta.getDetallesVenta() != null ? registroVenta.getDetallesVenta().stream()
+                        .map(DatosListadoDetalleVenta::new)
+                        .collect(Collectors.toList()) : null);
     }
 }

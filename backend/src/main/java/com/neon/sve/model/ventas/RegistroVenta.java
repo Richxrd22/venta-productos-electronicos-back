@@ -13,6 +13,7 @@ import com.neon.sve.model.usuario.Usuario;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -48,19 +49,19 @@ public class RegistroVenta {
     @CreationTimestamp
     private Timestamp fecha;
 
-    @Column(name = "igv_porcentaje", nullable = false, precision = 5, scale = 2)
+    @Column(name = "igv_porcentaje", precision = 5, scale = 2)
     private BigDecimal igv_porcentaje;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(precision = 10, scale = 2)
     private BigDecimal subtotal;
 
-    @Column(name = "igv_total", nullable = false, precision = 10, scale = 2)
+    @Column(name = "igv_total", precision = 10, scale = 2)
     private BigDecimal igv_total;
 
     @Column(nullable = true, precision = 10, scale = 2) // Puede ser nulo si no hay descuento
     private BigDecimal descuento;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(precision = 10, scale = 2)
     private BigDecimal total;
 
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
@@ -85,8 +86,7 @@ public class RegistroVenta {
     @JoinColumn(name = "id_cupon") // Puede ser nulo
     private Cupon id_cupon; // Relación con Cupon
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "id_registro_venta", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "id_registro_venta", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<DetalleVenta> detallesVenta;
 
     public RegistroVenta(@Valid DatosRegistroVenta datosRegistroVenta, Usuario usuario, Cliente cliente,

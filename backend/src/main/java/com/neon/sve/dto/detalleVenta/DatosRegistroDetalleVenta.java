@@ -8,9 +8,9 @@ import jakarta.validation.constraints.Positive;
 
 public record DatosRegistroDetalleVenta(
 
-    @NotNull @Min(1) int cantidad,
-    @NotNull @Positive BigDecimal precio_unitario,
-    @NotNull BigDecimal total,
+    @Min(1) int cantidad,
+    @Positive BigDecimal precio_unitario,
+    BigDecimal total,
     @NotNull Long id_producto,
     @NotNull Long id_registro_venta
     // total y fechaCreacion se calculan/generan automáticamente
