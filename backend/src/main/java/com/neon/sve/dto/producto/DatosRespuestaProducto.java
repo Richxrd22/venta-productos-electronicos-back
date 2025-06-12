@@ -1,5 +1,6 @@
 package com.neon.sve.dto.producto;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 import com.neon.sve.model.producto.Producto;
@@ -12,7 +13,7 @@ public record DatosRespuestaProducto(
                 String modelo,
                 String color,
                 String descripcion,
-                Double precio_venta,
+                BigDecimal precio_venta,
                 int min_stock,
                 int max_stock,
                 int stock_actual,

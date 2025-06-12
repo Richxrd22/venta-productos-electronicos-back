@@ -82,7 +82,7 @@ public class DevolucionProducto {
         this.motivo = datos.motivo().trim();
         this.observaciones = datos.observaciones();
         this.id_usuario = usuario;
-        this.reposicionAplicada = Boolean.TRUE.equals(datos.reposicionAplicada());
+        this.reposicionAplicada = Boolean.TRUE.equals(datos.reposicion_aplicada());
     }
 
     public void actualizar(@Valid DatosActualizarDevolucionProducto datos, Usuario usuario) {

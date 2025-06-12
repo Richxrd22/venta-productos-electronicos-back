@@ -23,6 +23,6 @@ public record DatosRegistroDevolucionProducto(
         String observaciones,
 
         @NotNull Long id_usuario,
-        Boolean reposicionAplicada
+        Boolean reposicion_aplicada
 
 ) {}

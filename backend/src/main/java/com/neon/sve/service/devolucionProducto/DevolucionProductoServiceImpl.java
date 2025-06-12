@@ -200,8 +200,9 @@ public class DevolucionProductoServiceImpl implements DevolucionProductoService 
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
 
         boolean tieneSerie = devolucion.getId_serie_producto() != null;
+        boolean reposicionAntes = Boolean.TRUE.equals(devolucion.getReposicionAplicada());
+        boolean reposicionNueva = Boolean.TRUE.equals(datos.reposicion_aplicada());
 
-        // Validaciones
         if (!tieneSerie) {
             if (datos.cantidad() <= 0) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La cantidad debe ser mayor a cero.");
@@ -218,28 +219,47 @@ public class DevolucionProductoServiceImpl implements DevolucionProductoService 
             }
 
             Producto producto = detalleIngreso.getId_producto();
-            int nuevoStock = producto.getStock_actual() - diferencia;
+            int stockActual = producto.getStock_actual();
 
-            if (nuevoStock < 0) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "Stock insuficiente para aplicar esta actualización.");
+            // Validación de stock por modificación de cantidad
+            if (!reposicionAntes && !reposicionNueva && (stockActual - diferencia) < 0) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Stock insuficiente para esta modificación.");
             }
 
-            // Actualiza stock si no tiene serie
-            producto.setStock_actual(nuevoStock);
-            productoRepository.save(producto);
+            // ✅ Si antes no se repuso y ahora sí → sumamos la cantidad devuelta al stock
+            if (!reposicionAntes && reposicionNueva) {
+                producto.setStock_actual(stockActual + nuevaCantidad);
+            }
 
-            // Actualiza TODO si no tiene serie
+            // Si antes sí estaba repuesto y ahora se desmarca → quitamos la cantidad del
+            // stock
+            if (reposicionAntes && !reposicionNueva) {
+                if (stockActual - nuevaCantidad < 0) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                            "No se puede retirar stock por debajo de cero.");
+                }
+                producto.setStock_actual(stockActual - nuevaCantidad);
+            }
+
+            // Si no cambió el estado de reposición pero sí la cantidad
+            if (reposicionNueva == reposicionAntes && diferencia != 0) {
+                int nuevoStock = stockActual - diferencia;
+                if (nuevoStock < 0) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                            "Stock insuficiente para aplicar esta actualización.");
+                }
+                producto.setStock_actual(nuevoStock);
+            }
+
+            productoRepository.save(producto);
             devolucion.actualizar(datos, usuario);
 
         } else {
-            // Si tiene serie, no permite cambiar la cantidad
             if (datos.cantidad() != devolucion.getCantidad()) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                         "No se puede cambiar la cantidad en devoluciones con Series.");
             }
 
-            // Actualiza solo otros campos (según lógica del método `actualizar`)
             devolucion.actualizar(datos, usuario);
         }
 

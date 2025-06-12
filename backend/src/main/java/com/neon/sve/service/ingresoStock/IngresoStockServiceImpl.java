@@ -24,11 +24,13 @@ import com.neon.sve.dto.login.DatosRespuestaMensaje;
 import com.neon.sve.model.producto.Producto;
 import com.neon.sve.model.producto.Proveedor;
 import com.neon.sve.model.stock.DetalleIngreso;
+import com.neon.sve.model.stock.DevolucionProducto;
 import com.neon.sve.model.stock.EstadoSerie;
 import com.neon.sve.model.stock.IngresoStock;
 import com.neon.sve.model.stock.SerieProducto;
 import com.neon.sve.model.usuario.Usuario;
 import com.neon.sve.repository.DetalleIngresoRepository;
+import com.neon.sve.repository.DevolucionProductoRepository;
 import com.neon.sve.repository.IngresoStockRepository;
 import com.neon.sve.repository.ProductoRepository;
 import com.neon.sve.repository.ProveedorRepository;
@@ -57,6 +59,9 @@ public class IngresoStockServiceImpl implements IngresoStockService {
 
     @Autowired
     private SerieProductoRepository serieProductoRepository;
+
+    @Autowired
+    private DevolucionProductoRepository devolucionProductoRepository;
 
     @Override
     public DatosRespuestaIngresoStock getIngresoStockById(Long id) {
@@ -177,6 +182,11 @@ public class IngresoStockServiceImpl implements IngresoStockService {
 
         int stockResultante = producto.getStock_actual() + datosRegistroIngresoStock.cantidad_producto();
 
+        if (datosRegistroIngresoStock.precio_unitario().compareTo(producto.getPrecio_venta()) > 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "El precio unitario del ingreso no puede ser mayor al precio de venta del producto.");
+        }
+
         if (stockResultante < producto.getMin_stock()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "El stock total después del ingreso no puede ser menor al stock mínimo permitido ("
@@ -224,7 +234,6 @@ public class IngresoStockServiceImpl implements IngresoStockService {
     /* Metodo para updateIngresoStock */
     private void actualizarCantidadYStockSiEsNecesario(DetalleIngreso detalle, Producto producto, int nuevaCantidad) {
         int cantidadAnterior = detalle.getCantidad();
-
         boolean tieneSeries = detalle.getSeriesProductos() != null && !detalle.getSeriesProductos().isEmpty();
 
         if (tieneSeries && nuevaCantidad != cantidadAnterior) {
@@ -233,6 +242,15 @@ public class IngresoStockServiceImpl implements IngresoStockService {
         }
 
         if (!tieneSeries && nuevaCantidad != cantidadAnterior) {
+            // Verificar si hay devoluciones manipuladas sin serie y sin reposición
+            boolean existeDevolucionNoReposicionada = devolucionProductoRepository
+                    .existsManipuladaSinSerie(detalle.getId());
+
+            if (existeDevolucionNoReposicionada) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Este ingreso no puede modificarse porque tiene una devolución sin reposición.");
+            }
+
             int diferencia = nuevaCantidad - cantidadAnterior;
             int nuevoStock = producto.getStock_actual() + diferencia;
 

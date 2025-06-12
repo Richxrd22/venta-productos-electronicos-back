@@ -1,5 +1,6 @@
 package com.neon.sve.model.producto;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -52,7 +53,7 @@ public class Producto {
     private String descripcion;
 
     @Column(nullable = false)
-    private double precio_venta;
+    private BigDecimal precio_venta;
 
     @Column(nullable = false)
     private int min_stock;

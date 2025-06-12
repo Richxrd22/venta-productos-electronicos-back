@@ -1,5 +1,7 @@
 package com.neon.sve.dto.producto;
 
+import java.math.BigDecimal;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -10,7 +12,7 @@ public record DatosActualizarProducto(
         String modelo,
         String color,
         @NotBlank String descripcion,
-        @NotNull Double precio_venta,
+        @NotNull BigDecimal precio_venta,
         @NotNull int min_stock,
         @NotNull int max_stock,
         @NotNull int garantia_meses,
