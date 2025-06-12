@@ -1,9 +1,9 @@
 package com.neon.sve.controller.venta;
 
 import com.neon.sve.dto.MensajeRespuesta;
-import com.neon.sve.dto.registroVenta.DatosActualizarRegistroVenta;
+import com.neon.sve.dto.registroVenta.DatosActualizarVentaCompleta;
 import com.neon.sve.dto.registroVenta.DatosListadoRegistroVenta;
-import com.neon.sve.dto.registroVenta.DatosRegistroVenta;
+import com.neon.sve.dto.registroVenta.DatosRegistroVentaCompleta;
 import com.neon.sve.dto.registroVenta.DatosRespuestaRegistroVenta;
 import com.neon.sve.service.registroVenta.VentaService;
 
@@ -52,20 +52,25 @@ public class VentaController {
 
     @PostMapping("/registrar")
     public ResponseEntity<DatosRespuestaRegistroVenta> registrarVenta(
-            @Valid @RequestBody DatosRegistroVenta datosRegistroVenta,
+            @Valid @RequestBody DatosRegistroVentaCompleta datosRegistroVenta,
             UriComponentsBuilder uriComponentsBuilder) {
-        DatosRespuestaRegistroVenta datosRespuestaVenta = ventaService.createVenta(datosRegistroVenta);
+
+        // Llamamos al nuevo método del servicio
+        DatosRespuestaRegistroVenta datosRespuestaVenta = ventaService.createVentaCompleta(datosRegistroVenta);
+
         URI url = uriComponentsBuilder.path("/buscar/{id}")
                 .buildAndExpand(datosRespuestaVenta.id())
                 .toUri();
+
         return ResponseEntity.created(url).body(datosRespuestaVenta);
     }
 
     @PutMapping("/actualizar")
     @Transactional
     public ResponseEntity<DatosRespuestaRegistroVenta> actualizarVenta(
-            @Valid @RequestBody DatosActualizarRegistroVenta datosActualizarRegistroVenta) {
-        DatosRespuestaRegistroVenta datosRespuestaVenta = ventaService.updateVenta(datosActualizarRegistroVenta);
+            @Valid @RequestBody DatosActualizarVentaCompleta datosActualizar) {
+
+        DatosRespuestaRegistroVenta datosRespuestaVenta = ventaService.updateVentaCompleta(datosActualizar);
         return ResponseEntity.ok(datosRespuestaVenta);
     }
 
