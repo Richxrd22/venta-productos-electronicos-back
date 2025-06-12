@@ -83,6 +83,10 @@ public class IngresoStockServiceImpl implements IngresoStockService {
         IngresoStock ingresoStock = ingresoStockRepository.findById(datosActualizarIngresoStock.id_ingreso())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ingreso no encontrado."));
 
+        if (!Boolean.TRUE.equals(ingresoStock.getActivo())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El Ingreso stock está inactivo.");
+        }
+
         Proveedor proveedor = proveedorRepository.findById(datosActualizarIngresoStock.id_proveedor())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Proveedor no encontrado."));
 
@@ -92,33 +96,7 @@ public class IngresoStockServiceImpl implements IngresoStockService {
         DetalleIngreso detalle = ingresoStock.getDetallesIngreso();
         Producto producto = detalle.getId_producto();
 
-        int cantidadAnterior = detalle.getCantidad();
-        int cantidadNueva = datosActualizarIngresoStock.cantidad_producto();
-
-        boolean tieneSeries = detalle.getSeriesProductos() != null && !detalle.getSeriesProductos().isEmpty();
-
-        if (tieneSeries && cantidadNueva != cantidadAnterior) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "No se puede modificar la cantidad porque ya hay series de productos asociadas.");
-        }
-
-        if (!tieneSeries && cantidadNueva != cantidadAnterior) {
-            int diferencia = cantidadNueva - cantidadAnterior;
-            int nuevoStock = producto.getStock_actual() + diferencia;
-
-            if (nuevoStock < 0) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "El stock del producto no puede quedar en negativo.");
-            }
-
-            if (nuevoStock > producto.getMax_stock()) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "El stock del producto superaría el máximo permitido.");
-            }
-
-            producto.setStock_actual(nuevoStock);
-            detalle.setCantidad(cantidadNueva); 
-        }
+        actualizarCantidadYStockSiEsNecesario(detalle, producto, datosActualizarIngresoStock.cantidad_producto());
 
         ingresoStock.actualizar(datosActualizarIngresoStock, proveedor, usuario);
         detalle.setPrecio_unitario(datosActualizarIngresoStock.precio_unitario());
@@ -138,31 +116,20 @@ public class IngresoStockServiceImpl implements IngresoStockService {
                     "El ingreso de stock ya se encuentra activo.");
         }
 
+        DetalleIngreso detalle = ingresoStock.getDetallesIngreso();
+        if (detalle == null)
+            return;
+
+        Producto producto = detalle.getId_producto();
+        validarStockMaximo(producto, detalle.getCantidad());
+
+        activarSeries(detalle.getSeriesProductos());
+
+        detalle.setActivo(true);
         ingresoStock.setActivo(true);
 
-        DetalleIngreso detalle = ingresoStock.getDetallesIngreso();
-        if (detalle != null) {
-            detalle.setActivo(true);
-
-            Producto producto = detalle.getId_producto();
-            int nuevoStock = producto.getStock_actual() + detalle.getCantidad();
-
-            if (nuevoStock > producto.getMax_stock()) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "Activar este ingreso superaría el stock máximo permitido.");
-            }
-
-            producto.setStock_actual(nuevoStock);
-            productoRepository.save(producto);
-
-            if (detalle.getSeriesProductos() != null) {
-                detalle.getSeriesProductos().forEach(serie -> {
-                    serie.setEstado(EstadoSerie.ACTIVO);
-                    serieProductoRepository.save(serie);
-                });
-            }
-        }
-
+        producto.setStock_actual(producto.getStock_actual() + detalle.getCantidad());
+        productoRepository.save(producto);
         ingresoStockRepository.save(ingresoStock);
     }
 
@@ -173,47 +140,22 @@ public class IngresoStockServiceImpl implements IngresoStockService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Ingreso de Stock no encontrado, verifique ID ingresado: " + id));
 
-        if (Boolean.FALSE.equals(ingresoStock.getActivo())) {
+        if (!Boolean.TRUE.equals(ingresoStock.getActivo())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "El ingreso de stock ya está desactivado.");
         }
 
         DetalleIngreso detalle = ingresoStock.getDetallesIngreso();
+        if (detalle == null)
+            return;
 
-        if (detalle != null) {
-            List<SerieProducto> series = detalle.getSeriesProductos();
-            if (series != null && !series.isEmpty()) {
-                boolean tieneSeriesComprometidas = series.stream()
-                        .anyMatch(serie -> serie.getEstado() == EstadoSerie.VENDIDO ||
-                                serie.getEstado() == EstadoSerie.REPARACION ||
-                                serie.getEstado() == EstadoSerie.DEVUELTO);
+        List<SerieProducto> series = detalle.getSeriesProductos();
+        validarSeries(series);
+        actualizarStock(detalle);
+        desactivarSeries(series);
 
-                if (tieneSeriesComprometidas) {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                            "No se puede desactivar este ingreso porque una o más series están en estado VENDIDO, REPARACION o DEVUELTO.");
-                }
-            }
-
-            detalle.setActivo(false);
-            ingresoStock.setActivo(false);
-            Producto producto = detalle.getId_producto();
-            int nuevoStock = producto.getStock_actual() - detalle.getCantidad();
-
-            if (nuevoStock < 0) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "No se puede desactivar este ingreso porque el stock actual es menor que la cantidad ingresada.");
-            }
-
-            producto.setStock_actual(nuevoStock);
-            productoRepository.save(producto);
-
-            if (series != null && !series.isEmpty()) {
-                series.forEach(serie -> {
-                    serie.setEstado(EstadoSerie.INACTIVO);
-                    serieProductoRepository.save(serie);
-                });
-            }
-        }
+        detalle.setActivo(false);
+        ingresoStock.setActivo(false);
 
         ingresoStockRepository.save(ingresoStock);
     }
@@ -221,7 +163,6 @@ public class IngresoStockServiceImpl implements IngresoStockService {
     @Transactional
     @Override
     public DatosRespuestaMensaje createIngresoStock(DatosRegistroIngresoStock datosRegistroIngresoStock) {
-
         String codigoLoteAutomatico = "L-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")) + "-"
                 + UUID.randomUUID().toString().substring(0, 6);
 
@@ -280,6 +221,37 @@ public class IngresoStockServiceImpl implements IngresoStockService {
         return new DatosRespuestaMensaje("Ingreso de stock registrado con éxito.");
     }
 
+    /* Metodo para updateIngresoStock */
+    private void actualizarCantidadYStockSiEsNecesario(DetalleIngreso detalle, Producto producto, int nuevaCantidad) {
+        int cantidadAnterior = detalle.getCantidad();
+
+        boolean tieneSeries = detalle.getSeriesProductos() != null && !detalle.getSeriesProductos().isEmpty();
+
+        if (tieneSeries && nuevaCantidad != cantidadAnterior) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "No se puede modificar la cantidad porque ya hay series de productos asociadas.");
+        }
+
+        if (!tieneSeries && nuevaCantidad != cantidadAnterior) {
+            int diferencia = nuevaCantidad - cantidadAnterior;
+            int nuevoStock = producto.getStock_actual() + diferencia;
+
+            if (nuevoStock < 0) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "El stock del producto no puede quedar en negativo.");
+            }
+
+            if (nuevoStock > producto.getMax_stock()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "El stock del producto superaría el máximo permitido.");
+            }
+
+            producto.setStock_actual(nuevoStock);
+            detalle.setCantidad(nuevaCantidad);
+        }
+    }
+
+    /* Metodo para createIngresoSotck */
     private void procesarSerieIndividual(DatosRegistroIngresoStock datos, DetalleIngreso detalleIngreso) {
         List<String> series = datos.series_individuales();
 
@@ -324,6 +296,63 @@ public class IngresoStockServiceImpl implements IngresoStockService {
                     .estado(EstadoSerie.ACTIVO)
                     .build();
             serieProductoRepository.save(serie);
+        }
+    }
+
+    /* Metodo para desactivarIngresoStock */
+    private void validarSeries(List<SerieProducto> series) {
+        if (series == null || series.isEmpty())
+            return;
+
+        boolean tieneSeriesComprometidas = series.stream().anyMatch(serie -> serie.getEstado() == EstadoSerie.VENDIDO ||
+                serie.getEstado() == EstadoSerie.REPARACION ||
+                serie.getEstado() == EstadoSerie.DEVUELTO);
+
+        if (tieneSeriesComprometidas) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "No se puede desactivar este ingreso porque una o más series están en estado VENDIDO, REPARACION o DEVUELTO.");
+        }
+
+    }
+
+    private void actualizarStock(DetalleIngreso detalle) {
+        Producto producto = detalle.getId_producto();
+        int nuevoStock = producto.getStock_actual() - detalle.getCantidad();
+
+        if (nuevoStock < 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "No se puede desactivar este ingreso porque el stock actual es menor que la cantidad ingresada.");
+        }
+
+        producto.setStock_actual(nuevoStock);
+        productoRepository.save(producto);
+    }
+
+    private void desactivarSeries(List<SerieProducto> series) {
+
+        if (series == null || series.isEmpty())
+            return;
+        series.forEach(serie -> {
+            serie.setEstado(EstadoSerie.INACTIVO);
+            serieProductoRepository.save(serie);
+        });
+    }
+
+    /* Metodo para activarIngresoStock */
+    private void validarStockMaximo(Producto producto, int cantidadAgregar) {
+        int stockFinal = producto.getStock_actual() + cantidadAgregar;
+        if (stockFinal > producto.getMax_stock()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Activar este ingreso superaría el stock máximo permitido.");
+        }
+    }
+
+    private void activarSeries(List<SerieProducto> series) {
+        if (series != null && !series.isEmpty()) {
+            series.forEach(serie -> {
+                serie.setEstado(EstadoSerie.ACTIVO);
+                serieProductoRepository.save(serie);
+            });
         }
     }
 

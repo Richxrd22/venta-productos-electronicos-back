@@ -10,12 +10,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.neon.sve.dto.proveedor.DatosRespuestaProveedor;
 import com.neon.sve.dto.reclamoGarantia.DatosActualizarReclamoGarantia;
 import com.neon.sve.dto.reclamoGarantia.DatosListadoReclamoGarantia;
 import com.neon.sve.dto.reclamoGarantia.DatosRegistroReclamoGarantia;
 import com.neon.sve.dto.reclamoGarantia.DatosRespuestaReclamoGarantia;
-import com.neon.sve.model.producto.Proveedor;
 import com.neon.sve.model.ventas.Garantia;
 import com.neon.sve.model.ventas.ReclamoGarantia;
 import com.neon.sve.model.ventas.Tipos.EstadoReclamo;
@@ -37,10 +35,6 @@ public class ReclamoGarantiaServiceImpl implements ReclamoGarantiaService {
 
         Garantia garantia = garantiaRepository.findById(datosRegistrarReclamoGarantia.id_garantia())
                 .orElseThrow(() -> new RuntimeException("Garantía no encontrada"));
-
-        if (!Boolean.TRUE.equals(garantia.getActivo())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La garantía está inactiva.");
-        }
 
         LocalDate hoy = LocalDate.now();
         if (hoy.isBefore(garantia.getInicioGarantia()) || hoy.isAfter(garantia.getFinGarantia())) {

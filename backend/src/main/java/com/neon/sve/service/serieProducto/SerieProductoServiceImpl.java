@@ -48,79 +48,98 @@ public class SerieProductoServiceImpl implements SerieProductoService {
 
     @Override
     public DatosRespuestaSerie createSerieProductos(DatosRegistroSerie datosRegistroSerie) {
-        DetalleIngreso detalleIngreso = detalleIngresoRepository
-                .getReferenceById(datosRegistroSerie.id_detalle_ingreso());
+        DetalleIngreso detalleIngreso = detalleIngresoRepository.findById(datosRegistroSerie.id_detalle_ingreso())
+                .orElseThrow(
+                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Detalle de ingreso no encontrado"));
 
-        // Validar si el detalle es sin serie (por convención, si no tiene ninguna serie
-        // registrada todavía)
-        long totalSeriesRegistradas = serieProductoRepository.contarPorDetalleIngreso(detalleIngreso);
+        validarProductoConSeries(detalleIngreso);
+        validarCantidadSeries(detalleIngreso);
+        validarSerieLocal(datosRegistroSerie.numero_serie(), detalleIngreso);
+        validarSerieGlobal(datosRegistroSerie.numero_serie());
 
-        if (totalSeriesRegistradas == 0 && detalleIngreso.getCantidad() > 0) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Este detalle está registrado como un producto sin serie. No se pueden agregar series.");
-        }
+        SerieProducto nuevaSerie = new SerieProducto(datosRegistroSerie, detalleIngreso);
+        serieProductoRepository.save(nuevaSerie);
 
-        // Validar que no se exceda la cantidad del detalle
-        if (totalSeriesRegistradas >= detalleIngreso.getCantidad()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Ya se han registrado todas las series para este detalle.");
-        }
-
-        // Validar si la serie ya existe con estado ocupado
-        List<EstadoSerie> estadosOcupados = List.of(
-                EstadoSerie.ACTIVO,
-                EstadoSerie.VENDIDO,
-                EstadoSerie.DEVUELTO,
-                EstadoSerie.REPARACION);
-
-        // Validar que no exista ya una serie con el mismo número
-        boolean yaExiste = serieProductoRepository.existsByNumeroSerieAndEstadoIn(
-                datosRegistroSerie.numero_serie(), estadosOcupados);
-
-        if (yaExiste) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Ya existe una serie con ese número en uso.");
-        }
-
-        // Guardar la nueva serie
-        SerieProducto serieProducto = serieProductoRepository
-                .save(new SerieProducto(datosRegistroSerie, detalleIngreso));
-
-        return new DatosRespuestaSerie(serieProducto);
+        return new DatosRespuestaSerie(nuevaSerie);
     }
 
     @Override
     public DatosRespuestaSerie updateSerieProductos(DatosActualizarSerie datosActualizarSerie) {
-
         SerieProducto serieProducto = serieProductoRepository.findById(datosActualizarSerie.id())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Serie Producto no encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Serie Producto no encontrada"));
 
-        DetalleIngreso detalleIngreso = detalleIngresoRepository.findById(datosActualizarSerie.id_detalle_ingreso())
-                .orElseThrow(
-                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Detalle de ingreso no encontrado"));
+        Long idIngresoOriginal = serieProducto.getId_detalle_ingreso().getId();
+        Long idIngresoActualizado = datosActualizarSerie.id_detalle_ingreso();
+
+        if (!idIngresoOriginal.equals(idIngresoActualizado)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "No se puede cambiar el detalle de ingreso original de la serie.");
+        }
 
         String nuevaSerie = datosActualizarSerie.numero_serie();
         String serieActual = serieProducto.getNumeroSerie();
 
-        // Solo validar si la serie ha cambiado
         if (!nuevaSerie.equals(serieActual)) {
-            List<EstadoSerie> estadosOcupados = List.of(
-                    EstadoSerie.ACTIVO,
-                    EstadoSerie.VENDIDO,
-                    EstadoSerie.REPARACION,
-                    EstadoSerie.DEVUELTO);
-
-            boolean yaExiste = serieProductoRepository.existsByNumeroSerieAndEstadoIn(nuevaSerie, estadosOcupados);
-            if (yaExiste) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "El número de serie '" + nuevaSerie + "' ya está siendo usado en otra serie activa.");
-            }
+            validarSerieLocal(nuevaSerie, serieProducto.getId_detalle_ingreso());
+            validarSerieGlobal(nuevaSerie);
         }
 
-        serieProducto.actualizar(datosActualizarSerie, detalleIngreso);
+        serieProducto.actualizar(datosActualizarSerie, serieProducto.getId_detalle_ingreso());
         serieProductoRepository.save(serieProducto);
+
         return new DatosRespuestaSerie(serieProducto);
+    }
+
+    private void validarProductoConSeries(DetalleIngreso detalleIngreso) {
+        long totalSeries = serieProductoRepository.contarPorDetalleIngreso(detalleIngreso);
+        if (totalSeries == 0 && detalleIngreso.getCantidad() > 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Este detalle está registrado como producto sin serie. No se pueden agregar series.");
+        }
+    }
+
+    private void validarCantidadSeries(DetalleIngreso detalleIngreso) {
+        List<EstadoSerie> estadosValidos = List.of(
+                EstadoSerie.ACTIVO,
+                EstadoSerie.VENDIDO,
+                EstadoSerie.REPARACION,
+                EstadoSerie.DEVUELTO);
+
+        long cantidadSeries = serieProductoRepository.contarPorDetalleIngresoYEstados(detalleIngreso, estadosValidos);
+
+        if (cantidadSeries >= detalleIngreso.getCantidad()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Ya se han registrado todas las series activas para este detalle.");
+        }
+    }
+
+    private void validarSerieLocal(String numeroSerie, DetalleIngreso detalleIngreso) {
+        Optional<SerieProducto> serieExistente = serieProductoRepository
+                .findByNumeroSerieAndDetalleIngreso(numeroSerie, detalleIngreso);
+
+        if (serieExistente.isPresent()) {
+            EstadoSerie estado = serieExistente.get().getEstado();
+            String mensaje = switch (estado) {
+                case ACTIVO -> "Ya existe una serie con ese número en estado ACTIVO para este detalle.";
+                case INACTIVO -> "Esa serie ya existe en estado INACTIVO. Puede reactivarla si lo desea.";
+                default -> "Ya existe una serie con ese número asociada a este detalle.";
+            };
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, mensaje);
+        }
+    }
+
+    private void validarSerieGlobal(String numeroSerie) {
+        List<EstadoSerie> estadosOcupados = List.of(
+                EstadoSerie.ACTIVO,
+                EstadoSerie.VENDIDO,
+                EstadoSerie.REPARACION,
+                EstadoSerie.DEVUELTO);
+
+        boolean yaExiste = serieProductoRepository.existsByNumeroSerieAndEstadoIn(numeroSerie, estadosOcupados);
+        if (yaExiste) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "El número de serie '" + numeroSerie + "' ya está en uso activo en otro ingreso.");
+        }
     }
 
 }
