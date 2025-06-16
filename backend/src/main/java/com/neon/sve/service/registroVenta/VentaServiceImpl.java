@@ -74,7 +74,7 @@ public class VentaServiceImpl implements VentaService {
 
         // METODO PARA LA VENTA COMPLETA, INCLUYENDO EL DESCUENTO DE STOCK
         @Override
-        @Transactional // ¡CRÍTICO! Asegura que toda la operación sea atómica.
+        @Transactional
         public DatosRespuestaRegistroVenta createVentaCompleta(DatosRegistroVentaCompleta datosVenta) {
                 // 1. Obtener entidades principales (Usuario, Cliente, etc.)
                 Usuario usuario = usuarioRepository.findById(datosVenta.id_usuario())
