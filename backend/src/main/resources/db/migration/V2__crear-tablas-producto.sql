@@ -4,7 +4,8 @@ CREATE TABLE categorias (
     id_categoria_padre BIGINT DEFAULT NULL,
     nivel INT NOT NULL CHECK (nivel >= 0),
     activo BIT(1) NOT NULL DEFAULT 1,
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    FOREIGN KEY (id_categoria_padre) REFERENCES categorias(id) ON DELETE SET NULL
 );
 
 CREATE TABLE proveedores (
