@@ -24,7 +24,6 @@ import com.neon.sve.dto.login.DatosRespuestaMensaje;
 import com.neon.sve.model.producto.Producto;
 import com.neon.sve.model.producto.Proveedor;
 import com.neon.sve.model.stock.DetalleIngreso;
-import com.neon.sve.model.stock.DevolucionProducto;
 import com.neon.sve.model.stock.EstadoSerie;
 import com.neon.sve.model.stock.IngresoStock;
 import com.neon.sve.model.stock.SerieProducto;

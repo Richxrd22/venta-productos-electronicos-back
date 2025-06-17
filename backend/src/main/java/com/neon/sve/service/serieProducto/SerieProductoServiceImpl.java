@@ -12,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.neon.sve.dto.serie.DatosActualizarSerie;
 import com.neon.sve.dto.serie.DatosListadoSerie;
+import com.neon.sve.dto.serie.DatosListadoSerieDetalle;
 import com.neon.sve.dto.serie.DatosRegistroSerie;
 import com.neon.sve.dto.serie.DatosRespuestaSerie;
 import com.neon.sve.model.stock.DetalleIngreso;
@@ -140,6 +141,14 @@ public class SerieProductoServiceImpl implements SerieProductoService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "El número de serie '" + numeroSerie + "' ya está en uso activo en otro ingreso.");
         }
+    }
+
+    @Override
+    public List<DatosListadoSerieDetalle> getAllSerieProductoByDetalleIngresoId(Long id_detalle_ingreso) {
+           return serieProductoRepository.buscarPorIdDetalleIngreso(id_detalle_ingreso)
+            .stream()
+            .map(DatosListadoSerieDetalle::new)
+            .toList();
     }
 
 }

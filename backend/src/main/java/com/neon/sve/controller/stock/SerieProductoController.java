@@ -19,6 +19,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.neon.sve.dto.serie.DatosActualizarSerie;
 import com.neon.sve.dto.serie.DatosListadoSerie;
+import com.neon.sve.dto.serie.DatosListadoSerieDetalle;
 import com.neon.sve.dto.serie.DatosRegistroSerie;
 import com.neon.sve.dto.serie.DatosRespuestaSerie;
 import com.neon.sve.service.serieProducto.SerieProductoService;
@@ -45,20 +46,16 @@ public class SerieProductoController {
     @GetMapping("/listar")
     public ResponseEntity<List<DatosListadoSerie>> listarSeriesProducto() {
         Pageable paginacion = Pageable.unpaged();
-        ;
         List<DatosListadoSerie> series = serieProductoService.getAllSerieProducto(paginacion).getContent();
         return ResponseEntity.ok(series);
     }
 
-    /*
-     * @GetMapping("/listar/detalle/{idDetalleIngreso}")
-     * public ResponseEntity<List<SerieProducto>>
-     * obtenerSeriesPorDetalle(@PathVariable Long idDetalleIngreso) {
-     * List<SerieProducto> series =
-     * serieProductoService.getAllSerieProductoByDetalleIngresoId(idDetalleIngreso);
-     * return ResponseEntity.ok(series);
-     * }
-     */
+    @GetMapping("/listar/detalle/{idDetalleIngreso}")
+    public ResponseEntity<List<DatosListadoSerieDetalle>> obtenerSeriesReducidas(@PathVariable Long idDetalleIngreso) {
+        List<DatosListadoSerieDetalle> series = serieProductoService
+                .getAllSerieProductoByDetalleIngresoId(idDetalleIngreso);
+        return ResponseEntity.ok(series);
+    }
 
     @PutMapping("/actualizar")
     @Transactional
