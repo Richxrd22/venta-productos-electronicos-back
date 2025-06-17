@@ -1,5 +1,6 @@
 package com.neon.sve.model.producto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -9,9 +10,12 @@ import com.neon.sve.model.ventas.Descuento;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.Valid;
@@ -36,8 +40,12 @@ public class Categoria {
     @Column(unique = true, nullable = false)
     private String nombre;
 
-    @Column
-    private Long id_categoria_padre;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_categoria_padre")
+    private Categoria categoriaPadre;
+
+    @OneToMany(mappedBy = "categoriaPadre", fetch = FetchType.EAGER)
+    private List<Categoria> subcategorias = new ArrayList<>();
 
     @Column(nullable = false)
     private int nivel;
@@ -50,19 +58,21 @@ public class Categoria {
     private List<Producto> productos;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "id_categoria")
+    @OneToMany(mappedBy = "categoria")
     private List<Descuento> descuentos;
 
+    /*
     public Categoria(@Valid DatosRegistroCategoria datosRegistroCategoria) {
         this.nombre = datosRegistroCategoria.nombre();
-        this.id_categoria_padre = datosRegistroCategoria.id_categoria_padre();
+        this.categoriaPadre = datosRegistroCategoria.id_categoria_padre();
         this.nivel = datosRegistroCategoria.nivel();
     }
 
     public void actualizar(@Valid DatosActualizarCategoria datosActualizarCategoria) {
         this.nombre = datosActualizarCategoria.nombre();
-        this.id_categoria_padre = datosActualizarCategoria.id_categoria_padre();
+        this.categoriaPadre = datosActualizarCategoria.id_categoria_padre();
         this.nivel = datosActualizarCategoria.nivel();
     }
+    */
 
 }

@@ -64,7 +64,7 @@ CREATE TABLE descuentos (
     porcentaje DECIMAL(5,2) NOT NULL,                -- Porcentaje de descuento (por ejemplo, 20.00 para un 20%)
     fecha_inicio DATE NOT NULL,                       -- Fecha de inicio del descuento
     fecha_fin DATE NOT NULL,                          -- Fecha de finalización del descuento
-    estado BIT(1) NOT NULL DEFAULT 1,  
+    activo BIT(1) NOT NULL DEFAULT 1,  
     PRIMARY KEY (id),                    -- Estado del descuento
     FOREIGN KEY (id_categoria) REFERENCES categorias(id) -- Relación con la tabla de productos
 );

@@ -21,6 +21,7 @@ import com.neon.sve.dto.MensajeRespuesta;
 import com.neon.sve.dto.categoria.DatosActualizarCategoria;
 import com.neon.sve.dto.categoria.DatosListadoCategoria;
 import com.neon.sve.dto.categoria.DatosListadoCategoriaNivel;
+import com.neon.sve.dto.categoria.DatosListadoDetalleCategorias;
 import com.neon.sve.dto.categoria.DatosRegistroCategoria;
 import com.neon.sve.dto.categoria.DatosRespuestaCategoria;
 import com.neon.sve.service.categoria.CategoriaService;
@@ -38,6 +39,13 @@ public class CategoriaController {
     public ResponseEntity<List<DatosListadoCategoria>> listarCategoria() {
         Pageable paginacion = Pageable.unpaged();
         List<DatosListadoCategoria> categorias = categoriaService.getAllCategoria(paginacion).getContent();
+        return ResponseEntity.ok(categorias);
+    }
+
+    @GetMapping("/listar-detalle")
+    public ResponseEntity<List<DatosListadoDetalleCategorias>> listarCategoriaDetalle() {
+        Pageable paginacion = Pageable.unpaged();
+        List<DatosListadoDetalleCategorias> categorias = categoriaService.getAllCategoriaDetalle(paginacion).getContent();
         return ResponseEntity.ok(categorias);
     }
 

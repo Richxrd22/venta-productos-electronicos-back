@@ -36,7 +36,7 @@ public class Descuento {
 
     @ManyToOne
     @JoinColumn(name = "id_categoria", nullable = false)
-    private Categoria id_categoria;
+    private Categoria categoria;
 
     @Column(nullable = false)
     private Double porcentaje; // Porcentaje de descuento
@@ -45,22 +45,22 @@ public class Descuento {
     private LocalDate fecha_inicio; // Fecha de inicio del descuento
 
     @Column(nullable = false)
-    private LocalDate fecha_fin; // Fecha de finalización del descuento
+    private LocalDate fechaFin; // Fecha de finalización del descuento
 
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private Boolean activo = true; // Estado del descuento
 
     public Descuento(@Valid DatosRegistroDescuento datosRegistroDescuento, Categoria categoria) {
-        this.id_categoria = categoria;
+        this.categoria = categoria;
         this.porcentaje = datosRegistroDescuento.porcentaje();
         this.fecha_inicio = datosRegistroDescuento.fecha_inicio();
-        this.fecha_fin = datosRegistroDescuento.fecha_fin();
+        this.fechaFin = datosRegistroDescuento.fecha_fin();
     }
 
     public void actualizar(@Valid DatosActualizarDescuento datosActualizarDescuento, Categoria categoria) {
-        this.id_categoria = categoria;
+        this.categoria = categoria;
         this.porcentaje = datosActualizarDescuento.porcentaje();
         this.fecha_inicio = datosActualizarDescuento.fecha_inicio();
-        this.fecha_fin = datosActualizarDescuento.fecha_fin();
+        this.fechaFin = datosActualizarDescuento.fecha_fin();
     }
 }
