@@ -1,6 +1,8 @@
 package com.neon.sve.service.descuento;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.neon.sve.dto.descuento.DatosActualizarDescuento;
@@ -49,41 +52,93 @@ public class DescuentoServiceImpl implements DescuentoService {
         return descuentoPage.map(DatosListadoDescuento::new);
     }
 
+    @Transactional
     @Override
     public DatosRespuestaDescuento createDescuento(DatosRegistroDescuento datosRegistroDescuento) {
-
+        // 1. Validaciones iniciales (las que ya tenías)
         Categoria categoria = categoriaRepository.findById(datosRegistroDescuento.id_categoria())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Categoria no encontrada con ID ingresado : " + datosRegistroDescuento.id_categoria()));
+                        "Categoria no encontrada con ID: " + datosRegistroDescuento.id_categoria()));
 
         if (Boolean.FALSE.equals(categoria.getActivo())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "No se puede aplicar un descuento a una categoría inactiva.");
         }
 
-        // Fechas del descuento
-        LocalDate fechaInicio = datosRegistroDescuento.fecha_inicio();
-        LocalDate fechaFin = datosRegistroDescuento.fecha_fin();
-        LocalDate hoy = LocalDate.now();
-
-        if (fechaFin.isBefore(fechaInicio)) {
+        if (datosRegistroDescuento.fecha_fin().isBefore(datosRegistroDescuento.fecha_inicio())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "La fecha de fin no puede ser anterior a la fecha de inicio del descuento.");
+                    "La fecha de fin no puede ser anterior a la fecha de inicio.");
         }
 
-        Descuento descuento = new Descuento(datosRegistroDescuento, categoria);
+        // 2. Procesar y guardar el descuento principal
+        Descuento descuentoPrincipal = procesarYGuardarDescuentoParaCategoria(datosRegistroDescuento, categoria);
 
-        // Si la fecha de inicio es futura, el descuento debe empezar como inactivo
-        // o activarse automáticamente al llegar la fecha.
-        if (descuento.getFecha_inicio().isAfter(hoy)) {
-            descuento.setActivo(false); // Se activará cuando llegue la fecha_inicio
-        } else {
-            descuento.setActivo(true); // Si la fecha de inicio es hoy o pasada, está activo inmediatamente
+        // 3. Propagar el descuento a todas las subcategorías de forma recursiva
+        List<Categoria> todasLasSubcategorias = obtenerTodasLasSubcategorias(categoria);
+        for (Categoria subcategoria : todasLasSubcategorias) {
+            procesarYGuardarDescuentoParaCategoria(datosRegistroDescuento, subcategoria);
         }
 
-        Descuento nuevoDescuento = descuentoRepository.save(descuento);
-        return new DatosRespuestaDescuento(nuevoDescuento);
+        return new DatosRespuestaDescuento(descuentoPrincipal);
+    }
 
+    /**
+     * Método privado que centraliza la lógica de validación y creación de un
+     * descuento para una categoría específica.
+     * Comprueba si existe un descuento activo y decide cuál debe permanecer activo.
+     */
+    private Descuento procesarYGuardarDescuentoParaCategoria(DatosRegistroDescuento datos, Categoria categoria) {
+        // Busca descuentos activos y vigentes para la misma categoría
+        List<Descuento> descuentosActivos = descuentoRepository.findByActivoTrueAndCategoriaAndFechaFinAfter(categoria,
+                LocalDate.now().minusDays(1));
+
+        boolean elNuevoDebeSerActivo = true;
+
+        for (Descuento existente : descuentosActivos) {
+            // Si el nuevo descuento tiene un porcentaje mayor, desactiva el existente.
+            if (datos.porcentaje() > existente.getPorcentaje()) {
+                existente.setActivo(false);
+                descuentoRepository.save(existente);
+            } else {
+                // Si hay un descuento existente mayor o igual, el nuevo se creará como
+                // inactivo.
+                elNuevoDebeSerActivo = false;
+            }
+        }
+
+        Descuento nuevoDescuento = new Descuento(datos, categoria);
+
+        // El descuento solo puede estar activo si está dentro del rango de fechas Y si
+        // ganó la competencia de porcentajes.
+        LocalDate hoy = LocalDate.now();
+        boolean estaEnRangoDeFechas = !hoy.isBefore(nuevoDescuento.getFecha_inicio())
+                && !hoy.isAfter(nuevoDescuento.getFechaFin());
+
+        nuevoDescuento.setActivo(estaEnRangoDeFechas && elNuevoDebeSerActivo);
+
+        return descuentoRepository.save(nuevoDescuento);
+    }
+
+    /**
+     * Obtiene de forma recursiva todas las subcategorías (hijas, nietas, etc.) de
+     * una categoría padre.
+     * Requiere que la entidad Categoria tenga una lista de sus hijas.
+     */
+    private List<Categoria> obtenerTodasLasSubcategorias(Categoria categoriaPadre) {
+        List<Categoria> listaCompleta = new ArrayList<>();
+        // Asumiendo que Categoria tiene un método getSubcategorias() que devuelve sus
+        // hijas directas.
+        // Es importante que la carga de esta relación no sea LAZY o manejarla
+        // adecuadamente.
+        List<Categoria> hijasDirectas = categoriaPadre.getSubcategorias();
+
+        if (hijasDirectas != null && !hijasDirectas.isEmpty()) {
+            for (Categoria hija : hijasDirectas) {
+                listaCompleta.add(hija);
+                listaCompleta.addAll(obtenerTodasLasSubcategorias(hija)); // Llamada recursiva
+            }
+        }
+        return listaCompleta;
     }
 
     @Override
@@ -92,15 +147,12 @@ public class DescuentoServiceImpl implements DescuentoService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "Descuento no encontrado con ID: " + datosActualizarDescuento.id()));
 
-        // Manejar la actualización de la categoría
-        Categoria categoria = descuentoAActualizar.getId_categoria(); // Categoría actual del descuento
-        if (datosActualizarDescuento.id_categoria() != null &&
-                !datosActualizarDescuento.id_categoria().equals(categoria.getId())) {
-            // Se intenta cambiar la categoría asociada al descuento
+        Categoria categoria = descuentoAActualizar.getCategoria();
+        if (datosActualizarDescuento.id_categoria() != null
+                && !datosActualizarDescuento.id_categoria().equals(categoria.getId())) {
             categoria = categoriaRepository.findById(datosActualizarDescuento.id_categoria())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                             "Nueva categoría no encontrada con ID: " + datosActualizarDescuento.id_categoria()));
-
         }
 
         if (Boolean.FALSE.equals(categoria.getActivo())) {
@@ -108,29 +160,39 @@ public class DescuentoServiceImpl implements DescuentoService {
                     "No se puede asociar el descuento a una categoría inactiva.");
         }
 
-        // Obtener las fechas y porcentaje, usando las existentes si no se actualizan
         LocalDate fechaInicio = Optional.ofNullable(datosActualizarDescuento.fecha_inicio())
                 .orElse(descuentoAActualizar.getFecha_inicio());
         LocalDate fechaFin = Optional.ofNullable(datosActualizarDescuento.fecha_fin())
-                .orElse(descuentoAActualizar.getFecha_fin());
+                .orElse(descuentoAActualizar.getFechaFin());
 
-        // Validación 1: Fechas del descuento
         if (fechaFin.isBefore(fechaInicio)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "La fecha de fin no puede ser anterior a la fecha de inicio del descuento.");
+                    "La fecha de fin no puede ser anterior a la fecha de inicio.");
         }
 
-        // Actualizar el descuento con los nuevos datos
-        descuentoAActualizar.actualizar(datosActualizarDescuento, categoria); // Pasa la categoría actualizada
+        descuentoAActualizar.actualizar(datosActualizarDescuento, categoria);
 
-        // Reevaluar el estado activo basado en las nuevas fechas
         LocalDate hoy = LocalDate.now();
-        if (descuentoAActualizar.getFecha_inicio().isAfter(hoy) || descuentoAActualizar.getFecha_fin().isBefore(hoy)) {
-            descuentoAActualizar.setActivo(false); // Inactivo si es futuro o ya caducó
-        } else {
-            descuentoAActualizar.setActivo(true); // Activo si está en el rango de hoy
+        boolean estaEnRangoDeFechas = !hoy.isBefore(descuentoAActualizar.getFecha_inicio())
+                && !hoy.isAfter(descuentoAActualizar.getFechaFin());
+
+        List<Descuento> descuentosActivos = descuentoRepository
+                .findByActivoTrueAndCategoriaAndFechaFinAfter(categoria, LocalDate.now().minusDays(1));
+
+        boolean debeSerActivo = true;
+
+        for (Descuento d : descuentosActivos) {
+            if (!d.getId().equals(descuentoAActualizar.getId())) {
+                if (descuentoAActualizar.getPorcentaje() > d.getPorcentaje()) {
+                    d.setActivo(false);
+                    descuentoRepository.save(d);
+                } else {
+                    debeSerActivo = false;
+                }
+            }
         }
 
+        descuentoAActualizar.setActivo(estaEnRangoDeFechas && debeSerActivo);
         Descuento descuentoActualizado = descuentoRepository.save(descuentoAActualizar);
         return new DatosRespuestaDescuento(descuentoActualizado);
     }
@@ -139,24 +201,40 @@ public class DescuentoServiceImpl implements DescuentoService {
     public void activarDescuento(Long id) {
         Descuento descuento = descuentoRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Descuento no encontrado con el ID ingresado: " + id));
+                        "Descuento no encontrado con ID: " + id));
 
-        if (Boolean.TRUE.equals(descuento.getActivo())) {
+        if (descuento.getActivo()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El descuento ya está activo.");
         }
 
-        if (Boolean.FALSE.equals(descuento.getId_categoria().getActivo())) {
+        if (!descuento.getCategoria().getActivo()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "No se puede activar el descuento porque su categoría asociada está inactiva.");
+                    "No se puede activar el descuento porque su categoría está inactiva.");
         }
 
-        // Las fechas deben estar dentro del rango actual (hoy debe estar
-        // entre fecha_inicio y fecha_fin)
         LocalDate hoy = LocalDate.now();
-        if (hoy.isBefore(descuento.getFecha_inicio()) || hoy.isAfter(descuento.getFecha_fin())) {
+        if (hoy.isBefore(descuento.getFecha_inicio()) || hoy.isAfter(descuento.getFechaFin())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "No se puede activar el descuento fuera de su rango de fechas válido (" +
-                            descuento.getFecha_inicio() + " a " + descuento.getFecha_fin() + ").");
+                    "No se puede activar el descuento fuera de su rango de fechas válido.");
+        }
+
+        List<Descuento> descuentosActivos = descuentoRepository
+                .findByActivoTrueAndCategoriaAndFechaFinAfter(descuento.getCategoria(), LocalDate.now().minusDays(1));
+
+        for (Descuento d : descuentosActivos) {
+            if (!d.getId().equals(descuento.getId())
+                    && d.getPorcentaje() >= descuento.getPorcentaje()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Ya existe un descuento activo con igual o mayor porcentaje.");
+            }
+        }
+
+        // Desactivar los demás si este es mayor
+        for (Descuento d : descuentosActivos) {
+            if (!d.getId().equals(descuento.getId()) && d.getPorcentaje() < descuento.getPorcentaje()) {
+                d.setActivo(false);
+                descuentoRepository.save(d);
+            }
         }
 
         descuento.setActivo(true);

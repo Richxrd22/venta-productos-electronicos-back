@@ -9,11 +9,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.neon.sve.dto.categoria.DatosActualizarCategoria;
 import com.neon.sve.dto.categoria.DatosListadoCategoria;
 import com.neon.sve.dto.categoria.DatosListadoCategoriaNivel;
+import com.neon.sve.dto.categoria.DatosListadoDetalleCategorias;
 import com.neon.sve.dto.categoria.DatosRegistroCategoria;
 import com.neon.sve.dto.categoria.DatosRespuestaCategoria;
 import com.neon.sve.model.producto.Categoria;
@@ -46,34 +48,51 @@ public class CategoriaServiceImpl implements CategoriaService {
     }
 
     @Override
-    public DatosRespuestaCategoria createCategoria(DatosRegistroCategoria datosRegistroCategoria) {
-        // Verificar si ya existe una categoría con el mismo nombre
-        Optional<Categoria> categoriaOptional = categoriaRepository.findByNombre(datosRegistroCategoria.nombre());
-        if (categoriaOptional.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Ya existe una categoría con el nombre ingresado: " + datosRegistroCategoria.nombre());
+    @Transactional
+    public DatosRespuestaCategoria createCategoria(DatosRegistroCategoria datos) {
+        // Valida si ya existe una categoría con el mismo nombre
+        if (categoriaRepository.findByNombre(datos.nombre()).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ya existe una categoría con ese nombre.");
         }
 
-        // Crear la nueva categoría
-        Categoria categoria = categoriaRepository.save(new Categoria(datosRegistroCategoria));
-        return new DatosRespuestaCategoria(categoria);
+        Categoria nuevaCategoria = new Categoria();
+        nuevaCategoria.setNombre(datos.nombre());
+        nuevaCategoria.setNivel(datos.nivel());
 
+        // ✅ LÓGICA CORRECTA PARA ASIGNAR LA CATEGORÍA PADRE
+        if (datos.id_categoria_padre() != null) {
+            Categoria categoriaPadre = categoriaRepository.findById(datos.id_categoria_padre())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                            "La categoría padre con ID " + datos.id_categoria_padre() + " no existe."));
+            nuevaCategoria.setCategoriaPadre(categoriaPadre);
+        }
+
+        Categoria categoriaGuardada = categoriaRepository.save(nuevaCategoria);
+        return new DatosRespuestaCategoria(categoriaGuardada);
     }
 
     @Override
-    public DatosRespuestaCategoria updateCategoria(DatosActualizarCategoria datosActualizarCategoria) {
-        Optional<Categoria> existente = categoriaRepository.findByNombre(datosActualizarCategoria.nombre());
+    @Transactional
+    public DatosRespuestaCategoria updateCategoria(DatosActualizarCategoria datos) {
+        Categoria categoriaAActualizar = categoriaRepository.findById(datos.id())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoría no encontrada."));
 
-        if (existente.isPresent() && !existente.get().getId().equals(datosActualizarCategoria.id())) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Ya existe una categoría con el nombre: " + datosActualizarCategoria.nombre());
+        categoriaAActualizar.setNombre(datos.nombre());
+        categoriaAActualizar.setNivel(datos.nivel());
+
+        // ✅ LÓGICA CORRECTA PARA ACTUALIZAR LA CATEGORÍA PADRE
+        if (datos.id_categoria_padre() != null) {
+            Categoria categoriaPadre = categoriaRepository.findById(datos.id_categoria_padre())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                            "La categoría padre con ID " + datos.id_categoria_padre() + " no existe."));
+            categoriaAActualizar.setCategoriaPadre(categoriaPadre);
+        } else {
+            categoriaAActualizar.setCategoriaPadre(null); // Permite quitar la categoría padre
         }
 
-        Categoria categoria = categoriaRepository.getReferenceById(datosActualizarCategoria.id());
-        categoria.actualizar(datosActualizarCategoria);
-        categoria = categoriaRepository.save(categoria);
-        return new DatosRespuestaCategoria(categoria);
+        // El método save actualiza si la entidad ya existe
+        Categoria categoriaActualizada = categoriaRepository.save(categoriaAActualizar);
+        return new DatosRespuestaCategoria(categoriaActualizada);
     }
 
     @Override
@@ -110,6 +129,12 @@ public class CategoriaServiceImpl implements CategoriaService {
         return categorias.stream()
                 .map(DatosListadoCategoriaNivel::new)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<DatosListadoDetalleCategorias> getAllCategoriaDetalle(Pageable pageable) {
+        Page<Categoria> categoriaPage = categoriaRepository.findAll(pageable);
+        return categoriaPage.map(DatosListadoDetalleCategorias::new);
     }
 
 }

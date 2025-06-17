@@ -14,11 +14,11 @@ public record DatosRespuestaCategoria(
 
         public DatosRespuestaCategoria(Categoria categoria) {
                 this(
-                                categoria.getId(),
-                                categoria.getNombre(),
-                                categoria.getId_categoria_padre(),
-                                categoria.getNivel(),
-                                categoria.getActivo() != null && categoria.getActivo() ? 1 : 0);
+                        categoria.getId(),
+                        categoria.getNombre(),
+                        categoria.getCategoriaPadre() != null ? categoria.getCategoriaPadre().getId() : null,
+                        categoria.getNivel(),
+                        categoria.getActivo() != null && categoria.getActivo() ? 1 : 0);
         }
 
 }

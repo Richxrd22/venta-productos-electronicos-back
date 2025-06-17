@@ -10,8 +10,8 @@ public record DatosRespuestaDescuento(
         Long id_categoria,
         String nombreCategoria,
         double porcentaje,
-        LocalDate fechaInicio,
-        LocalDate fechaFinal,
+        LocalDate fecha_inicio,
+        LocalDate fecha_fin,
         int activo
 
 ) {
@@ -19,11 +19,11 @@ public record DatosRespuestaDescuento(
     public DatosRespuestaDescuento(Descuento descuento) {
         this(
                 descuento.getId(),
-                descuento.getId_categoria().getId(),
-                descuento.getId_categoria().getNombre(),
+                descuento.getCategoria().getId(),
+                descuento.getCategoria().getNombre(),
                 descuento.getPorcentaje(),
                 descuento.getFecha_inicio(),
-                descuento.getFecha_fin(),
+                descuento.getFechaFin(),
                 descuento.getActivo() != null && descuento.getActivo() ? 1 : 0);
     }
 

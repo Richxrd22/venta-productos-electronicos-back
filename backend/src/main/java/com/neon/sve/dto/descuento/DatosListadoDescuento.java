@@ -1,18 +1,17 @@
 package com.neon.sve.dto.descuento;
 
-
 import java.time.LocalDate;
 
 import com.neon.sve.model.ventas.Descuento;
 
 public record DatosListadoDescuento(
 
-    Long id,
+        Long id,
         Long id_categoria,
         String nombreCategoria,
         double porcentaje,
-        LocalDate fechaInicio,
-        LocalDate fechaFinal,
+        LocalDate fecha_inicio,
+        LocalDate fecha_fin,
         int activo
 
 ) {
@@ -20,12 +19,12 @@ public record DatosListadoDescuento(
     public DatosListadoDescuento(Descuento descuento) {
         this(
                 descuento.getId(),
-                descuento.getId_categoria().getId(),
-                descuento.getId_categoria().getNombre(),
+                descuento.getCategoria().getId(),
+                descuento.getCategoria().getNombre(),
                 descuento.getPorcentaje(),
                 descuento.getFecha_inicio(),
-                descuento.getFecha_fin(),
+                descuento.getFechaFin(),
                 descuento.getActivo() != null && descuento.getActivo() ? 1 : 0);
     }
-    
+
 }

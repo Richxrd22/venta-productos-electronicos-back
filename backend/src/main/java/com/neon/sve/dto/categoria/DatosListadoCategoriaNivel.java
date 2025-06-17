@@ -12,7 +12,7 @@ public record DatosListadoCategoriaNivel(
         this(
                 categoria.getId(),
                 categoria.getNombre(),
-                categoria.getId_categoria_padre(),
+                categoria.getCategoriaPadre() != null ? categoria.getCategoriaPadre().getId() : null,
                 categoria.getActivo() != null && categoria.getActivo() ? 1 : 0);
     }
 
