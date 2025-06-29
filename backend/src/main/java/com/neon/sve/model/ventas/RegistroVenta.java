@@ -86,7 +86,7 @@ public class RegistroVenta {
     @JoinColumn(name = "id_cupon") // Puede ser nulo
     private Cupon id_cupon; // Relación con Cupon
 
-    @OneToMany(mappedBy = "id_registro_venta", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "id_registro_venta", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DetalleVenta> detallesVenta;
 
     public RegistroVenta(@Valid DatosRegistroVenta datosRegistroVenta, Usuario usuario, Cliente cliente,

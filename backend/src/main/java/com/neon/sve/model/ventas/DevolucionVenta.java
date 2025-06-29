@@ -4,16 +4,22 @@ import java.sql.Timestamp;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.neon.sve.dto.devolucionVenta.DatosActualizarDevolucionVenta;
+import com.neon.sve.dto.devolucionVenta.DatosRegistroDevolucionVenta;
 import com.neon.sve.model.usuario.Usuario;
+import com.neon.sve.model.ventas.Tipos.EstadoReclamo;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -35,8 +41,8 @@ public class DevolucionVenta {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "id_detalle", nullable = false)
-    private DetalleVenta id_detalle_venta;
+    @JoinColumn(name = "id_detalle_venta", nullable = false)
+    private DetalleVenta detalleVenta;
 
     @Column(nullable = false, updatable = false)
     @CreationTimestamp
@@ -50,17 +56,30 @@ public class DevolucionVenta {
 
     @ManyToOne
     @JoinColumn(name = "id_usuario", nullable = false)
-    private Usuario id_usuario;
+    private Usuario usuario;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private EstadoReclamo estado = EstadoReclamo.PENDIENTE;
 
     // Constructor para registro
-    /*
-     * public DevolucionVenta(@Valid DatosRegistroDevolucionVenta datosRegistro,
-     * DetalleVenta detalleVenta, Usuario usuario) {
-     * this.detalleVenta = detalleVenta;
-     * this.cantidad = datosRegistro.cantidad();
-     * this.motivo = datosRegistro.motivo();
-     * this.usuario = usuario;
-     * }
-     */
+
+    public DevolucionVenta(@Valid DatosRegistroDevolucionVenta datosRegistro,
+            DetalleVenta detalleVenta, Usuario usuario) {
+        this.detalleVenta = detalleVenta;
+        this.cantidad = datosRegistro.cantidad();
+        this.motivo = datosRegistro.motivo();
+        this.usuario = usuario;
+    }
+
+    public void actualizar(@Valid DatosActualizarDevolucionVenta datosActualizarDevolucionVenta,
+            DetalleVenta detalleVenta) {
+        this.id = datosActualizarDevolucionVenta.id();
+        this.detalleVenta = detalleVenta;
+        this.cantidad = datosActualizarDevolucionVenta.cantidad();
+        this.motivo = datosActualizarDevolucionVenta.motivo();
+        this.estado = datosActualizarDevolucionVenta.estado();
+    }
 
 }
+

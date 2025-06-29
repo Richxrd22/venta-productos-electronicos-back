@@ -9,6 +9,7 @@ public class Tipos {
 
     public enum EstadoReclamo {
         PENDIENTE,
+        APROBADO,
         RESUELTO,
         RECHAZADO
     }

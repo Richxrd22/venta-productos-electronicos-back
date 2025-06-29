@@ -9,8 +9,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.neon.sve.dto.detalleVenta.DatosRegistroDetalleVenta;
 import com.neon.sve.model.producto.Producto;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -59,7 +61,7 @@ public class DetalleVenta {
     @JoinColumn(name = "id_producto", nullable = false)
     private Producto id_producto;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_registro_venta", nullable = false)
     private RegistroVenta id_registro_venta;
 
@@ -75,7 +77,7 @@ public class DetalleVenta {
     private Garantia garantia;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "id_detalle_venta")
+    @OneToMany(mappedBy = "detalleVenta", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<DevolucionVenta> devolucionesVenta;
 
     public DetalleVenta(@Valid DatosRegistroDetalleVenta datosRegistro,

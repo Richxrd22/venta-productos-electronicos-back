@@ -55,7 +55,7 @@ public class DescuentoServiceImpl implements DescuentoService {
     @Transactional
     @Override
     public DatosRespuestaDescuento createDescuento(DatosRegistroDescuento datosRegistroDescuento) {
-        // 1. Validaciones iniciales (las que ya tenías)
+        // 1. Validaciones iniciales
         Categoria categoria = categoriaRepository.findById(datosRegistroDescuento.id_categoria())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "Categoria no encontrada con ID: " + datosRegistroDescuento.id_categoria()));
@@ -108,8 +108,7 @@ public class DescuentoServiceImpl implements DescuentoService {
 
         Descuento nuevoDescuento = new Descuento(datos, categoria);
 
-        // El descuento solo puede estar activo si está dentro del rango de fechas Y si
-        // ganó la competencia de porcentajes.
+        // El descuento solo puede estar activo si está dentro del rango de fechas Y si el porcentaje es mayor
         LocalDate hoy = LocalDate.now();
         boolean estaEnRangoDeFechas = !hoy.isBefore(nuevoDescuento.getFecha_inicio())
                 && !hoy.isAfter(nuevoDescuento.getFechaFin());
@@ -126,10 +125,7 @@ public class DescuentoServiceImpl implements DescuentoService {
      */
     private List<Categoria> obtenerTodasLasSubcategorias(Categoria categoriaPadre) {
         List<Categoria> listaCompleta = new ArrayList<>();
-        // Asumiendo que Categoria tiene un método getSubcategorias() que devuelve sus
-        // hijas directas.
-        // Es importante que la carga de esta relación no sea LAZY o manejarla
-        // adecuadamente.
+
         List<Categoria> hijasDirectas = categoriaPadre.getSubcategorias();
 
         if (hijasDirectas != null && !hijasDirectas.isEmpty()) {

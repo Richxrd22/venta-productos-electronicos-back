@@ -14,19 +14,9 @@ public interface VentaService {
 
     Page<DatosListadoRegistroVenta> getAllVentas(Pageable pageable);
 
-    // MÉTODO NUEVO Y RECOMENDADO
     DatosRespuestaRegistroVenta createVentaCompleta(DatosRegistroVentaCompleta datosRegistroVenta);
 
-    // método antiguo
-    // DatosRespuestaRegistroVenta createVenta(DatosRegistroVenta
-    // datosRegistroVenta);
-
-    // MÉTODO NUEVO
     DatosRespuestaRegistroVenta updateVentaCompleta(DatosActualizarVentaCompleta datosActualizar);
-
-    // método antiguo
-    // DatosRespuestaRegistroVenta updateVenta(DatosActualizarRegistroVenta
-    // datosActualizarRegistroVenta);
 
     void cancelarVenta(Long id);
 

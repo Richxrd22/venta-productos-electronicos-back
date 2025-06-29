@@ -59,7 +59,7 @@ public class CategoriaServiceImpl implements CategoriaService {
         nuevaCategoria.setNombre(datos.nombre());
         nuevaCategoria.setNivel(datos.nivel());
 
-        // ✅ LÓGICA CORRECTA PARA ASIGNAR LA CATEGORÍA PADRE
+        // ASIGNAR LA CATEGORÍA PADRE
         if (datos.id_categoria_padre() != null) {
             Categoria categoriaPadre = categoriaRepository.findById(datos.id_categoria_padre())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
@@ -80,7 +80,7 @@ public class CategoriaServiceImpl implements CategoriaService {
         categoriaAActualizar.setNombre(datos.nombre());
         categoriaAActualizar.setNivel(datos.nivel());
 
-        // ✅ LÓGICA CORRECTA PARA ACTUALIZAR LA CATEGORÍA PADRE
+        // ACTUALIZAR LA CATEGORÍA PADRE
         if (datos.id_categoria_padre() != null) {
             Categoria categoriaPadre = categoriaRepository.findById(datos.id_categoria_padre())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
@@ -90,7 +90,7 @@ public class CategoriaServiceImpl implements CategoriaService {
             categoriaAActualizar.setCategoriaPadre(null); // Permite quitar la categoría padre
         }
 
-        // El método save actualiza si la entidad ya existe
+        // El método save(guardar) actualiza si la entidad ya existe
         Categoria categoriaActualizada = categoriaRepository.save(categoriaAActualizar);
         return new DatosRespuestaCategoria(categoriaActualizada);
     }

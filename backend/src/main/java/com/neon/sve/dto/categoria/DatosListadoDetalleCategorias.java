@@ -21,8 +21,9 @@ public record DatosListadoDetalleCategorias(
                 categoria.getNombre(),
                 categoria.getCategoriaPadre() != null ? categoria.getCategoriaPadre().getId() : null,
                 categoria.getNivel(),
-                categoria.getActivo() != null && categoria.getActivo() ? 1 : 0, // Si la entidad 'categoria' tiene
-                                                                                // subcategorías, las convierte a DTOs.
+                categoria.getActivo() != null && categoria.getActivo() ? 1 : 0,
+                
+                // Si la entidad 'categoria' tiene subcategorías, las convierte a DTOs.
                 categoria.getSubcategorias() != null && !categoria.getSubcategorias().isEmpty()
                         ? categoria.getSubcategorias().stream() // Convierte la lista de entidades Categoria en un
                                                                 // 'Stream'
