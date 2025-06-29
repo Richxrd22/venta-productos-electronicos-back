@@ -5,10 +5,10 @@ import jakarta.validation.constraints.NotNull;
 
 public record DatosRegistroDevolucionVenta(
 
-        @NotNull Long id_detalle,
         @NotNull @Min(1) int cantidad,
         String motivo,
-        @NotNull Long id_usuario
+        @NotNull Long id_usuario,
+        @NotNull Long id_detalle_venta
 
 ) {
 

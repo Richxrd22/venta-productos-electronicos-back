@@ -34,9 +34,10 @@ public class VentaController {
     private VentaService ventaService;
 
     @GetMapping("/listar")
-    public ResponseEntity<List<DatosListadoRegistroVenta>> listarVentas(Pageable pageable) {
-        Page<DatosListadoRegistroVenta> ventas = ventaService.getAllVentas(pageable);
-        return ResponseEntity.ok(ventas.getContent());
+    public ResponseEntity<List<DatosListadoRegistroVenta>> listarVentas() {
+        Pageable paginacion = Pageable.unpaged();
+        List<DatosListadoRegistroVenta> ventas = ventaService.getAllVentas(paginacion).getContent();
+        return ResponseEntity.ok(ventas);
     }
 
     @GetMapping("/buscar/{id}")

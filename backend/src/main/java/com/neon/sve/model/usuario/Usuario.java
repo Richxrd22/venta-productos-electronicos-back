@@ -80,7 +80,7 @@ public class Usuario implements UserDetails{
     private List<IngresoStock> ingresoStocks;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "id_usuario")
+    @OneToMany(mappedBy = "usuario")
     private List<DevolucionVenta> devolucionVentas;
 
     @JsonIgnore

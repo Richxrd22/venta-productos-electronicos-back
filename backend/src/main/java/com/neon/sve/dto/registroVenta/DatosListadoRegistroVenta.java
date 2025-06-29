@@ -2,6 +2,7 @@ package com.neon.sve.dto.registroVenta;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,22 +36,29 @@ public record DatosListadoRegistroVenta(
                 registroVenta.getFecha(),
                 registroVenta.getIgv_porcentaje(),
                 registroVenta.getSubtotal(),
-                registroVenta.getIgv_porcentaje(),
+                registroVenta.getIgv_total(), // Corregido: Usar igv_total en lugar de igv_porcentaje de nuevo
                 registroVenta.getDescuento(),
                 registroVenta.getTotal(),
                 registroVenta.getCancelado(),
                 registroVenta.getActivo() != null && registroVenta.getActivo() ? 1 : 0,
-                registroVenta.getId_usuario().getId(),
-                registroVenta.getId_usuario().getCorreo(),
-                registroVenta.getId_cliente().getId(),
-                registroVenta.getId_cliente().getNombre() + " " + registroVenta.getId_cliente().getApellido(),
-                registroVenta.getId_metodo_pago().getId(),
-                registroVenta.getId_metodo_pago().getMetodo(),
+
+                // --- Comprobaciones de nulidad añadidas aquí ---
+                registroVenta.getId_usuario() != null ? registroVenta.getId_usuario().getId() : null,
+                registroVenta.getId_usuario() != null ? registroVenta.getId_usuario().getCorreo() : "N/A", // O un valor por defecto
+                
+                registroVenta.getId_cliente() != null ? registroVenta.getId_cliente().getId() : null,
+                registroVenta.getId_cliente() != null ? (registroVenta.getId_cliente().getNombre() + " " + registroVenta.getId_cliente().getApellido()) : "Cliente no asignado", // O un valor por defecto
+                
+                registroVenta.getId_metodo_pago() != null ? registroVenta.getId_metodo_pago().getId() : null,
+                registroVenta.getId_metodo_pago() != null ? registroVenta.getId_metodo_pago().getMetodo() : "Método de pago no asignado", // O un valor por defecto
+                // --- Fin de comprobaciones de nulidad añadidas ---
+
                 registroVenta.getId_cupon() != null ? registroVenta.getId_cupon().getId() : null,
                 registroVenta.getId_cupon() != null ? registroVenta.getId_cupon().getCodigo() : null,
+
                 // Mapea la lista de DetalleVenta a DatosListadoDetalleVenta
                 registroVenta.getDetallesVenta() != null ? registroVenta.getDetallesVenta().stream()
                         .map(DatosListadoDetalleVenta::new)
-                        .collect(Collectors.toList()) : null);
+                        .collect(Collectors.toList()) : Collections.emptyList()); // Mejor devolver una lista vacía que null
     }
 }

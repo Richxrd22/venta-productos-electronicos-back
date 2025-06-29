@@ -25,7 +25,7 @@ CREATE TABLE clientes (
     celular VARCHAR(9) NOT NULL UNIQUE,
     correo VARCHAR(100) NOT NULL UNIQUE,
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    activo BIT(1) NOT NULL,
+    activo BIT(1) NOT NULL DEFAULT 1,
     PRIMARY KEY (id)
 );
 
@@ -120,6 +120,7 @@ CREATE TABLE devoluciones_venta (
     cantidad INT NOT NULL CHECK (cantidad > 0),
     motivo TEXT,
     id_usuario BIGINT NOT NULL,
+    estado ENUM('PENDIENTE', 'RESUELTO', 'RECHAZADO') NOT NULL DEFAULT 'PENDIENTE',
     PRIMARY KEY (id),
     FOREIGN KEY (id_detalle_venta) REFERENCES detalle_ventas(id),
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
