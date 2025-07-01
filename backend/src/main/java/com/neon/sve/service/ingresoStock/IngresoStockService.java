@@ -12,17 +12,17 @@ import com.neon.sve.dto.login.DatosRespuestaMensaje;
 
 public interface IngresoStockService {
     
-    DatosRespuestaIngresoStock getIngresoStockById(Long id);
+   // DatosRespuestaIngresoStock getIngresoStockById(Long id);
 
-    Page<DatosListadoIngresoStock> getAllIngresoStock(Pageable pageable);
+ //   Page<DatosListadoIngresoStock> getAllIngresoStock(Pageable pageable);
     
-    DatosRespuestaMensaje createIngresoStock(DatosRegistroIngresoStock datosRegistroIngresoStock);
+    //DatosRespuestaMensaje createIngresoStock(DatosRegistroIngresoStock datosRegistroIngresoStock);
 
-    DatosRespuestaIngresoStock updateIngresoStock(DatosActualizarIngresoStock datosActualizarIngresoStock);
+    //DatosRespuestaIngresoStock updateIngresoStock(DatosActualizarIngresoStock datosActualizarIngresoStock);
 
-    void activarIngresoStock(Long id);
+   // void activarIngresoStock(Long id);
 
-    void desactivarIngresoStock(Long id);
+   // void desactivarIngresoStock(Long id);
 
     
 

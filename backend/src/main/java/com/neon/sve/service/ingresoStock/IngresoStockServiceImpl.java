@@ -40,6 +40,7 @@ import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class IngresoStockServiceImpl implements IngresoStockService {
+    /* 
 
     @Autowired
     private IngresoStockRepository ingresoStockRepository;
@@ -97,17 +98,16 @@ public class IngresoStockServiceImpl implements IngresoStockService {
         Usuario usuario = usuarioRepository.findById(datosActualizarIngresoStock.id_usuario())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuario no encontrado."));
 
-        DetalleIngreso detalle = ingresoStock.getDetallesIngreso();
-        Producto producto = detalle.getId_producto();
+       // DetalleIngreso detalle = ingresoStock.getDetallesIngreso();
+        //Producto producto = detalle.getId_producto();
 
-        actualizarCantidadYStockSiEsNecesario(detalle, producto, datosActualizarIngresoStock.cantidad_producto());
+        //actualizarCantidadYStockSiEsNecesario(detalle, producto, datosActualizarIngresoStock.cantidad_producto());
 
         ingresoStock.actualizar(datosActualizarIngresoStock, proveedor, usuario);
-        detalle.setPrecio_unitario(datosActualizarIngresoStock.precio_unitario());
+        //detalle.setPrecio_unitario(datosActualizarIngresoStock.precio_unitario());
 
         return new DatosRespuestaIngresoStock(ingresoStock);
     }
-
     @Override
     @Transactional
     public void activarIngresoStock(Long id) {
@@ -163,7 +163,8 @@ public class IngresoStockServiceImpl implements IngresoStockService {
 
         ingresoStockRepository.save(ingresoStock);
     }
-
+*/
+/* 
     @Transactional
     @Override
     public DatosRespuestaMensaje createIngresoStock(DatosRegistroIngresoStock datosRegistroIngresoStock) {
@@ -229,8 +230,8 @@ public class IngresoStockServiceImpl implements IngresoStockService {
         }
         return new DatosRespuestaMensaje("Ingreso de stock registrado con éxito.");
     }
-
-    /* Metodo para updateIngresoStock */
+*/
+    /* Metodo para updateIngresoStock 
     private void actualizarCantidadYStockSiEsNecesario(DetalleIngreso detalle, Producto producto, int nuevaCantidad) {
         int cantidadAnterior = detalle.getCantidad();
         boolean tieneSeries = detalle.getSeriesProductos() != null && !detalle.getSeriesProductos().isEmpty();
@@ -267,8 +268,8 @@ public class IngresoStockServiceImpl implements IngresoStockService {
             detalle.setCantidad(nuevaCantidad);
         }
     }
-
-    /* Metodo para createIngresoSotck */
+*/
+    /* Metodo para createIngresoSotck 
     private void procesarSerieIndividual(DatosRegistroIngresoStock datos, DetalleIngreso detalleIngreso) {
         List<String> series = datos.series_individuales();
 
@@ -315,8 +316,8 @@ public class IngresoStockServiceImpl implements IngresoStockService {
             serieProductoRepository.save(serie);
         }
     }
-
-    /* Metodo para desactivarIngresoStock */
+*/
+    /* Metodo para desactivarIngresoStock 
     private void validarSeries(List<SerieProducto> series) {
         if (series == null || series.isEmpty())
             return;
@@ -354,8 +355,8 @@ public class IngresoStockServiceImpl implements IngresoStockService {
             serieProductoRepository.save(serie);
         });
     }
-
-    /* Metodo para activarIngresoStock */
+*/
+    /* Metodo para activarIngresoStock 
     private void validarStockMaximo(Producto producto, int cantidadAgregar) {
         int stockFinal = producto.getStock_actual() + cantidadAgregar;
         if (stockFinal > producto.getMax_stock()) {
@@ -372,5 +373,5 @@ public class IngresoStockServiceImpl implements IngresoStockService {
             });
         }
     }
-
+*/
 }

@@ -28,7 +28,7 @@ import jakarta.validation.Valid;
 @Controller
 @RequestMapping("/ingresoStock")
 public class IngresoStockController {
-
+    /*
     @Autowired
     private IngresoStockService ingresoStockService;
 
@@ -80,5 +80,5 @@ public class IngresoStockController {
         ingresoStockService.desactivarIngresoStock(id);
         return ResponseEntity.ok(new MensajeRespuesta("Ingreso de Stock desactivado correctamente"));
     }
-
+ */
 }

@@ -41,9 +41,9 @@ public class DetalleIngreso {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "id_ingreso", nullable = false)
-    private IngresoStock id_ingresoStock; // Relación con la entidad IngresoStock
+    private IngresoStock ingresoStock;
 
     @ManyToOne
     @JoinColumn(name = "id_producto", nullable = false)
@@ -70,7 +70,6 @@ public class DetalleIngreso {
 
     public DetalleIngreso(@Valid DatosRegistroDetalleIngreso datosRegistroDetalleIngreso, IngresoStock ingresoStock,
             Producto producto) {
-        this.id_ingresoStock = ingresoStock;
         this.id_producto = producto;
         this.cantidad = datosRegistroDetalleIngreso.cantidad();
         this.precio_unitario = datosRegistroDetalleIngreso.precio_unitario();
