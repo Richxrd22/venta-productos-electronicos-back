@@ -185,40 +185,80 @@ INSERT INTO metodo_pagos (metodo, activo) VALUES
 ('Transferencia', 1),
 ('Visa', 1);
 
-INSERT INTO ingreso_stocks (id, id_proveedor, fecha_ingreso, tipo_documento, numero_documento, observaciones) VALUES
-(1, 16, '2025-07-01', 'Boleta', 'BOL-3286', 'Ingreso automático #1'),
-(2, 20, '2025-06-28', 'Guía', 'GUÍ-7834', 'Ingreso automático #2'),
-(3, 14, '2025-06-25', 'Guía', 'GUÍ-1591', 'Ingreso automático #3'),
-(4, 8, '2025-06-22', 'Factura', 'FAC-6205', 'Ingreso automático #4'),
-(5, 5, '2025-06-19', 'Boleta', 'BOL-5062', 'Ingreso automático #5'),
-(6, 3, '2025-06-16', 'Factura', 'FAC-3423', 'Ingreso automático #6'),
-(7, 12, '2025-06-13', 'Guía', 'GUÍ-4376', 'Ingreso automático #7'),
-(8, 1, '2025-06-10', 'Factura', 'FAC-1532', 'Ingreso automático #8'),
-(9, 9, '2025-06-07', 'Boleta', 'BOL-6571', 'Ingreso automático #9'),
-(10, 18, '2025-06-04', 'Factura', 'FAC-3160', 'Ingreso automático #10');
+
 
 -- ===== Ingreso Stock =====
 
 INSERT INTO ingreso_stocks (id, id_proveedor, fecha_ingreso, tipo_documento, numero_documento, observaciones) VALUES
 (1, 3, '2025-07-01', 'Factura', 'FAC-1001', 'Ingreso inicial de productos básicos'),
 (2, 5, '2025-07-01', 'Guía', 'GUI-1002', 'Ingreso intermedio para stock'),
-(3, 7, '2025-07-01', 'Boleta', 'BOL-1003', 'Tercera carga de productos generales');
+(3, 7, '2025-07-01', 'Boleta', 'BOL-1003', 'Tercera carga de productos generales'),
+(4, 2, '2025-07-01', 'Factura', 'FAC-1004', 'Carga adicional de periféricos'),
+(5, 4, '2025-07-01', 'Guía', 'GUI-1005', 'Ingreso de componentes'),
+(6, 1, '2025-07-01', 'Boleta', 'BOL-1006', 'Ingreso de dispositivos móviles'),
+(7, 6, '2025-07-01', 'Factura', 'FAC-1007', 'Ingreso de accesorios y almacenamiento'),
+(8, 8, '2025-07-01', 'Factura', 'FAC-1008', 'Ingreso de equipos de escritorio y tablets');
 
 INSERT INTO detalle_ingresos (id, id_ingreso, id_producto, codigo_lote, cantidad, precio_unitario, activo) VALUES
 (1, 1, 5, 'L-20250701-ABC123', 10, 589.99, 1),
 (2, 1, 12, 'L-20250701-DEF456', 8, 349.50, 1),
-
 (3, 2, 18, 'L-20250701-GHI789', 5, 429.90, 1),
 (4, 2, 27, 'L-20250701-JKL012', 14, 1199.00, 1),
+(5, 3, 3, 'L-20250701-MNO345', 15, 239.99, 1), -- Ajustado a max_stock 15
+(6, 3, 30, 'L-20250701-PQR678', 18, 149.95, 1), -- Ajustado a max_stock 30 - stock previo 12
+(7, 4, 4, 'L-20250701-KIN-480', 25, 199.00, 1),
+(8, 4, 5, 'L-20250701-LOG-M185', 50, 59.90, 1),
+(9, 4, 6, 'L-20250701-RED-H120', 20, 119.00, 1),
+(10, 5, 7, 'L-20250701-TPL-C6', 15, 139.00, 1),
+(11, 5, 8, 'L-20250701-RAZ-V2', 10, 219.00, 1),
+(12, 5, 9, 'L-20250701-AMD-5600G', 10, 649.00, 1),
+(13, 6, 10, 'L-20250701-NVI-1650', 5, 1099.00, 1),
+(14, 6, 11, 'L-20250701-EPS-L3250', 10, 649.00, 1),
+(15, 6, 13, 'L-20250701-XIA-NOTE12', 20, 749.00, 1),
+(16, 6, 14, 'L-20250701-HUA-FIT2', 10, 559.00, 1),
+(17, 7, 15, 'L-20250701-MIC-HD3000', 15, 139.00, 1),
+(18, 7, 16, 'L-20250701-MSI-B550', 5, 399.00, 1),
+(19, 7, 17, 'L-20250701-DEL-5400', 3, 2899.00, 1),
+(20, 7, 19, 'L-20250701-LOG-Z313', 10, 179.00, 1),
+(21, 7, 20, 'L-20250701-IPAD-64', 5, 1499.00, 1),
+(22, 8, 21, 'L-20250701-ASU-X515', 8, 2199.00, 1),
+(23, 8, 22, 'L-20250701-ACE-ASP3', 7, 1699.00, 1),
+(24, 8, 23, 'L-20250701-GIG-8GB', 30, 159.00, 1),
+(25, 8, 26, 'L-20250701-TPL-SW8', 10, 209.00, 1),
+(26, 8, 30, 'L-20250701-REDMI10A', 18, 499.00, 1), -- Ajustado a no pasar el max_stock
+(27, 8, 32, 'L-20250701-KIN-USB64', 40, 49.90, 1),
+(28, 8, 34, 'L-20250701-GIG-B450M', 5, 369.00, 1),
+(29, 8, 36, 'L-20250701-PAD5', 7, 1299.00, 1),
+(30, 8, 40, 'L-20250701-GENIUS', 25, 29.00, 1);
 
-(5, 3, 3, 'L-20250701-MNO345', 20, 239.99, 1),
-(6, 3, 30, 'L-20250701-PQR678', 12, 149.95, 1);
 
 UPDATE productos SET stock_actual = stock_actual + 10 WHERE id = 5;
 UPDATE productos SET stock_actual = stock_actual + 8 WHERE id = 12;
 UPDATE productos SET stock_actual = stock_actual + 5 WHERE id = 18;
 UPDATE productos SET stock_actual = stock_actual + 14 WHERE id = 27;
-UPDATE productos SET stock_actual = stock_actual + 20 WHERE id = 3;
-UPDATE productos SET stock_actual = stock_actual + 12 WHERE id = 30;
+UPDATE productos SET stock_actual = stock_actual + 15 WHERE id = 3;  -- Ajustado
+UPDATE productos SET stock_actual = stock_actual + 18 WHERE id = 30; -- Ajustado
 
-
+UPDATE productos SET stock_actual = stock_actual + 25 WHERE id = 4;
+UPDATE productos SET stock_actual = stock_actual + 50 WHERE id = 5;
+UPDATE productos SET stock_actual = stock_actual + 20 WHERE id = 6;
+UPDATE productos SET stock_actual = stock_actual + 15 WHERE id = 7;
+UPDATE productos SET stock_actual = stock_actual + 10 WHERE id = 8;
+UPDATE productos SET stock_actual = stock_actual + 10 WHERE id = 9;
+UPDATE productos SET stock_actual = stock_actual + 5 WHERE id = 10;
+UPDATE productos SET stock_actual = stock_actual + 10 WHERE id = 11;
+UPDATE productos SET stock_actual = stock_actual + 20 WHERE id = 13;
+UPDATE productos SET stock_actual = stock_actual + 10 WHERE id = 14;
+UPDATE productos SET stock_actual = stock_actual + 15 WHERE id = 15;
+UPDATE productos SET stock_actual = stock_actual + 5 WHERE id = 16;
+UPDATE productos SET stock_actual = stock_actual + 3 WHERE id = 17;
+UPDATE productos SET stock_actual = stock_actual + 10 WHERE id = 19;
+UPDATE productos SET stock_actual = stock_actual + 5 WHERE id = 20;
+UPDATE productos SET stock_actual = stock_actual + 8 WHERE id = 21;
+UPDATE productos SET stock_actual = stock_actual + 7 WHERE id = 22;
+UPDATE productos SET stock_actual = stock_actual + 30 WHERE id = 23;
+UPDATE productos SET stock_actual = stock_actual + 10 WHERE id = 26;
+UPDATE productos SET stock_actual = stock_actual + 40 WHERE id = 32;
+UPDATE productos SET stock_actual = stock_actual + 5 WHERE id = 34;
+UPDATE productos SET stock_actual = stock_actual + 7 WHERE id = 36;
+UPDATE productos SET stock_actual = stock_actual + 25 WHERE id = 40;
