@@ -115,9 +115,9 @@ CREATE TABLE reclamo_garantias (
 
 CREATE TABLE devoluciones_venta (
     id BIGINT AUTO_INCREMENT,
-    id_detalle_venta BIGINT NOT NULL,
+    id_detalle_venta BIGINT NULL,
     fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    cantidad INT NOT NULL CHECK (cantidad > 0),
+    cantidad INT NULL CHECK (cantidad > 0),
     motivo TEXT,
     id_usuario BIGINT NOT NULL,
     estado ENUM('PENDIENTE', 'RESUELTO', 'RECHAZADO') NOT NULL DEFAULT 'PENDIENTE',

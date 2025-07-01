@@ -77,7 +77,7 @@ public class DetalleVenta {
     private Garantia garantia;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "detalleVenta", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "detalleVenta", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DevolucionVenta> devolucionesVenta;
 
     public DetalleVenta(@Valid DatosRegistroDetalleVenta datosRegistro,

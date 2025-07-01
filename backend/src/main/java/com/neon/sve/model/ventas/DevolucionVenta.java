@@ -1,23 +1,26 @@
 package com.neon.sve.model.ventas;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
-import com.neon.sve.dto.devolucionVenta.DatosActualizarDevolucionVenta;
-import com.neon.sve.dto.devolucionVenta.DatosRegistroDevolucionVenta;
 import com.neon.sve.model.usuario.Usuario;
 import com.neon.sve.model.ventas.Tipos.EstadoReclamo;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -40,15 +43,23 @@ public class DevolucionVenta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Deprecated // Marcamos como obsoleto para no usarlo en código nuevo
     @ManyToOne
-    @JoinColumn(name = "id_detalle_venta", nullable = false)
+    @JoinColumn(name = "id_detalle_venta", nullable = true) // Hacemos que la columna sea opcional
     private DetalleVenta detalleVenta;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_registro_venta", nullable = false)
+    private RegistroVenta venta;
+
+    @OneToMany(mappedBy = "devolucionVenta", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<DetalleDevolucion> detallesDevolucion = new ArrayList<>();
 
     @Column(nullable = false, updatable = false)
     @CreationTimestamp
     private Timestamp fecha;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private int cantidad;
 
     @Column(columnDefinition = "TEXT")
@@ -62,24 +73,4 @@ public class DevolucionVenta {
     @Column(nullable = false, length = 20)
     private EstadoReclamo estado = EstadoReclamo.PENDIENTE;
 
-    // Constructor para registro
-
-    public DevolucionVenta(@Valid DatosRegistroDevolucionVenta datosRegistro,
-            DetalleVenta detalleVenta, Usuario usuario) {
-        this.detalleVenta = detalleVenta;
-        this.cantidad = datosRegistro.cantidad();
-        this.motivo = datosRegistro.motivo();
-        this.usuario = usuario;
-    }
-
-    public void actualizar(@Valid DatosActualizarDevolucionVenta datosActualizarDevolucionVenta,
-            DetalleVenta detalleVenta) {
-        this.id = datosActualizarDevolucionVenta.id();
-        this.detalleVenta = detalleVenta;
-        this.cantidad = datosActualizarDevolucionVenta.cantidad();
-        this.motivo = datosActualizarDevolucionVenta.motivo();
-        this.estado = datosActualizarDevolucionVenta.estado();
-    }
-
 }
-
