@@ -73,7 +73,6 @@ public class VentaServiceImpl implements VentaService {
                 return ventasPage.map(DatosListadoRegistroVenta::new);
         }
 
-        /*
         // METODO PARA LA VENTA COMPLETA, INCLUYENDO EL DESCUENTO DE STOCK
         @Override
         @Transactional
@@ -110,7 +109,13 @@ public class VentaServiceImpl implements VentaService {
                 registroVentaRepository.save(registroVenta);
 
                 // 3. Procesar los detalles de la venta (items)
-                BigDecimal subtotalCalculado = BigDecimal.ZERO;
+                // Para acumular el subtotal base (sin IGV)
+                BigDecimal subtotalBaseCalculado = BigDecimal.ZERO;
+                // Para acumular el IGV de todos los items
+                BigDecimal igvTotalCalculado = BigDecimal.ZERO;
+                // Para acumular el total (ya con IGV) de todos los items
+                BigDecimal totalItemsConIgv = BigDecimal.ZERO;
+
                 List<DetalleVenta> detallesAGuardar = new ArrayList<>();
 
                 for (DatosRegistroItemVenta itemDTO : datosVenta.items()) {
@@ -127,19 +132,40 @@ public class VentaServiceImpl implements VentaService {
                         producto.setStock_actual(producto.getStock_actual() - itemDTO.cantidad());
                         productoRepository.save(producto); // Actualizamos el stock en la BD
 
+                        // --- CÁLCULO DEL IGV POR PRODUCTO E INTEGRACIÓN DEL PRECIO ---
+                        BigDecimal precioUnitarioBase = itemDTO.precio_unitario(); // Precio unitario sin IGV
+                        BigDecimal igvPorItemUnitario = precioUnitarioBase.multiply(IGV_PORCENTAJE).divide(CIEN, 2,
+                                        RoundingMode.HALF_UP);
+                        BigDecimal precioUnitarioConIgv = precioUnitarioBase.add(igvPorItemUnitario);
+
                         // Crear el objeto DetalleVenta
                         DetalleVenta detalle = new DetalleVenta();
                         detalle.setId_registro_venta(registroVenta);
                         detalle.setId_producto(producto);
                         detalle.setCantidad(itemDTO.cantidad());
-                        detalle.setPrecio_unitario(itemDTO.precio_unitario());
+                        // Guardamos el precio unitario que ya incluye el IGV para este item
+                        detalle.setPrecio_unitario(precioUnitarioConIgv);
 
-                        BigDecimal totalPorItem = detalle.getPrecio_unitario()
+                        // El total por item ya incluye el IGV
+                        BigDecimal totalPorItemConIgv = precioUnitarioConIgv
                                         .multiply(BigDecimal.valueOf(detalle.getCantidad()));
-                        detalle.setTotal(totalPorItem);
+                        detalle.setTotal(totalPorItemConIgv);
 
                         detallesAGuardar.add(detalle);
-                        subtotalCalculado = subtotalCalculado.add(totalPorItem);
+
+                        // Acumular para los totales de la cabecera
+                        subtotalBaseCalculado = subtotalBaseCalculado
+                                        .add(precioUnitarioBase.multiply(BigDecimal.valueOf(detalle.getCantidad()))); // Suma
+                                                                                                                      // de
+                                                                                                                      // precios
+                                                                                                                      // base
+                        igvTotalCalculado = igvTotalCalculado
+                                        .add(igvPorItemUnitario.multiply(BigDecimal.valueOf(detalle.getCantidad()))); // Suma
+                                                                                                                      // de
+                                                                                                                      // IGVs
+                                                                                                                      // individuales
+                        totalItemsConIgv = totalItemsConIgv.add(totalPorItemConIgv); // Suma de totales de ítems (con
+                                                                                     // IGV)
                 }
 
                 // Guardamos todos los detalles en la base de datos
@@ -147,21 +173,23 @@ public class VentaServiceImpl implements VentaService {
 
                 // 4. Calcular los totales finales para el RegistroVenta
                 BigDecimal descuento = BigDecimal.ZERO;
+                // El descuento se aplica sobre el total de los items que ya incluye IGV
                 if (cupon != null) {
-                        descuento = subtotalCalculado.multiply(BigDecimal.valueOf(cupon.getDescuentoPorcentaje()))
-                                        .divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP);
+                        descuento = totalItemsConIgv.multiply(BigDecimal.valueOf(cupon.getDescuentoPorcentaje()))
+                                        .divide(CIEN, 2, RoundingMode.HALF_UP);
                 }
 
-                BigDecimal subtotalConDescuento = subtotalCalculado.subtract(descuento);
-                BigDecimal igvTotal = subtotalConDescuento.multiply(IGV_PORCENTAJE)
-                                .divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP);
-                BigDecimal totalFinal = subtotalConDescuento.add(igvTotal);
+                // El total final es la suma de los totales de los ítems (que ya tienen IGV)
+                // menos el descuento
+                BigDecimal totalFinal = totalItemsConIgv.subtract(descuento);
 
                 // 5. Actualizar el RegistroVenta con los valores finales y guardar
-                registroVenta.setSubtotal(subtotalCalculado);
+                // El subtotal de la venta será la suma de los totales de los ítems (que ya
+                // incluyen IGV)
+                registroVenta.setSubtotal(totalItemsConIgv);
                 registroVenta.setDescuento(descuento);
                 registroVenta.setIgv_porcentaje(IGV_PORCENTAJE);
-                registroVenta.setIgv_total(igvTotal);
+                registroVenta.setIgv_total(igvTotalCalculado); // El IGV total es la suma de los IGV de cada item
                 registroVenta.setTotal(totalFinal);
 
                 RegistroVenta ventaGuardada = registroVentaRepository.save(registroVenta);
@@ -172,24 +200,29 @@ public class VentaServiceImpl implements VentaService {
         @Override
         @Transactional
         public DatosRespuestaRegistroVenta updateVentaCompleta(DatosActualizarVentaCompleta datosActualizar) {
-                // 1. Encontrar la venta existente
                 RegistroVenta venta = registroVentaRepository.findById(datosActualizar.id())
                                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                                                 "Venta no encontrada con ID: " + datosActualizar.id()));
 
-                // 2. Restaurar el stock de los productos de los detalles antiguos
-                // Obtener los detalles antes de eliminarlos
-                List<DetalleVenta> detallesAntiguos = venta.getDetallesVenta();
-                for (DetalleVenta detalleAntiguo : detallesAntiguos) {
+                // 1. Restaurar el stock de los productos de los detalles antiguos
+                // IMPORTANTE: Iteramos una copia para evitar ConcurrentModificationException si
+                // la lista original
+                // estuviera siendo modificada por Hibernate al limpiar la colección.
+                // Además, al manipular la colección directamente, no necesitamos llamar a
+                // deleteAll en el repositorio de detalles.
+                List<DetalleVenta> detallesAntiguosCopia = new ArrayList<>(venta.getDetallesVenta());
+                for (DetalleVenta detalleAntiguo : detallesAntiguosCopia) {
                         Producto producto = detalleAntiguo.getId_producto();
                         producto.setStock_actual(producto.getStock_actual() + detalleAntiguo.getCantidad());
                         productoRepository.save(producto);
                 }
 
-                // 3. Eliminar los detalles de venta antiguos
-                detalleVentaRepository.deleteAll(detallesAntiguos);
+                // 2. Limpiar la colección de detalles de la venta existente.
+                // Debido a orphanRemoval=true, Hibernate eliminará los detalles de la base de
+                // datos.
+                venta.getDetallesVenta().clear();
 
-                // 4. Obtener las nuevas entidades principales (cliente, usuario, etc.)
+                // 3. Obtener las nuevas entidades principales (cliente, usuario, etc.)
                 Usuario usuario = usuarioRepository.findById(datosActualizar.id_usuario())
                                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                                                 "Usuario no encontrado"));
@@ -213,16 +246,17 @@ public class VentaServiceImpl implements VentaService {
                 venta.setId_metodo_pago(metodoPago);
                 venta.setId_cupon(cupon);
 
-                // 5. Procesar los nuevos detalles de la venta (items)
-                BigDecimal subtotalCalculado = BigDecimal.ZERO;
-                List<DetalleVenta> detallesNuevos = new ArrayList<>();
+                // 4. Procesar los nuevos detalles de la venta (items) y agregarlos a la
+                // colección de la venta
+                BigDecimal subtotalBaseCalculado = BigDecimal.ZERO;
+                BigDecimal igvTotalCalculado = BigDecimal.ZERO;
+                BigDecimal totalItemsConIgv = BigDecimal.ZERO;
 
                 for (DatosRegistroItemVenta itemDTO : datosActualizar.items()) {
                         Producto producto = productoRepository.findById(itemDTO.id_producto())
                                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                                                         "Producto con ID " + itemDTO.id_producto() + " no encontrado"));
 
-                        // Validar y descontar el stock para los nuevos items
                         if (producto.getStock_actual() < itemDTO.cantidad()) {
                                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                                                 "Stock insuficiente para el producto: " + producto.getNombre()
@@ -231,262 +265,54 @@ public class VentaServiceImpl implements VentaService {
                         producto.setStock_actual(producto.getStock_actual() - itemDTO.cantidad());
                         productoRepository.save(producto);
 
-                        // Crear el nuevo objeto DetalleVenta
+                        BigDecimal precioUnitarioBase = itemDTO.precio_unitario();
+                        BigDecimal igvPorItemUnitario = precioUnitarioBase.multiply(IGV_PORCENTAJE).divide(CIEN, 2,
+                                        RoundingMode.HALF_UP);
+                        BigDecimal precioUnitarioConIgv = precioUnitarioBase.add(igvPorItemUnitario);
+
                         DetalleVenta detalleNuevo = new DetalleVenta();
-                        detalleNuevo.setId_registro_venta(venta);
+                        detalleNuevo.setId_registro_venta(venta); // Establece la relación bidireccional
                         detalleNuevo.setId_producto(producto);
                         detalleNuevo.setCantidad(itemDTO.cantidad());
-                        detalleNuevo.setPrecio_unitario(itemDTO.precio_unitario());
-                        BigDecimal totalPorItem = detalleNuevo.getPrecio_unitario()
-                                        .multiply(BigDecimal.valueOf(detalleNuevo.getCantidad()));
-                        detalleNuevo.setTotal(totalPorItem);
+                        detalleNuevo.setPrecio_unitario(precioUnitarioConIgv);
 
-                        detallesNuevos.add(detalleNuevo);
-                        subtotalCalculado = subtotalCalculado.add(totalPorItem);
+                        BigDecimal totalPorItemConIgv = precioUnitarioConIgv
+                                        .multiply(BigDecimal.valueOf(detalleNuevo.getCantidad()));
+                        detalleNuevo.setTotal(totalPorItemConIgv);
+
+                        // AGREGAR DIRECTAMENTE A LA COLECCIÓN DE LA VENTA
+                        venta.getDetallesVenta().add(detalleNuevo);
+
+                        subtotalBaseCalculado = subtotalBaseCalculado.add(
+                                        precioUnitarioBase.multiply(BigDecimal.valueOf(detalleNuevo.getCantidad())));
+                        igvTotalCalculado = igvTotalCalculado.add(
+                                        igvPorItemUnitario.multiply(BigDecimal.valueOf(detalleNuevo.getCantidad())));
+                        totalItemsConIgv = totalItemsConIgv.add(totalPorItemConIgv);
                 }
 
-                detalleVentaRepository.saveAll(detallesNuevos);
-
-                // 6. Recalcular los totales finales
+                // 5. Recalcular los totales finales
                 BigDecimal descuento = BigDecimal.ZERO;
                 if (cupon != null) {
-                        descuento = subtotalCalculado.multiply(BigDecimal.valueOf(cupon.getDescuentoPorcentaje()))
-                                        .divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP);
+                        descuento = totalItemsConIgv.multiply(BigDecimal.valueOf(cupon.getDescuentoPorcentaje()))
+                                        .divide(CIEN, 2, RoundingMode.HALF_UP);
                 }
 
-                BigDecimal subtotalConDescuento = subtotalCalculado.subtract(descuento);
-                BigDecimal igvTotal = subtotalConDescuento.multiply(IGV_PORCENTAJE)
-                                .divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP);
-                BigDecimal totalFinal = subtotalConDescuento.add(igvTotal);
+                BigDecimal totalFinal = totalItemsConIgv.subtract(descuento);
 
-                // 7. Actualizar la venta con los valores finales y guardar
-                venta.setSubtotal(subtotalCalculado);
+                // 6. Actualizar la venta con los valores finales y guardar
+                venta.setSubtotal(totalItemsConIgv);
                 venta.setDescuento(descuento);
                 venta.setIgv_porcentaje(IGV_PORCENTAJE);
-                venta.setIgv_total(igvTotal);
+                venta.setIgv_total(igvTotalCalculado);
                 venta.setTotal(totalFinal);
 
+                // Guardamos la venta. Hibernate se encargará de persistir los nuevos detalles y
+                // eliminar los antiguos
+                // gracias a la configuración de la relación @OneToMany y orphanRemoval=true.
                 RegistroVenta ventaActualizada = registroVentaRepository.save(venta);
 
                 return new DatosRespuestaRegistroVenta(ventaActualizada);
         }
-                */
-
-        // METODO PARA LA VENTA COMPLETA, INCLUYENDO EL DESCUENTO DE STOCK
-    @Override
-    @Transactional
-    public DatosRespuestaRegistroVenta createVentaCompleta(DatosRegistroVentaCompleta datosVenta) {
-        // 1. Obtener entidades principales (Usuario, Cliente, etc.)
-        Usuario usuario = usuarioRepository.findById(datosVenta.id_usuario())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Usuario no encontrado"));
-
-        Cliente cliente = clienteRepository.findById(datosVenta.id_cliente())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Cliente no encontrado"));
-
-        MetodoPago metodoPago = metodoPagoRepository.findById(datosVenta.id_metodo_pago())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Método de pago no encontrado"));
-
-        Cupon cupon = null;
-        if (datosVenta.id_cupon() != null) {
-            cupon = cuponRepository.findById(datosVenta.id_cupon())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                            "Cupón no encontrado"));
-        }
-
-        // 2. Crear la cabecera de la venta (RegistroVenta) sin totales aún
-        RegistroVenta registroVenta = new RegistroVenta();
-        registroVenta.setId_usuario(usuario);
-        registroVenta.setId_cliente(cliente);
-        registroVenta.setId_metodo_pago(metodoPago);
-        registroVenta.setId_cupon(cupon);
-        registroVenta.setCancelado(false);
-        registroVenta.setActivo(true);
-        // Guardamos para que JPA le asigne un ID que usaremos en los detalles
-        registroVentaRepository.save(registroVenta);
-
-        // 3. Procesar los detalles de la venta (items)
-        // Para acumular el subtotal base (sin IGV)
-        BigDecimal subtotalBaseCalculado = BigDecimal.ZERO;
-        // Para acumular el IGV de todos los items
-        BigDecimal igvTotalCalculado = BigDecimal.ZERO;
-        // Para acumular el total (ya con IGV) de todos los items
-        BigDecimal totalItemsConIgv = BigDecimal.ZERO;
-
-
-        List<DetalleVenta> detallesAGuardar = new ArrayList<>();
-
-        for (DatosRegistroItemVenta itemDTO : datosVenta.items()) {
-            Producto producto = productoRepository.findById(itemDTO.id_producto())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                            "Producto con ID " + itemDTO.id_producto() + " no encontrado"));
-
-            // --- LÓGICA DE VALIDACIÓN Y DESCUENTO DE STOCK ---
-            if (producto.getStock_actual() < itemDTO.cantidad()) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "Stock insuficiente para el producto: " + producto.getNombre()
-                                + ". Stock disponible: " + producto.getStock_actual());
-            }
-            producto.setStock_actual(producto.getStock_actual() - itemDTO.cantidad());
-            productoRepository.save(producto); // Actualizamos el stock en la BD
-
-            // --- CÁLCULO DEL IGV POR PRODUCTO E INTEGRACIÓN DEL PRECIO ---
-            BigDecimal precioUnitarioBase = itemDTO.precio_unitario(); // Precio unitario sin IGV
-            BigDecimal igvPorItemUnitario = precioUnitarioBase.multiply(IGV_PORCENTAJE).divide(CIEN, 2, RoundingMode.HALF_UP);
-            BigDecimal precioUnitarioConIgv = precioUnitarioBase.add(igvPorItemUnitario);
-
-            // Crear el objeto DetalleVenta
-            DetalleVenta detalle = new DetalleVenta();
-            detalle.setId_registro_venta(registroVenta);
-            detalle.setId_producto(producto);
-            detalle.setCantidad(itemDTO.cantidad());
-            // Guardamos el precio unitario que ya incluye el IGV para este item
-            detalle.setPrecio_unitario(precioUnitarioConIgv);
-
-            // El total por item ya incluye el IGV
-            BigDecimal totalPorItemConIgv = precioUnitarioConIgv.multiply(BigDecimal.valueOf(detalle.getCantidad()));
-            detalle.setTotal(totalPorItemConIgv);
-
-            detallesAGuardar.add(detalle);
-
-            // Acumular para los totales de la cabecera
-            subtotalBaseCalculado = subtotalBaseCalculado.add(precioUnitarioBase.multiply(BigDecimal.valueOf(detalle.getCantidad()))); // Suma de precios base
-            igvTotalCalculado = igvTotalCalculado.add(igvPorItemUnitario.multiply(BigDecimal.valueOf(detalle.getCantidad()))); // Suma de IGVs individuales
-            totalItemsConIgv = totalItemsConIgv.add(totalPorItemConIgv); // Suma de totales de ítems (con IGV)
-        }
-
-        // Guardamos todos los detalles en la base de datos
-        detalleVentaRepository.saveAll(detallesAGuardar);
-
-        // 4. Calcular los totales finales para el RegistroVenta
-        BigDecimal descuento = BigDecimal.ZERO;
-        // El descuento se aplica sobre el total de los items que ya incluye IGV
-        if (cupon != null) {
-            descuento = totalItemsConIgv.multiply(BigDecimal.valueOf(cupon.getDescuentoPorcentaje()))
-                    .divide(CIEN, 2, RoundingMode.HALF_UP);
-        }
-
-        // El total final es la suma de los totales de los ítems (que ya tienen IGV) menos el descuento
-        BigDecimal totalFinal = totalItemsConIgv.subtract(descuento);
-
-        // 5. Actualizar el RegistroVenta con los valores finales y guardar
-        // El subtotal de la venta será la suma de los totales de los ítems (que ya incluyen IGV)
-        registroVenta.setSubtotal(totalItemsConIgv);
-        registroVenta.setDescuento(descuento);
-        registroVenta.setIgv_porcentaje(IGV_PORCENTAJE);
-        registroVenta.setIgv_total(igvTotalCalculado); // El IGV total es la suma de los IGV de cada item
-        registroVenta.setTotal(totalFinal);
-
-        RegistroVenta ventaGuardada = registroVentaRepository.save(registroVenta);
-
-        return new DatosRespuestaRegistroVenta(ventaGuardada);
-    }
-
-    @Override
-    @Transactional
-    public DatosRespuestaRegistroVenta updateVentaCompleta(DatosActualizarVentaCompleta datosActualizar) {
-        RegistroVenta venta = registroVentaRepository.findById(datosActualizar.id())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Venta no encontrada con ID: " + datosActualizar.id()));
-
-        // 1. Restaurar el stock de los productos de los detalles antiguos
-        // IMPORTANTE: Iteramos una copia para evitar ConcurrentModificationException si la lista original
-        // estuviera siendo modificada por Hibernate al limpiar la colección.
-        // Además, al manipular la colección directamente, no necesitamos llamar a deleteAll en el repositorio de detalles.
-        List<DetalleVenta> detallesAntiguosCopia = new ArrayList<>(venta.getDetallesVenta());
-        for (DetalleVenta detalleAntiguo : detallesAntiguosCopia) {
-            Producto producto = detalleAntiguo.getId_producto();
-            producto.setStock_actual(producto.getStock_actual() + detalleAntiguo.getCantidad());
-            productoRepository.save(producto);
-        }
-
-        // 2. Limpiar la colección de detalles de la venta existente.
-        // Debido a orphanRemoval=true, Hibernate eliminará los detalles de la base de datos.
-        venta.getDetallesVenta().clear();
-
-        // 3. Obtener las nuevas entidades principales (cliente, usuario, etc.)
-        Usuario usuario = usuarioRepository.findById(datosActualizar.id_usuario())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
-        Cliente cliente = clienteRepository.findById(datosActualizar.id_cliente())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente no encontrado"));
-        MetodoPago metodoPago = metodoPagoRepository.findById(datosActualizar.id_metodo_pago())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Método de pago no encontrado"));
-
-        Cupon cupon = null;
-        if (datosActualizar.id_cupon() != null) {
-            cupon = cuponRepository.findById(datosActualizar.id_cupon())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cupón no encontrado"));
-        }
-
-        // Actualizar la cabecera de la venta
-        venta.setId_usuario(usuario);
-        venta.setId_cliente(cliente);
-        venta.setId_metodo_pago(metodoPago);
-        venta.setId_cupon(cupon);
-
-        // 4. Procesar los nuevos detalles de la venta (items) y agregarlos a la colección de la venta
-        BigDecimal subtotalBaseCalculado = BigDecimal.ZERO;
-        BigDecimal igvTotalCalculado = BigDecimal.ZERO;
-        BigDecimal totalItemsConIgv = BigDecimal.ZERO;
-
-        for (DatosRegistroItemVenta itemDTO : datosActualizar.items()) {
-            Producto producto = productoRepository.findById(itemDTO.id_producto())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                            "Producto con ID " + itemDTO.id_producto() + " no encontrado"));
-
-            if (producto.getStock_actual() < itemDTO.cantidad()) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "Stock insuficiente para el producto: " + producto.getNombre()
-                                + ". Stock disponible: " + producto.getStock_actual());
-            }
-            producto.setStock_actual(producto.getStock_actual() - itemDTO.cantidad());
-            productoRepository.save(producto);
-
-            BigDecimal precioUnitarioBase = itemDTO.precio_unitario();
-            BigDecimal igvPorItemUnitario = precioUnitarioBase.multiply(IGV_PORCENTAJE).divide(CIEN, 2, RoundingMode.HALF_UP);
-            BigDecimal precioUnitarioConIgv = precioUnitarioBase.add(igvPorItemUnitario);
-
-            DetalleVenta detalleNuevo = new DetalleVenta();
-            detalleNuevo.setId_registro_venta(venta); // Establece la relación bidireccional
-            detalleNuevo.setId_producto(producto);
-            detalleNuevo.setCantidad(itemDTO.cantidad());
-            detalleNuevo.setPrecio_unitario(precioUnitarioConIgv);
-
-            BigDecimal totalPorItemConIgv = precioUnitarioConIgv.multiply(BigDecimal.valueOf(detalleNuevo.getCantidad()));
-            detalleNuevo.setTotal(totalPorItemConIgv);
-
-            // AGREGAR DIRECTAMENTE A LA COLECCIÓN DE LA VENTA
-            venta.getDetallesVenta().add(detalleNuevo);
-            
-            subtotalBaseCalculado = subtotalBaseCalculado.add(precioUnitarioBase.multiply(BigDecimal.valueOf(detalleNuevo.getCantidad())));
-            igvTotalCalculado = igvTotalCalculado.add(igvPorItemUnitario.multiply(BigDecimal.valueOf(detalleNuevo.getCantidad())));
-            totalItemsConIgv = totalItemsConIgv.add(totalPorItemConIgv);
-        }
-
-        // 5. Recalcular los totales finales
-        BigDecimal descuento = BigDecimal.ZERO;
-        if (cupon != null) {
-            descuento = totalItemsConIgv.multiply(BigDecimal.valueOf(cupon.getDescuentoPorcentaje()))
-                    .divide(CIEN, 2, RoundingMode.HALF_UP);
-        }
-
-        BigDecimal totalFinal = totalItemsConIgv.subtract(descuento);
-
-        // 6. Actualizar la venta con los valores finales y guardar
-        venta.setSubtotal(totalItemsConIgv);
-        venta.setDescuento(descuento);
-        venta.setIgv_porcentaje(IGV_PORCENTAJE);
-        venta.setIgv_total(igvTotalCalculado);
-        venta.setTotal(totalFinal);
-
-        // Guardamos la venta. Hibernate se encargará de persistir los nuevos detalles y eliminar los antiguos
-        // gracias a la configuración de la relación @OneToMany y orphanRemoval=true.
-        RegistroVenta ventaActualizada = registroVentaRepository.save(venta);
-
-        return new DatosRespuestaRegistroVenta(ventaActualizada);
-    }
 
         @Override
         public void cancelarVenta(Long id) {

@@ -14,143 +14,191 @@ import org.springframework.web.server.ResponseStatusException;
 import com.neon.sve.dto.cupon.DatosRespuestaCupon;
 import com.neon.sve.dto.devolucionVenta.DatosActualizarDevolucionVenta;
 import com.neon.sve.dto.devolucionVenta.DatosListadoDevolucionVenta;
+import com.neon.sve.dto.devolucionVenta.DatosProductoDevolucion;
 import com.neon.sve.dto.devolucionVenta.DatosRegistroDevolucionVenta;
 import com.neon.sve.dto.devolucionVenta.DatosRespuestaDevolucionVenta;
 import com.neon.sve.dto.reclamoGarantia.DatosListadoReclamoGarantia;
 import com.neon.sve.model.producto.Producto;
 import com.neon.sve.model.usuario.Usuario;
 import com.neon.sve.model.ventas.Cupon;
+import com.neon.sve.model.ventas.DetalleDevolucion;
 import com.neon.sve.model.ventas.DetalleVenta;
 import com.neon.sve.model.ventas.DevolucionVenta;
 import com.neon.sve.model.ventas.ReclamoGarantia;
+import com.neon.sve.model.ventas.RegistroVenta;
 import com.neon.sve.model.ventas.Tipos.EstadoReclamo;
+import com.neon.sve.repository.DetalleDevolucionRepository;
 import com.neon.sve.repository.DetalleVentaRepository;
 import com.neon.sve.repository.DevolucionVentaRepository;
 import com.neon.sve.repository.ProductoRepository;
+import com.neon.sve.repository.RegistroVentaRepository;
 import com.neon.sve.repository.UsuarioRepository;
 
 @Service
 public class DevolucionVentaServiceImpl implements DevolucionVentaService {
 
-    @Autowired
-    private DevolucionVentaRepository devolucionVentaRepository;
+        @Autowired
+        private DevolucionVentaRepository devolucionVentaRepository;
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+        @Autowired
+        private DetalleDevolucionRepository detalleDevolucionRepository;
 
-    @Autowired
-    private DetalleVentaRepository detalleVentaRepository;
+        @Autowired
+        private RegistroVentaRepository ventaRepository;
 
-    @Autowired
-    private ProductoRepository productoRepository;
+        @Autowired
+        private UsuarioRepository usuarioRepository;
 
-    @Override
-    public DatosRespuestaDevolucionVenta getDevolucionVentaById(Long id) {
+        @Autowired
+        private DetalleVentaRepository detalleVentaRepository;
 
-        Optional<DevolucionVenta> devolucionVentaOptional = devolucionVentaRepository.findById(id);
-        if (devolucionVentaOptional.isPresent()) {
-            DevolucionVenta devolucionVenta = devolucionVentaOptional.get();
-            return new DatosRespuestaDevolucionVenta(devolucionVenta);
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Devolucion de venta no encontrada");
-        }
-    }
+        @Autowired
+        private ProductoRepository productoRepository;
 
-    @Override
-    public Page<DatosListadoDevolucionVenta> getAllDevolucionVenta(Pageable pageable) {
-        Page<DevolucionVenta> devolucionVentaPage = devolucionVentaRepository.findAll(pageable);
-        return devolucionVentaPage.map(reclamo -> new DatosListadoDevolucionVenta(reclamo));
-    }
+        @Override
+        public DatosRespuestaDevolucionVenta getDevolucionVentaById(Long id) {
 
-    @Override
-    @Transactional
-    public DatosRespuestaDevolucionVenta createDevolucionVenta(
-            DatosRegistroDevolucionVenta datosRegistro) {
-
-        Usuario usuario = usuarioRepository.findById(datosRegistro.id_usuario())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
-
-        DetalleVenta detalleVenta = detalleVentaRepository.findById(datosRegistro.id_detalle_venta())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Detalle de venta no encontrado"));
-
-        // 1. VALIDACIÓN: La cantidad a devolver no puede ser mayor a la comprada.
-        if (datosRegistro.cantidad() > detalleVenta.getCantidad()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "La cantidad a devolver (" + datosRegistro.cantidad()
-                            + ") no puede ser mayor a la cantidad comprada (" + detalleVenta.getCantidad() + ").");
+                Optional<DevolucionVenta> devolucionVentaOptional = devolucionVentaRepository.findById(id);
+                if (devolucionVentaOptional.isPresent()) {
+                        DevolucionVenta devolucionVenta = devolucionVentaOptional.get();
+                        return new DatosRespuestaDevolucionVenta(devolucionVenta);
+                } else {
+                        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Devolucion de venta no encontrada");
+                }
         }
 
-        // 2. VALIDACIÓN: Sumar devoluciones existentes para este detalle de venta.
-        List<DevolucionVenta> devolucionesAnteriores = devolucionVentaRepository.findByDetalleVenta(detalleVenta);
-        int cantidadYaDevuelta = devolucionesAnteriores.stream()
-                .filter(d -> d.getEstado() != EstadoReclamo.RECHAZADO)
-                .mapToInt(DevolucionVenta::getCantidad)
-                .sum();
-
-        if (cantidadYaDevuelta + datosRegistro.cantidad() > detalleVenta.getCantidad()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "La cantidad total a devolver supera la cantidad comprada originalmente. Ya se han devuelto "
-                            + cantidadYaDevuelta + " unidades.");
+        @Override
+        public Page<DatosListadoDevolucionVenta> getAllDevolucionVenta(Pageable pageable) {
+                Page<DevolucionVenta> devolucionVentaPage = devolucionVentaRepository.findAll(pageable);
+                return devolucionVentaPage.map(reclamo -> new DatosListadoDevolucionVenta(reclamo));
         }
 
-        DevolucionVenta devolucionVenta = new DevolucionVenta(datosRegistro, detalleVenta, usuario);
-        devolucionVentaRepository.save(devolucionVenta);
+        @Override
+        @Transactional
+        public DatosRespuestaDevolucionVenta createDevolucionVenta(
+                        DatosRegistroDevolucionVenta datosRegistro) {
 
-        return new DatosRespuestaDevolucionVenta(devolucionVenta);
-    }
+                // 1. Buscar entidades principales
+                Usuario usuario = usuarioRepository.findById(datosRegistro.id_usuario())
+                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                                "Usuario no encontrado"));
 
-    @Override
-    @Transactional
-    public DatosRespuestaDevolucionVenta updateDevolucionVenta(
-            DatosActualizarDevolucionVenta datosActualizar) {
+                RegistroVenta venta = ventaRepository.findById(datosRegistro.id_registro_venta())
+                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                                "Venta no encontrada"));
 
-        DevolucionVenta devolucionVenta = devolucionVentaRepository.findById(datosActualizar.id())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Devolución no encontrada con ID: " + datosActualizar.id()));
+                // 2. Crear la cabecera de la devolución (objeto limpio)
+                DevolucionVenta devolucionVenta = new DevolucionVenta();
 
-        // Validar que no se pueda modificar una devolución ya completada o rechazada
-        if (devolucionVenta.getEstado() == EstadoReclamo.RESUELTO
-                || devolucionVenta.getEstado() == EstadoReclamo.RECHAZADO) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "No se puede actualizar una devolución que ya ha sido completada o rechazada.");
+                // 3. Poblar SOLO los campos relevantes para una devolución AGRUPADA
+                devolucionVenta.setVenta(venta); // Se asigna la Venta principal
+                devolucionVenta.setUsuario(usuario);
+                devolucionVenta.setMotivo(datosRegistro.motivo());
+                devolucionVenta.setEstado(EstadoReclamo.PENDIENTE);
+
+                // 4. Iterar sobre los productos del JSON para crear los detalles de la
+                // devolución
+                for (DatosProductoDevolucion prodDevolucion : datosRegistro.devolucion()) {
+                        if (prodDevolucion.cantidad() <= 0) {
+                                continue; // Ignorar productos con cantidad 0 o negativa
+                        }
+
+                        Producto producto = productoRepository.findById(prodDevolucion.id_producto())
+                                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                                        "Producto con ID " + prodDevolucion.id_producto()
+                                                                        + " no encontrado"));
+
+                        // Validación: Asegurarse de que el producto estaba en la venta original.
+                        DetalleVenta detalleVentaOriginal = venta.getDetallesVenta().stream()
+                                        .filter(detalle -> detalle.getId_producto().getId()
+                                                        .equals(prodDevolucion.id_producto()))
+                                        .findFirst()
+                                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                                                        "El producto " + producto.getNombre()
+                                                                        + " no pertenece a la venta original."));
+
+                        // Validación de cantidad
+                        if (prodDevolucion.cantidad() > detalleVentaOriginal.getCantidad()) {
+                                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                                                "La cantidad a devolver de " + producto.getNombre() + " ("
+                                                                + prodDevolucion.cantidad()
+                                                                + ") excede la cantidad comprada ("
+                                                                + detalleVentaOriginal.getCantidad() + ").");
+                        }
+
+                        // Crear el objeto de detalle y añadirlo a la lista de la devolución principal
+                        DetalleDevolucion detalleDevolucion = new DetalleDevolucion();
+                        detalleDevolucion.setDevolucionVenta(devolucionVenta);
+                        detalleDevolucion.setProducto(producto);
+                        detalleDevolucion.setCantidad(prodDevolucion.cantidad());
+
+                        devolucionVenta.getDetallesDevolucion().add(detalleDevolucion);
+                }
+
+                if (devolucionVenta.getDetallesDevolucion().isEmpty()) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                                        "La devolución debe contener al menos un producto.");
+                }
+
+                DevolucionVenta devolucionGuardada = devolucionVentaRepository.save(devolucionVenta);
+
+                return new DatosRespuestaDevolucionVenta(devolucionGuardada);
         }
 
-        // Obtenemos el nuevo estado desde el DTO
-        EstadoReclamo nuevoEstado = datosActualizar.estado();
+        @Override
+        @Transactional
+        public DatosRespuestaDevolucionVenta updateDevolucionVenta(
+                        DatosActualizarDevolucionVenta datosActualizar) {
 
-        // Si el estado se actualiza a COMPLETADO y antes estaba PENDIENTE o APROBADO
-        if (nuevoEstado == EstadoReclamo.RESUELTO && devolucionVenta.getEstado() != EstadoReclamo.RESUELTO) {
+                // 1. Buscar la devolución principal por su ID
+                DevolucionVenta devolucionVenta = devolucionVentaRepository.findById(datosActualizar.id())
+                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                                "Devolución no encontrada con ID: " + datosActualizar.id()));
 
-            // Obtenemos el producto asociado a esta devolución
-            Producto productoADevolver = devolucionVenta.getDetalleVenta().getId_producto();
-            int cantidadADevolver = devolucionVenta.getCantidad();
+                EstadoReclamo estadoActual = devolucionVenta.getEstado();
+                EstadoReclamo nuevoEstado = datosActualizar.estado();
 
-            // Buscamos el producto en el repositorio para obtener el stock actual
-            Producto productoEnStock = productoRepository.findById(productoADevolver.getId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                            "El producto asociado a la venta ya no existe."));
+                // 2. Validar que no se pueda modificar una devolución ya finalizada
+                if (estadoActual == EstadoReclamo.RESUELTO || estadoActual == EstadoReclamo.RECHAZADO) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                                        "No se puede actualizar una devolución que ya ha sido resuelta o rechazada.");
+                }
 
-            // Verificamos si hay suficiente stock para hacer el cambio
-            if (productoEnStock.getStock_actual() < cantidadADevolver) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT,
-                        "No hay suficiente stock para realizar el cambio. Stock actual: " + productoEnStock.getStock_actual()
-                                + ", se necesitan: " + cantidadADevolver);
-            }
+                // 3. LÓGICA CLAVE: Reponer el stock si el estado cambia a RESUELTO
+                if (nuevoEstado != null && nuevoEstado == EstadoReclamo.RESUELTO
+                                && estadoActual != EstadoReclamo.RESUELTO) {
 
-            // Disminuimos el stock
-            productoEnStock.setStock_actual(productoEnStock.getStock_actual() - cantidadADevolver);
-            productoRepository.save(productoEnStock); // Guardamos el producto con el stock actualizado
+                        System.out.println("La devolución se marcó como RESUELTA. Reponiendo stock...");
+
+                        // Iterar sobre cada detalle de la devolución
+                        for (DetalleDevolucion detalle : devolucionVenta.getDetallesDevolucion()) {
+                                Producto producto = detalle.getProducto();
+                                int cantidadADevolver = detalle.getCantidad();
+
+                                // Aumentar el stock del producto
+                                producto.setStock_actual(producto.getStock_actual() + cantidadADevolver);
+
+                                // Guardar el producto con el stock actualizado
+                                productoRepository.save(producto);
+
+                                System.out.println("Stock del producto '" + producto.getNombre()
+                                                + "' actualizado. Nuevo stock: " + producto.getStock_actual());
+                        }
+                }
+
+                // 4. Actualizar los campos de la devolución (motivo y estado)
+                if (datosActualizar.motivo() != null) {
+                        devolucionVenta.setMotivo(datosActualizar.motivo());
+                }
+                if (nuevoEstado != null) {
+                        devolucionVenta.setEstado(nuevoEstado);
+                }
+
+                // 5. Guardar los cambios en la base de datos
+                devolucionVentaRepository.save(devolucionVenta);
+
+                // 6. Retornar la respuesta con los datos actualizados
+                return new DatosRespuestaDevolucionVenta(devolucionVenta);
         }
-
-        // Actualizamos los datos de la devolución
-        DetalleVenta detalleVenta = detalleVentaRepository.findById(datosActualizar.id_detalle_venta())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Detalle de venta no encontrado"));
-
-        devolucionVenta.actualizar(datosActualizar, detalleVenta);
-
-        devolucionVentaRepository.save(devolucionVenta);
-
-        return new DatosRespuestaDevolucionVenta(devolucionVenta);
-    }
 
 }

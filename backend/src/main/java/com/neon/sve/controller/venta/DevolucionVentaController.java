@@ -52,10 +52,10 @@ public class DevolucionVentaController {
 
     @PostMapping("/registrar")
     public ResponseEntity<DatosRespuestaDevolucionVenta> registrarDevolucion(
+            // El @RequestBody ahora espera el nuevo formato de DTO
             @Valid @RequestBody DatosRegistroDevolucionVenta datosRegistroDevolucion,
             UriComponentsBuilder uriComponentsBuilder) {
 
-        // Llamamos al nuevo método del servicio
         DatosRespuestaDevolucionVenta datosRespuestaDevolucion = devolucionVentaService
                 .createDevolucionVenta(datosRegistroDevolucion);
 

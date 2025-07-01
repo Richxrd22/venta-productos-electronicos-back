@@ -33,7 +33,7 @@ import java.util.List;
 @Table(name = "garantias")
 
 public class Garantia {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -59,9 +59,9 @@ public class Garantia {
         this.id_detalle_venta = detalleVenta;
         this.inicioGarantia = datosRegistro.inicio_garantia();
         this.finGarantia = datosRegistro.fin_garantia();
-        }
+    }
 
-    public void actualizar(@Valid DatosActualizarGarantia datosActualizarGarantia,DetalleVenta detalleVenta) {
+    public void actualizar(@Valid DatosActualizarGarantia datosActualizarGarantia, DetalleVenta detalleVenta) {
         this.id = datosActualizarGarantia.id_garantia();
         this.id_detalle_venta = detalleVenta;
         this.inicioGarantia = datosActualizarGarantia.inicio_garantia();

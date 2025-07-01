@@ -120,7 +120,7 @@ public class RegistroVenta {
 
     public RegistroVenta(BigDecimal subtotal2, double doubleValue, double doubleValue2, BigDecimal total2,
             Boolean cancelado2, Usuario usuario, Cliente cliente, MetodoPago metodoPago, Cupon cupon) {
-        //TODO Auto-generated constructor stub
+        // TODO Auto-generated constructor stub
     }
 
 }
