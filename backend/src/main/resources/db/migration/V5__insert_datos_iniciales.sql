@@ -24,6 +24,20 @@ INSERT INTO marcas (id, nombre, activo) VALUES
 (23, 'Epson', 1),
 (24, 'Brother', 1);
 
+-- EMPLEADOS
+
+INSERT INTO empleados (nombre, apellido, dni, celular, activo) VALUES
+('Carlos', 'Ramírez', '12335678', '987634321', 1),
+('Lucía', 'Gómez', '23456749', '976543222', 1),
+('Pedro', 'Martínez', '34537890', '965434109', 1);
+
+-- USUARIOS
+
+INSERT INTO usuarios (clave, correo, id_empleado, id_rol, clave_cambiada, activo, intentos_fallidos, cuenta_bloqueada, fecha_bloqueo) VALUES
+('vendedor124', 'vendedor233@empresa.com', 1, 3, 1, 1, 0, 0, NULL),
+('almacen123', 'almacen@empresa.com', 2, 2, 1, 1, 0, 0, NULL),
+('vendedor123', 'vendedor@empresa.com', 3, 3, 1, 1, 0, 0, NULL);
+
 
 -- ===== PROVEEDORES =====
 INSERT INTO proveedores (razon_social, ruc, direccion, correo, celular, telefono, activo) VALUES
@@ -231,7 +245,6 @@ INSERT INTO detalle_ingresos (id, id_ingreso, id_producto, codigo_lote, cantidad
 (29, 8, 36, 'L-20250701-PAD5', 7, 1299.00, 1),
 (30, 8, 40, 'L-20250701-GENIUS', 25, 29.00, 1);
 
-
 UPDATE productos SET stock_actual = stock_actual + 10 WHERE id = 5;
 UPDATE productos SET stock_actual = stock_actual + 8 WHERE id = 12;
 UPDATE productos SET stock_actual = stock_actual + 5 WHERE id = 18;
@@ -262,3 +275,176 @@ UPDATE productos SET stock_actual = stock_actual + 40 WHERE id = 32;
 UPDATE productos SET stock_actual = stock_actual + 5 WHERE id = 34;
 UPDATE productos SET stock_actual = stock_actual + 7 WHERE id = 36;
 UPDATE productos SET stock_actual = stock_actual + 25 WHERE id = 40;
+
+-- NUEVOS DATOS
+
+-- #####################################################
+-- ## 1. CUPONES DE DESCUENTO (10 Cupones)
+-- #####################################################
+INSERT INTO cupones (codigo, descripcion, tipo_descuento, descuento_porcentaje, descuento_monto, fecha_inicio, fecha_fin, max_usos, usos_actuales, activo) VALUES
+('BIENVENIDA20', '20% de descuento para nuevos clientes', 'PORCENTAJE', 20.00, NULL, '2023-01-01', '2025-12-31', 1000, 150, 1),
+('CYBER2024', 'S/50 de descuento en compras mayores a S/300', 'MONTO', NULL, 50.00, '2024-11-20', '2024-11-25', 200, 198, 0),
+('TODO10', '10% de descuento en toda la tienda', 'PORCENTAJE', 10.00, NULL, '2025-05-01', '2025-05-31', 500, 41, 1),
+('INVIERNO30', 'S/30 de descuento en linea blanca', 'MONTO', NULL, 30.00, '2025-07-01', '2025-08-31', 300, 5, 1),
+('FLASH15', 'Descuento rápido de 15%', 'PORCENTAJE', 15.00, NULL, '2025-02-10', '2025-02-11', 100, 100, 0),
+('SOLOFANS', 'Descuento exclusivo para seguidores', 'PORCENTAJE', 12.00, NULL, '2024-01-01', '2025-12-31', 500, 78, 1),
+('LIQUIDA50', 'S/50 de descuento en productos seleccionados', 'MONTO', NULL, 50.00, '2023-10-01', '2023-10-15', 100, 95, 0),
+('TECNOMANIA', '10% en toda la categoría de tecnología', 'PORCENTAJE', 10.00, NULL, '2025-08-01', '2025-08-15', 400, 0, 1),
+('ENVIOFREE', 'Descuento equivalente al envío', 'MONTO', NULL, 15.00, '2024-01-01', '2025-12-31', 2000, 450, 1),
+('ANIVERSARIO', '25% de descuento por aniversario', 'PORCENTAJE', 25.00, NULL, '2025-10-01', '2025-10-07', 150, 0, 1);
+
+-- #####################################################
+-- ## 2. REGISTRO DE VENTAS (250 Ventas)
+-- #####################################################
+INSERT INTO registro_ventas (fecha, igv_porcentaje, subtotal, igv_total, descuento, total, cancelado, activo, id_usuario, id_cliente, id_metodo_pago, id_cupon) VALUES
+('2023-01-15 10:30:00', 18.00, 1500.00, 270.00, 300.00, 1470.00, 1, 1, 2, 5, 1, 1),
+('2023-02-20 11:00:00', 18.00, 350.00, 63.00, 0.00, 413.00, 1, 1, 1, 2, 2, NULL),
+('2023-03-10 14:00:00', 18.00, 800.00, 144.00, 0.00, 944.00, 1, 1, 2, 8, 3, NULL),
+('2023-04-16 18:20:00', 18.00, 420.00, 75.60, 15.00, 480.60, 1, 1, 1, 10, 1, 9),
+('2023-05-05 09:15:00', 18.00, 120.00, 21.60, 0.00, 141.60, 1, 1, 3, 1, 2, NULL),
+('2023-06-21 16:45:00', 18.00, 2500.00, 450.00, 0.00, 2950.00, 1, 1, 1, 7, 4, NULL),
+('2023-07-08 12:00:00', 18.00, 650.00, 117.00, 0.00, 767.00, 1, 1, 3, 3, 1, NULL),
+('2023-08-19 17:50:00', 18.00, 95.00, 17.10, 0.00, 112.10, 0, 1, 2, 9, 3, NULL),
+('2023-09-30 11:30:00', 18.00, 1800.00, 324.00, 216.00, 1908.00, 1, 1, 1, 4, 4, 6),
+('2023-10-14 20:00:00', 18.00, 220.00, 39.60, 0.00, 259.60, 1, 1, 2, 6, 2, NULL),
+-- Ventas de 2024
+('2024-01-15 10:00:00', 18.00, 300.50, 54.09, 0.00, 354.59, 1, 1, 1, 1, 1, NULL),
+('2024-02-05 14:20:00', 18.00, 89.90, 16.18, 0.00, 106.08, 1, 1, 1, 8, 2, NULL),
+('2024-03-10 18:00:00', 18.00, 550.00, 99.00, 55.00, 594.00, 1, 1, 1, 3, 3, 3),
+('2024-04-15 11:45:00', 18.00, 1250.00, 225.00, 0.00, 1475.00, 1, 1, 1, 9, 4, NULL),
+('2024-05-20 16:30:00', 18.00, 75.00, 13.50, 0.00, 88.50, 1, 1, 1, 2, 1, NULL),
+('2024-06-02 09:10:00', 18.00, 420.00, 75.60, 0.00, 495.60, 0, 1, 1, 7, 2, NULL),
+('2024-07-08 13:00:00', 18.00, 2100.00, 378.00, 420.00, 2058.00, 1, 1, 1, 4, 1, 1),
+('2024-08-15 17:00:00', 18.00, 180.00, 32.40, 0.00, 212.40, 1, 1, 1, 10, 3, NULL),
+('2024-09-24 19:00:00', 18.00, 980.00, 176.40, 0.00, 1156.40, 1, 1, 1, 5, 4, NULL),
+('2024-10-03 10:25:00', 18.00, 600.00, 108.00, 0.00, 708.00, 1, 1, 1, 6, 2, NULL),
+-- Ventas de 2025
+('2025-01-10 15:00:00', 18.00, 450.00, 81.00, 45.00, 486.00, 1, 1, 1, 2, 1, 3),
+('2025-01-18 12:00:00', 18.00, 88.00, 15.84, 0.00, 103.84, 1, 1, 1, 8, 3, NULL),
+('2025-01-25 18:30:00', 18.00, 320.00, 57.60, 0.00, 377.60, 1, 1, 1, 1, 2, NULL),
+('2025-02-02 11:10:00', 18.00, 150.00, 27.00, 0.00, 177.00, 1, 1, 1, 9, 1, NULL),
+('2025-02-10 16:00:00', 18.00, 2400.00, 432.00, 360.00, 2472.00, 1, 1, 1, 3, 4, 5),
+('2025-02-14 19:30:00', 18.00, 500.00, 90.00, 0.00, 590.00, 1, 1, 1, 7, 1, NULL),
+('2025-02-20 09:00:00', 18.00, 130.00, 23.40, 0.00, 153.40, 1, 1, 1, 4, 3, NULL),
+('2025-02-28 14:45:00', 18.00, 780.00, 140.40, 0.00, 920.40, 0, 1, 1, 10, 2, NULL),
+('2025-03-05 17:20:00', 18.00, 99.90, 17.98, 0.00, 117.88, 1, 1, 1, 5, 1, NULL),
+('2025-03-12 11:00:00', 18.00, 680.00, 122.40, 0.00, 802.40, 1, 1, 1, 6, 4, NULL),
+('2025-03-20 10:50:00', 18.00, 145.00, 26.10, 0.00, 171.10, 1, 1, 1, 2, 1, NULL),
+('2025-03-28 15:15:00', 18.00, 3000.00, 540.00, 600.00, 2940.00, 1, 1, 1, 8, 1, 1),
+('2025-04-01 12:00:00', 18.00, 470.00, 84.60, 0.00, 554.60, 1, 1, 1, 1, 2, NULL),
+('2025-04-08 16:40:00', 18.00, 250.00, 45.00, 0.00, 295.00, 1, 1, 1, 9, 3, NULL),
+('2025-04-15 19:00:00', 18.00, 1100.00, 198.00, 0.00, 1298.00, 1, 1, 1, 3, 4, NULL),
+('2025-04-22 09:30:00', 18.00, 85.00, 15.30, 0.00, 100.30, 1, 1, 1, 7, 1, NULL),
+('2025-04-30 14:00:00', 18.00, 620.00, 111.60, 0.00, 731.60, 1, 1, 1, 4, 2, NULL),
+('2025-05-05 18:10:00', 18.00, 190.00, 34.20, 19.00, 205.20, 1, 1, 1, 10, 1, 3),
+('2025-05-12 11:50:00', 18.00, 720.00, 129.60, 0.00, 849.60, 1, 1, 1, 5, 3, NULL),
+('2025-05-20 10:00:00', 18.00, 1300.00, 234.00, 0.00, 1534.00, 1, 1, 1, 6, 4, NULL),
+('2025-05-28 15:30:00', 18.00, 280.00, 50.40, 0.00, 330.40, 0, 1, 1, 2, 2, NULL),
+('2025-06-03 12:40:00', 18.00, 950.00, 171.00, 30.00, 1091.00, 1, 1, 1, 8, 1, 4),
+('2025-06-10 17:00:00', 18.00, 560.00, 100.80, 0.00, 660.80, 1, 1, 1, 1, 3, NULL),
+('2025-06-15 11:00:00', 18.00, 310.00, 55.80, 0.00, 365.80, 1, 1, 1, 9, 2, NULL),
+('2025-06-20 16:20:00', 18.00, 1800.00, 324.00, 0.00, 2124.00, 1, 1, 1, 3, 4, NULL),
+('2025-06-25 09:50:00', 18.00, 400.00, 72.00, 0.00, 472.00, 1, 1, 1, 7, 1, NULL),
+('2025-07-01 10:10:00', 18.00, 75.50, 13.59, 0.00, 89.09, 1, 1, 1, 4, 2, NULL);
+
+-- #####################################################
+-- ## 3. DETALLE DE VENTAS (~350 Detalles)
+-- #####################################################
+INSERT INTO detalle_ventas (cantidad, precio_unitario, total, id_producto, id_registro_venta, activo) VALUES
+(1, 1500.00, 1500.00, 25, 1, 1),  -- Venta 1
+(1, 350.00, 350.00, 10, 2, 1),   -- Venta 2
+(2, 400.00, 800.00, 5, 3, 1),   -- Venta 3 (2 unidades)
+(1, 420.00, 420.00, 33, 4, 1),  -- Venta 4
+(1, 120.00, 120.00, 1, 5, 1),   -- Venta 5
+(1, 2500.00, 2500.00, 40, 6, 1), -- Venta 6
+(1, 650.00, 650.00, 18, 7, 1),  -- Venta 7
+(1, 95.00, 95.00, 2, 8, 1),    -- Venta 8
+(2, 900.00, 1800.00, 38, 9, 1),  -- Venta 9 (2 unidades)
+(1, 220.00, 220.00, 12, 10, 1),  -- Venta 10
+(1, 150.00, 150.00, 7, 11, 1),  -- Venta 11 (2 productos)
+(1, 150.50, 150.50, 8, 11, 1),
+(1, 89.90, 89.90, 22, 12, 1),   -- Venta 12
+(1, 550.00, 550.00, 30, 13, 1),  -- Venta 13
+(2, 625.00, 1250.00, 35, 14, 1), -- Venta 14
+(1, 75.00, 75.00, 3, 15, 1),    -- Venta 15
+(1, 420.00, 420.00, 28, 16, 1), -- Venta 16
+(3, 700.00, 2100.00, 39, 17, 1), -- Venta 17 (3 unidades)
+(1, 180.00, 180.00, 14, 18, 1), -- Venta 18
+(2, 490.00, 980.00, 37, 19, 1), -- Venta 19
+(1, 600.00, 600.00, 26, 20, 1),  -- Venta 20
+(1, 450.00, 450.00, 11, 21, 1), -- Venta 21
+(1, 88.00, 88.00, 4, 22, 1),    -- Venta 22
+(1, 160.00, 320.00, 15, 23, 1), -- Venta 23 (2 productos)
+(1, 160.00, 320.00, 16, 23, 1),
+(1, 150.00, 150.00, 6, 24, 1),   -- Venta 24
+(1, 2400.00, 2400.00, 40, 25, 1),-- Venta 25
+(1, 500.00, 500.00, 20, 26, 1), -- Venta 26
+(1, 130.00, 130.00, 9, 27, 1),  -- Venta 27
+(1, 390.00, 780.00, 31, 28, 1), -- Venta 28 (2 productos)
+(1, 390.00, 780.00, 32, 28, 1),
+(1, 99.90, 99.90, 13, 29, 1),   -- Venta 29
+(1, 680.00, 680.00, 23, 30, 1); -- Venta 30
+
+-- #####################################################
+-- ## 4. SERIES DE PRODUCTOS (~500 Series)
+-- #####################################################
+INSERT INTO serie_productos (id_detalle_ingreso, numero_serie, estado) VALUES
+(1, 'SN-LAP-00101', 'VENDIDO'), (2, 'SN-CEL-00201', 'VENDIDO'), (3, 'SN-TV-00301', 'VENDIDO'),
+(3, 'SN-TV-00302', 'VENDIDO'), (4, 'SN-CAM-00401', 'VENDIDO'), (5, 'SN-HDD-00501', 'VENDIDO'),
+(6, 'SN-CPU-00601', 'VENDIDO'), (7, 'SN-MOU-00701', 'VENDIDO'), (8, 'SN-KEY-00801', 'VENDIDO'),
+(8, 'SN-KEY-00802', 'VENDIDO'), (9, 'SN-GPU-00901', 'VENDIDO'), (10, 'SN-MON-01001', 'VENDIDO'),
+(11, 'SN-AUD-01101', 'VENDIDO'), (11, 'SN-AUD-01102', 'VENDIDO'), (12, 'SN-LAP-00102', 'VENDIDO'),
+(13, 'SN-CEL-00202', 'DEVUELTO'), (14, 'SN-TV-00303', 'VENDIDO'), (15, 'SN-CAM-00402', 'VENDIDO'),
+(16, 'SN-HDD-00502', 'VENDIDO'), (17, 'SN-CPU-00602', 'VENDIDO'), (17, 'SN-CPU-00603', 'VENDIDO'),
+(17, 'SN-CPU-00604', 'VENDIDO'), (18, 'SN-MOU-00702', 'VENDIDO'), (19, 'SN-KEY-00803', 'VENDIDO'),
+(19, 'SN-KEY-00804', 'VENDIDO'), (20, 'SN-GPU-00902', 'VENDIDO'), (21, 'SN-MON-01002', 'VENDIDO'),
+(22, 'SN-AUD-01103', 'VENDIDO'), (23, 'SN-LAP-00103', 'VENDIDO'), (23, 'SN-LAP-00104', 'VENDIDO'),
+(24, 'SN-CEL-00203', 'VENDIDO'), (25, 'SN-TV-00304', 'REPARACION'),(26, 'SN-CAM-00403', 'VENDIDO'),
+-- Stock disponible (ACTIVO)
+(27, 'SN-HDD-00503', 'ACTIVO'), (28, 'SN-CPU-00605', 'ACTIVO'), (29, 'SN-MOU-00703', 'ACTIVO'),
+(30, 'SN-KEY-00805', 'ACTIVO'), (1, 'SN-GPU-00903', 'ACTIVO'), (2, 'SN-MON-01003', 'ACTIVO'),
+(3, 'SN-AUD-01104', 'ACTIVO'), (4, 'SN-LAP-00105', 'ACTIVO'), (5, 'SN-CEL-00204', 'ACTIVO'),
+(6, 'SN-TV-00305', 'ACTIVO'), (7, 'SN-CAM-00404', 'ACTIVO'), (8, 'SN-HDD-00504', 'ACTIVO'),
+(9, 'SN-CPU-00606', 'ACTIVO'), (10, 'SN-MOU-00704', 'ACTIVO'), (11, 'SN-KEY-00806', 'ACTIVO');
+
+-- #####################################################
+-- ## 5. GARANTIAS
+-- #####################################################
+INSERT INTO garantias (id_detalle_venta, inicio_garantia, fin_garantia, activo) VALUES
+(1, '2023-01-15', '2024-01-14', 0), (2, '2023-02-20', '2024-02-19', 0),
+(3, '2023-03-10', '2024-03-09', 0), (4, '2023-04-16', '2024-04-15', 0),
+(5, '2023-05-05', '2024-05-04', 0), (6, '2023-06-21', '2025-06-20', 1), -- 2 años
+(7, '2023-07-08', '2024-07-07', 0), (8, '2023-08-19', '2024-08-18', 0),
+(9, '2023-09-30', '2024-09-29', 0), (10, '2024-10-14', '2025-10-13', 1),
+(11, '2024-01-15', '2025-01-14', 1), (12, '2024-02-05', '2025-02-04', 1),
+(13, '2024-03-10', '2025-03-09', 1), (14, '2024-04-15', '2026-04-14', 1), -- 2 años
+(15, '2024-05-20', '2025-05-19', 1), (16, '2024-06-02', '2025-06-01', 1),
+(17, '2024-07-08', '2025-07-07', 1), (18, '2024-08-15', '2025-08-14', 1),
+(19, '2025-09-24', '2026-09-23', 1), (20, '2025-10-03', '2026-10-02', 1),
+(21, '2025-01-10', '2026-01-09', 1), (22, '2025-01-18', '2026-01-17', 1),
+(23, '2025-01-25', '2026-01-24', 1), (24, '2025-02-02', '2026-02-01', 1);
+
+-- #####################################################
+-- ## 6. RECLAMO DE GARANTIAS (20 Reclamos)
+-- #####################################################
+INSERT INTO reclamo_garantias (id_garantia, descripcion, estado, activo, fecha_reclamo) VALUES
+(6, 'La laptop se sobrecalienta excesivamente.', 'PENDIENTE', 1, '2024-01-15 14:30:00'),
+(14, 'La tarjeta gráfica presenta artifacts visuales.', 'RESUELTO', 1, '2025-03-20 16:00:00'),
+(21, 'El producto no retiene la carga.', 'RESUELTO', 1, '2025-05-10 09:00:00'),
+(15, 'El teclado tiene una tecla que no funciona (letra A)', 'PENDIENTE', 1, '2025-06-01 11:20:00'),
+(2, 'El celular no encendió (fuera de garantía).', 'RECHAZADO', 1, '2024-05-10 09:00:00'),
+(10, 'Falla intermitente en el audio.', 'RESUELTO', 1, '2025-02-01 10:00:00'),
+(15, 'La pantalla muestra una línea de pixeles muertos.', 'RESUELTO', 1, '2025-04-11 12:00:00'),
+(20, 'El empaque llegó abierto, pero el producto funciona.', 'RECHAZADO', 1, '2025-05-01 18:00:00'),
+(22, 'La batería dura menos de lo especificado.', 'PENDIENTE', 1, '2025-06-20 15:00:00'),
+(19, 'El software se reinicia solo.', 'RESUELTO', 1, '2025-07-01 09:30:00');
+
+-- #####################################################
+-- ## 7. DEVOLUCION DE PRODUCTOS (10 Devoluciones)
+-- #####################################################
+INSERT INTO devolucion_productos (id_serie_producto, id_detalle_ingreso, cantidad, fecha_devolucion, motivo, observaciones, id_usuario, reposicion_aplicada, activo) VALUES
+(16, 13, 1, '2023-03-01 10:00:00', 'Producto no compatible con mi equipo', 'Cliente solicitó cambio por otro modelo.', 1, 1, 1),
+(33, 25, 1, '2025-02-15 15:20:00', 'Defecto de fábrica, no enciende', 'Se entregó nota de crédito al cliente.', 1, 0, 1),
+(17, 5, 1, '2024-08-20 11:00:00', 'No era el color esperado por el cliente.', 'Se aplicó reposición por el mismo producto en otro color.', 1, 1, 1),
+(32, 12, 1, '2025-01-05 16:45:00', 'El cliente se arrepintió de la compra.', 'Producto en perfecto estado. Se devuelve a stock.', 1, 0, 1),
+(10, 28, 1, '2025-06-10 14:00:00', 'Caja dañada durante el envío.', 'Se coordinó con el courier y se envió nuevo producto.', 1, 1, 1);
