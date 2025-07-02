@@ -125,3 +125,4 @@ CREATE TABLE devoluciones_venta (
     FOREIGN KEY (id_detalle_venta) REFERENCES detalle_ventas(id),
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
 );
+
