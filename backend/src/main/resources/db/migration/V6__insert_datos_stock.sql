@@ -75,6 +75,7 @@ UPDATE productos SET stock_actual = stock_actual + 7 WHERE id = 36;
 UPDATE productos SET stock_actual = stock_actual + 25 WHERE id = 40;
 
 
+
 -- Enero
 INSERT INTO ingreso_stocks (id, id_proveedor, fecha_ingreso, tipo_documento, numero_documento, observaciones) VALUES
 (24, 3, '2025-01-10', 'Factura', 'FAC-0806', 'Ingreso de equipos principales a inicios de año'),
@@ -698,3 +699,35 @@ INSERT INTO detalle_ingresos (id, id_ingreso, id_producto, codigo_lote, cantidad
 (332, 172, 8, 'L-20250629-RAZERV2', 3, 229.00, 1),
 (333, 172, 9, 'L-20250629-RYZEN5', 2, 649.00, 1),
 (334, 172, 24, 'L-20250629-LOGI-K380', 4, 169.00, 1);
+
+
+INSERT INTO serie_productos (id_detalle_ingreso, numero_serie, estado) VALUES
+(1, 'SN-LAP-00101', 'VENDIDO'), (2, 'SN-CEL-00201', 'VENDIDO'), (3, 'SN-TV-00301', 'VENDIDO'),
+(3, 'SN-TV-00302', 'VENDIDO'), (4, 'SN-CAM-00401', 'VENDIDO'), (5, 'SN-HDD-00501', 'VENDIDO'),
+(6, 'SN-CPU-00601', 'VENDIDO'), (7, 'SN-MOU-00701', 'VENDIDO'), (8, 'SN-KEY-00801', 'VENDIDO'),
+(8, 'SN-KEY-00802', 'VENDIDO'), (9, 'SN-GPU-00901', 'VENDIDO'), (10, 'SN-MON-01001', 'VENDIDO'),
+(11, 'SN-AUD-01101', 'VENDIDO'), (11, 'SN-AUD-01102', 'VENDIDO'), (12, 'SN-LAP-00102', 'VENDIDO'),
+(13, 'SN-CEL-00202', 'DEVUELTO'), (14, 'SN-TV-00303', 'VENDIDO'), (15, 'SN-CAM-00402', 'VENDIDO'),
+(16, 'SN-HDD-00502', 'VENDIDO'), (17, 'SN-CPU-00602', 'VENDIDO'), (17, 'SN-CPU-00603', 'VENDIDO'),
+(17, 'SN-CPU-00604', 'VENDIDO'), (18, 'SN-MOU-00702', 'VENDIDO'), (19, 'SN-KEY-00803', 'VENDIDO'),
+(19, 'SN-KEY-00804', 'VENDIDO'), (20, 'SN-GPU-00902', 'VENDIDO'), (21, 'SN-MON-01002', 'VENDIDO'),
+(22, 'SN-AUD-01103', 'VENDIDO'), (23, 'SN-LAP-00103', 'VENDIDO'), (23, 'SN-LAP-00104', 'VENDIDO'),
+(24, 'SN-CEL-00203', 'VENDIDO'), (25, 'SN-TV-00304', 'REPARACION'),(26, 'SN-CAM-00403', 'VENDIDO'),
+-- Stock disponible (ACTIVO)
+(27, 'SN-HDD-00503', 'ACTIVO'), (28, 'SN-CPU-00605', 'ACTIVO'), (29, 'SN-MOU-00703', 'ACTIVO'),
+(30, 'SN-KEY-00805', 'ACTIVO'), (1, 'SN-GPU-00903', 'ACTIVO'), (2, 'SN-MON-01003', 'ACTIVO'),
+(3, 'SN-AUD-01104', 'ACTIVO'), (4, 'SN-LAP-00105', 'ACTIVO'), (5, 'SN-CEL-00204', 'ACTIVO'),
+(6, 'SN-TV-00305', 'ACTIVO'), (7, 'SN-CAM-00404', 'ACTIVO'), (8, 'SN-HDD-00504', 'ACTIVO'),
+(9, 'SN-CPU-00606', 'ACTIVO'), (10, 'SN-MOU-00704', 'ACTIVO'), (11, 'SN-KEY-00806', 'ACTIVO');
+
+
+
+-- #####################################################
+-- ## 7. DEVOLUCION DE PRODUCTOS (10 Devoluciones)
+-- #####################################################
+INSERT INTO devolucion_productos (id_serie_producto, id_detalle_ingreso, cantidad, fecha_devolucion, motivo, observaciones, id_usuario, reposicion_aplicada, activo) VALUES
+(16, 13, 1, '2023-03-01 10:00:00', 'Producto no compatible con mi equipo', 'Cliente solicitó cambio por otro modelo.', 1, 1, 1),
+(33, 25, 1, '2025-02-15 15:20:00', 'Defecto de fábrica, no enciende', 'Se entregó nota de crédito al cliente.', 1, 0, 1),
+(17, 5, 1, '2024-08-20 11:00:00', 'No era el color esperado por el cliente.', 'Se aplicó reposición por el mismo producto en otro color.', 1, 1, 1),
+(32, 12, 1, '2025-01-05 16:45:00', 'El cliente se arrepintió de la compra.', 'Producto en perfecto estado. Se devuelve a stock.', 1, 0, 1),
+(10, 28, 1, '2025-06-10 14:00:00', 'Caja dañada durante el envío.', 'Se coordinó con el courier y se envió nuevo producto.', 1, 1, 1);
