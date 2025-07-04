@@ -132,8 +132,8 @@ INSERT INTO productos (
     garantia_meses, activo, id_usuario, id_categoria, id_marca
 ) VALUES
 -- Productos 1 a 10
-('HP-LAP-15E-PLA-001', 'Laptop HP Pavilion 15', '15-eg0501la', 'Plata', 'Laptop HP con procesador Intel Core i5 y 8GB RAM', 2499.90, 5, 20, 0, 12, 1, NULL, 34, 1),
-('LEN-LAP-81X-GRI-002', 'Laptop Lenovo Ideapad 3', '81X800ENLM', 'Gris', 'Laptop Lenovo con pantalla 15.6" y 256GB SSD', 1999.00, 5, 20, 0, 12, 1, NULL, 34, 2),
+('HP-LAP-15E-PLA-001', 'Laptop HP Pavilion 15', '15-eg0501la', 'Plata', 'Laptop HP con procesador Intel Core i5 y 8GB RAM', 2499.90, 5, 30, 0, 12, 1, NULL, 34, 1),
+('LEN-LAP-81X-GRI-002', 'Laptop Lenovo Ideapad 3', '81X800ENLM', 'Gris', 'Laptop Lenovo con pantalla 15.6" y 256GB SSD', 1999.00, 5, 30, 0, 12, 1, NULL, 34, 2),
 ('SAM-MON-C24-NEG-003', 'Monitor Samsung Curvo 24"', 'C24F390FHL', 'Negro', 'Monitor curvo Samsung Full HD 24 pulgadas', 799.00, 3, 15, 0, 12, 1, NULL, 40, 18),
 ('KIN-SSD-SA4-MOD-004', 'SSD Kingston 480GB', 'SA400S37/480G', NULL, 'Disco sólido interno 480GB SATA 2.5"', 209.00, 10, 50, 0, 36, 1, NULL, 48, 21),
 ('LOG-MOU-M18-GRI-005', 'Mouse Logitech M185', 'M185', 'Gris', 'Mouse inalámbrico óptico con receptor USB', 69.90, 20, 100, 0, 24, 1, NULL, 45, 11),
