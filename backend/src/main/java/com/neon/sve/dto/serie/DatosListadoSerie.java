@@ -18,7 +18,7 @@ public record DatosListadoSerie(
         this(
                 serieProducto.getId(),
                 serieProducto.getId_detalle_ingreso().getId(),
-                serieProducto.getId_detalle_ingreso().getCodigoLote(),
+                serieProducto.getId_detalle_ingreso().getCodigo_detalle(),
                 serieProducto.getId_detalle_ingreso().getId_producto().getNombre(),
                 serieProducto.getNumeroSerie(),
                 serieProducto.getEstado().name(),

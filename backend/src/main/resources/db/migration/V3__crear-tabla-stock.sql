@@ -1,19 +1,25 @@
 CREATE TABLE ingreso_stocks (
     id BIGINT NOT NULL AUTO_INCREMENT,
     id_proveedor BIGINT NOT NULL,
+    codigo_ingreso VARCHAR(30) NOT NULL UNIQUE,
     fecha_ingreso DATE NOT NULL,
     tipo_documento VARCHAR(20),
     numero_documento VARCHAR(50),
     observaciones TEXT,
+    activo BIT(1) NOT NULL DEFAULT 1,
+    id_usuario BIGINT NOT NULL,
+    total DECIMAL(10,2) DEFAULT 0,  -- Nuevo campo agregado aquí
     PRIMARY KEY (id),
-    FOREIGN KEY (id_proveedor) REFERENCES proveedores(id)
+    FOREIGN KEY (id_proveedor) REFERENCES proveedores(id),
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
 );
+
 
 CREATE TABLE detalle_ingresos (
     id BIGINT NOT NULL AUTO_INCREMENT,
     id_ingreso BIGINT NOT NULL,
     id_producto BIGINT NOT NULL,
-    codigo_lote VARCHAR(100) NOT NULL,
+    codigo_detalle VARCHAR(100) NOT NULL,
     cantidad INT NOT NULL CHECK (cantidad >= 0),
     precio_unitario DECIMAL(10, 2) NOT NULL,
     subtotal DECIMAL(12, 2) GENERATED ALWAYS AS (cantidad * precio_unitario) STORED,
@@ -53,3 +59,15 @@ CREATE TABLE devolucion_productos (
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
 );
 
+DELIMITER $$
+
+CREATE TRIGGER actualizar_total_ingreso
+AFTER INSERT ON detalle_ingresos
+FOR EACH ROW
+BEGIN
+    UPDATE ingreso_stocks
+    SET total = total + (NEW.precio_unitario * NEW.cantidad)
+    WHERE id = NEW.id_ingreso;
+END$$
+
+DELIMITER ;

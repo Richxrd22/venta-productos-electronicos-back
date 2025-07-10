@@ -20,7 +20,7 @@ public record DatosRespuestaDetalleIngreso(
                 detalleIngreso.getId(),
                 detalleIngreso.getId_producto().getNombre(),
                 detalleIngreso.getId_producto().getModelo(),
-                detalleIngreso.getCodigoLote(),
+                detalleIngreso.getCodigo_detalle(),
                 detalleIngreso.getCantidad(),
                 detalleIngreso.getPrecio_unitario(),
                 detalleIngreso.getSubtotal());

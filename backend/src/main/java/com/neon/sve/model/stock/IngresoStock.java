@@ -1,5 +1,6 @@
 package com.neon.sve.model.stock;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +46,9 @@ public class IngresoStock {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "codigo_ingreso", nullable = false, unique = true, length = 30)
+    private String codigo_ingreso;
+
     @ManyToOne
     @JoinColumn(name = "id_proveedor", nullable = false)
     private Proveedor id_proveedor;
@@ -62,6 +66,9 @@ public class IngresoStock {
     @Column(nullable = true, columnDefinition = "TEXT")
     private String observaciones;
 
+    @Column(name = "total", nullable = false, precision = 10, scale = 2)
+    private BigDecimal total ;
+
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private Boolean activo;
 
@@ -70,7 +77,7 @@ public class IngresoStock {
     private Usuario id_usuario;
 
     @OneToMany(mappedBy = "ingresoStock", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DetalleIngreso> detallesIngreso = new ArrayList<>();
+    private List<DetalleIngreso> detallesIngreso ;
 
     public IngresoStock(@Valid DatosRegistroIngresoStock datosRegistroIngresoStock,
             Proveedor proveedor, Usuario usuario, Producto producto) {

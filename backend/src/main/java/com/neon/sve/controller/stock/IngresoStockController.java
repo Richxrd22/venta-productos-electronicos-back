@@ -28,7 +28,6 @@ import jakarta.validation.Valid;
 @Controller
 @RequestMapping("/ingresoStock")
 public class IngresoStockController {
-    /*
     @Autowired
     private IngresoStockService ingresoStockService;
 
@@ -46,9 +45,8 @@ public class IngresoStockController {
             DatosRespuestaIngresoStock ingresoStock = ingresoStockService.getIngresoStockById(id);
             return ResponseEntity.ok(ingresoStock);
         } catch (Exception e) {
-            String mensajeError = "Error al buscar el Ingreso Stock requerido, verifique ID ingresado : " + id;
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensajeError);
-
+            String mensajeError = "Error al buscar el Ingreso Stock requerido, verifique ID ingresado: " + id;
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MensajeRespuesta(mensajeError));
         }
     }
 
@@ -80,5 +78,4 @@ public class IngresoStockController {
         ingresoStockService.desactivarIngresoStock(id);
         return ResponseEntity.ok(new MensajeRespuesta("Ingreso de Stock desactivado correctamente"));
     }
- */
 }

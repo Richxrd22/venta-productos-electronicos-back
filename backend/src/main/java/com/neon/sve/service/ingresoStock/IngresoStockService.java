@@ -1,6 +1,5 @@
 package com.neon.sve.service.ingresoStock;
 
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -11,19 +10,16 @@ import com.neon.sve.dto.ingresoStock.DatosRespuestaIngresoStock;
 import com.neon.sve.dto.login.DatosRespuestaMensaje;
 
 public interface IngresoStockService {
-    
-   // DatosRespuestaIngresoStock getIngresoStockById(Long id);
 
- //   Page<DatosListadoIngresoStock> getAllIngresoStock(Pageable pageable);
-    
-    //DatosRespuestaMensaje createIngresoStock(DatosRegistroIngresoStock datosRegistroIngresoStock);
+    DatosRespuestaMensaje createIngresoStock(DatosRegistroIngresoStock datosRegistroIngresoStock);
 
-    //DatosRespuestaIngresoStock updateIngresoStock(DatosActualizarIngresoStock datosActualizarIngresoStock);
+    Page<DatosListadoIngresoStock> getAllIngresoStock(Pageable pageable);
 
-   // void activarIngresoStock(Long id);
+    DatosRespuestaIngresoStock getIngresoStockById(Long id);
 
-   // void desactivarIngresoStock(Long id);
+    DatosRespuestaIngresoStock updateIngresoStock(DatosActualizarIngresoStock datosActualizarIngresoStock);
 
-    
+    void activarIngresoStock(Long id);
 
+    void desactivarIngresoStock(Long id);
 }

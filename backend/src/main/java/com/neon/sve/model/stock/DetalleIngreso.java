@@ -49,8 +49,8 @@ public class DetalleIngreso {
     @JoinColumn(name = "id_producto", nullable = false)
     private Producto id_producto; // Relación con la entidad Producto
 
-    @Column(name = "codigo_lote", nullable = false, length = 100)
-    private String codigoLote;
+    @Column(name = "codigo_detalle", nullable = false, length = 100)
+    private String codigo_detalle;
 
     @Column(nullable = false)
     private int cantidad;

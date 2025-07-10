@@ -21,7 +21,7 @@ public record DatosListadoDevolucionProducto(
     public DatosListadoDevolucionProducto(DevolucionProducto devolucionProducto) {
         this(
                 devolucionProducto.getId(),
-                devolucionProducto.getId_detalle_ingreso().getCodigoLote(),
+                devolucionProducto.getId_detalle_ingreso().getCodigo_detalle(),
                 devolucionProducto.getCantidad(),
                 devolucionProducto.getFechaDevolucion(),
                 devolucionProducto.getMotivo(),

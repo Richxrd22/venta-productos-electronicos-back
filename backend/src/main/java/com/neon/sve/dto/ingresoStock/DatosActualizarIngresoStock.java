@@ -1,8 +1,9 @@
 package com.neon.sve.dto.ingresoStock;
 
-import java.math.BigDecimal;
+import java.util.List;
 
-import jakarta.validation.constraints.DecimalMin;
+import com.neon.sve.dto.detalleIngreso.DatosActualizarDetalleIngreso;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -12,8 +13,10 @@ public record DatosActualizarIngresoStock(
                 @NotBlank String tipo_documento,
                 @NotBlank String numero_documento,
                 String observaciones,
-                int cantidad_producto,
-                @DecimalMin(value = "0.01", message = "El precio unitario debe ser mayor a cero") BigDecimal precio_unitario,
-                @NotNull Long id_usuario) {
+                @NotNull Long id_usuario,
+                List<DatosActualizarDetalleIngreso> detalles
+                
+                ) {
 
 }
+  //              @DecimalMin(value = "0.01", message = "El precio unitario debe ser mayor a cero") BigDecimal precio_unitario,
