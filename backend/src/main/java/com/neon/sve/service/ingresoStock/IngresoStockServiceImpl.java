@@ -44,6 +44,8 @@ import com.neon.sve.repository.ProveedorRepository;
 import com.neon.sve.repository.SerieProductoRepository;
 import com.neon.sve.repository.UsuarioRepository;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class IngresoStockServiceImpl implements IngresoStockService {
 
@@ -149,11 +151,25 @@ public class IngresoStockServiceImpl implements IngresoStockService {
                         actualizarCantidadYStockSiEsNecesario(detalle, producto, detalleDTO.cantidad());
 
                         detalle.setPrecio_unitario(detalleDTO.precio_unitario());
+                        detalle.setCantidad(detalleDTO.cantidad()); // También se actualiza la cantidad aquí
 
                         if ("CON_SERIE".equalsIgnoreCase(detalleDTO.tipo_serie())) {
                                 actualizarSeriesDeDetalle(detalle, detalleDTO.series(), detalleDTO.cantidad());
                         }
+
+                        detalleIngresoRepository.save(detalle); // Asegura persistencia
                 }
+
+                // Recalcular el total del ingreso
+                List<DetalleIngreso> detallesActualizados = detalleIngresoRepository
+                                .findByIngresoStockId(ingreso.getId());
+
+                BigDecimal nuevoTotal = detallesActualizados.stream()
+                                .map(det -> det.getPrecio_unitario().multiply(BigDecimal.valueOf(det.getCantidad())))
+                                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+                ingreso.setTotal(nuevoTotal);
+                ingresoStockRepository.save(ingreso);
 
                 return new DatosRespuestaIngresoStock(ingreso);
         }
@@ -299,67 +315,6 @@ public class IngresoStockServiceImpl implements IngresoStockService {
                 }
         }
 
-        /*
-         * 
-         * 
-         * @Override
-         * 
-         * @Transactional
-         * public void activarIngresoStock(Long id) {
-         * IngresoStock ingresoStock = ingresoStockRepository.findById(id)
-         * .orElseThrow(() -> new EntityNotFoundException(
-         * "Ingreso de Stock no encontrado, verifique ID ingresado: " + id));
-         * 
-         * if (Boolean.TRUE.equals(ingresoStock.getActivo())) {
-         * throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-         * "El ingreso de stock ya se encuentra activo.");
-         * }
-         * 
-         * DetalleIngreso detalle = ingresoStock.getDetallesIngreso();
-         * if (detalle == null)
-         * return;
-         * 
-         * Producto producto = detalle.getId_producto();
-         * validarStockMaximo(producto, detalle.getCantidad());
-         * 
-         * activarSeries(detalle.getSeriesProductos());
-         * 
-         * detalle.setActivo(true);
-         * ingresoStock.setActivo(true);
-         * 
-         * producto.setStock_actual(producto.getStock_actual() + detalle.getCantidad());
-         * productoRepository.save(producto);
-         * ingresoStockRepository.save(ingresoStock);
-         * }
-         * 
-         * @Override
-         * 
-         * @Transactional
-         * public void desactivarIngresoStock(Long id) {
-         * IngresoStock ingresoStock = ingresoStockRepository.findById(id)
-         * .orElseThrow(() -> new EntityNotFoundException(
-         * "Ingreso de Stock no encontrado, verifique ID ingresado: " + id));
-         * 
-         * if (!Boolean.TRUE.equals(ingresoStock.getActivo())) {
-         * throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-         * "El ingreso de stock ya está desactivado.");
-         * }
-         * 
-         * DetalleIngreso detalle = ingresoStock.getDetallesIngreso();
-         * if (detalle == null)
-         * return;
-         * 
-         * List<SerieProducto> series = detalle.getSeriesProductos();
-         * validarSeries(series);
-         * actualizarStock(detalle);
-         * desactivarSeries(series);
-         * 
-         * detalle.setActivo(false);
-         * ingresoStock.setActivo(false);
-         * 
-         * ingresoStockRepository.save(ingresoStock);
-         * }
-         */
 
         @Transactional
         @Override
@@ -395,7 +350,7 @@ public class IngresoStockServiceImpl implements IngresoStockService {
                 // Contador de correlativos por producto (en caso se repitan en el ingreso)
 
                 int contadorDetalle = 1;
-
+                BigDecimal totalIngreso = BigDecimal.ZERO;
                 for (DatosProductoIngreso productoDTO : datosRegistroIngresoStock.productos()) {
                         Producto producto = productoRepository.findById(productoDTO.id_producto())
                                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
@@ -425,7 +380,9 @@ public class IngresoStockServiceImpl implements IngresoStockService {
                         // Generar código de detalle usando nuevo formato
                         String codigoDetalle = String.format("DI-%s-%s-%03d", fechaFormateada, shortUUID,
                                         contadorDetalle++);
-
+                        BigDecimal subtotal = productoDTO.precio_unitario()
+                                        .multiply(BigDecimal.valueOf(productoDTO.cantidad()));
+                        totalIngreso = totalIngreso.add(subtotal);
                         // Crear DetalleIngreso
                         DetalleIngreso detalle = DetalleIngreso.builder()
                                         .ingresoStock(ingresoStock)
@@ -447,6 +404,9 @@ public class IngresoStockServiceImpl implements IngresoStockService {
                                 procesarSerieIndividual(productoDTO, detalle);
                         }
                 }
+                // Asignar el total calculado y actualizar
+                ingresoStock.setTotal(totalIngreso);
+                ingresoStockRepository.save(ingresoStock);
 
                 return new DatosRespuestaMensaje("Ingreso de stock registrado con éxito.");
         }
@@ -497,79 +457,137 @@ public class IngresoStockServiceImpl implements IngresoStockService {
                 }
         }
 
+        @Transactional
         @Override
         public void activarIngresoStock(Long id) {
-                // TODO Auto-generated method stub
-                throw new UnsupportedOperationException("Unimplemented method 'activarIngresoStock'");
+                IngresoStock ingresoStock = ingresoStockRepository.findById(id)
+                                .orElseThrow(() -> new EntityNotFoundException(
+                                                "Ingreso de Stock no encontrado: " + id));
+
+                if (Boolean.TRUE.equals(ingresoStock.getActivo())) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El ingreso ya está activo.");
+                }
+
+                List<DetalleIngreso> detalles = ingresoStock.getDetallesIngreso();
+                if (detalles == null || detalles.isEmpty()) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                                        "Este ingreso no tiene detalles registrados.");
+                }
+
+                for (DetalleIngreso detalle : detalles) {
+                        Producto producto = detalle.getId_producto();
+
+                        // Validar stock máximo permitido
+                        validarStockMaximo(producto, detalle.getCantidad());
+
+                        // Activar series asociadas (si las tiene)
+                        activarSeries(detalle.getSeriesProductos());
+
+                        // Sumar al stock
+                        producto.setStock_actual(producto.getStock_actual() + detalle.getCantidad());
+                        productoRepository.save(producto);
+
+                        detalle.setActivo(true);
+                        detalleIngresoRepository.save(detalle);
+                }
+
+                ingresoStock.setActivo(true);
+                ingresoStockRepository.save(ingresoStock);
         }
 
+        private void validarStockMaximo(Producto producto, int cantidadAgregar) {
+                int stockFinal = producto.getStock_actual() + cantidadAgregar;
+                if (stockFinal > producto.getMax_stock()) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                                        "Activar este ingreso superaría el stock máximo del producto: "
+                                                        + producto.getNombre());
+                }
+        }
+
+        private void activarSeries(List<SerieProducto> series) {
+                if (series == null || series.isEmpty())
+                        return;
+
+                for (SerieProducto serie : series) {
+                        if (serie.getEstado() == EstadoSerie.INACTIVO) {
+                                serie.setEstado(EstadoSerie.ACTIVO);
+                                serieProductoRepository.save(serie);
+                        }
+                }
+        }
+
+        @Transactional
         @Override
         public void desactivarIngresoStock(Long id) {
-                // TODO Auto-generated method stub
-                throw new UnsupportedOperationException("Unimplemented method 'desactivarIngresoStock'");
+                IngresoStock ingresoStock = ingresoStockRepository.findById(id)
+                                .orElseThrow(() -> new EntityNotFoundException(
+                                                "Ingreso de Stock no encontrado: " + id));
+
+                if (!Boolean.TRUE.equals(ingresoStock.getActivo())) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El ingreso ya está desactivado.");
+                }
+
+                List<DetalleIngreso> detalles = ingresoStock.getDetallesIngreso();
+                if (detalles == null || detalles.isEmpty()) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                                        "El ingreso no tiene detalles registrados.");
+                }
+
+                for (DetalleIngreso detalle : detalles) {
+                        List<SerieProducto> series = detalle.getSeriesProductos();
+
+                        // Validar que las series no estén comprometidas
+                        validarSeries(series);
+
+                        // Devolver stock
+                        Producto producto = detalle.getId_producto();
+                        int nuevoStock = producto.getStock_actual() - detalle.getCantidad();
+                        if (nuevoStock < 0) {
+                                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                                                "El stock quedaría negativo al desactivar el ingreso del producto: "
+                                                                + producto.getNombre());
+                        }
+                        producto.setStock_actual(nuevoStock);
+                        productoRepository.save(producto);
+
+                        // Desactivar series activas
+                        desactivarSeries(series);
+
+                        // Desactivar detalle
+                        detalle.setActivo(false);
+                        detalleIngresoRepository.save(detalle);
+                }
+
+                // Desactivar ingreso
+                ingresoStock.setActivo(false);
+                ingresoStockRepository.save(ingresoStock);
         }
 
-        /*
-         * Metodo para desactivarIngresoStock
-         * private void validarSeries(List<SerieProducto> series) {
-         * if (series == null || series.isEmpty())
-         * return;
-         * 
-         * boolean tieneSeriesComprometidas = series.stream().anyMatch(serie ->
-         * serie.getEstado() == EstadoSerie.VENDIDO ||
-         * serie.getEstado() == EstadoSerie.REPARACION ||
-         * serie.getEstado() == EstadoSerie.DEVUELTO);
-         * 
-         * if (tieneSeriesComprometidas) {
-         * throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-         * "No se puede desactivar este ingreso porque una o más series están en estado VENDIDO, REPARACION o DEVUELTO."
-         * );
-         * }
-         * 
-         * }
-         * 
-         * private void actualizarStock(DetalleIngreso detalle) {
-         * Producto producto = detalle.getId_producto();
-         * int nuevoStock = producto.getStock_actual() - detalle.getCantidad();
-         * 
-         * if (nuevoStock < 0) {
-         * throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-         * "No se puede desactivar este ingreso porque el stock actual es menor que la cantidad ingresada."
-         * );
-         * }
-         * 
-         * producto.setStock_actual(nuevoStock);
-         * productoRepository.save(producto);
-         * }
-         * 
-         * private void desactivarSeries(List<SerieProducto> series) {
-         * 
-         * if (series == null || series.isEmpty())
-         * return;
-         * series.forEach(serie -> {
-         * serie.setEstado(EstadoSerie.INACTIVO);
-         * serieProductoRepository.save(serie);
-         * });
-         * }
-         */
-        /*
-         * Metodo para activarIngresoStock
-         * private void validarStockMaximo(Producto producto, int cantidadAgregar) {
-         * int stockFinal = producto.getStock_actual() + cantidadAgregar;
-         * if (stockFinal > producto.getMax_stock()) {
-         * throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-         * "Activar este ingreso superaría el stock máximo permitido.");
-         * }
-         * }
-         * 
-         * private void activarSeries(List<SerieProducto> series) {
-         * if (series != null && !series.isEmpty()) {
-         * series.forEach(serie -> {
-         * serie.setEstado(EstadoSerie.ACTIVO);
-         * serieProductoRepository.save(serie);
-         * });
-         * }
-         * }
-         */
+        private void validarSeries(List<SerieProducto> series) {
+                if (series == null || series.isEmpty())
+                        return;
+
+                boolean tieneSeriesComprometidas = series.stream()
+                                .anyMatch(serie -> serie.getEstado() == EstadoSerie.VENDIDO ||
+                                                serie.getEstado() == EstadoSerie.REPARACION ||
+                                                serie.getEstado() == EstadoSerie.DEVUELTO);
+
+                if (tieneSeriesComprometidas) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                                        "No se puede desactivar el ingreso porque una o más series están en estado VENDIDO, REPARACION o DEVUELTO.");
+                }
+        }
+
+        private void desactivarSeries(List<SerieProducto> series) {
+                if (series == null || series.isEmpty())
+                        return;
+
+                for (SerieProducto serie : series) {
+                        if (serie.getEstado() == EstadoSerie.ACTIVO) {
+                                serie.setEstado(EstadoSerie.INACTIVO);
+                                serieProductoRepository.save(serie);
+                        }
+                }
+        }
 
 }
