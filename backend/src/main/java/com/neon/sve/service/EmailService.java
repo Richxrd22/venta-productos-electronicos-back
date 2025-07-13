@@ -45,8 +45,7 @@ public class EmailService {
                             + usuarioCorreo + "</td></tr>" +
                             "                <tr><td><strong>Contraseña:</strong></td><td style='padding-left: 10px;'>"
                             + claveSinCodificar + "</td></tr>" +
-                            "              </table>" +
-                            "              <a href='https://neon-sve.com/login' style='background-color: #11181C; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;'>Iniciar Sesión</a>"
+                            "              </table>" 
                             +
                             "              <p style='margin-top: 30px; font-size: 14px; color: #888;'>Por seguridad, te recomendamos cambiar tu contraseña en tu primer acceso.</p>"
                             +
