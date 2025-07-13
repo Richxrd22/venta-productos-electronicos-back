@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.neon.sve.dto.categoria.DatosActualizarCategoria;
-import com.neon.sve.dto.categoria.DatosRegistroCategoria;
 import com.neon.sve.model.ventas.Descuento;
 
 import jakarta.persistence.Column;
@@ -18,7 +16,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

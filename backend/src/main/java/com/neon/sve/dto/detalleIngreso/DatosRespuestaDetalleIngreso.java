@@ -1,7 +1,6 @@
 package com.neon.sve.dto.detalleIngreso;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 
 import com.neon.sve.model.stock.DetalleIngreso;
 

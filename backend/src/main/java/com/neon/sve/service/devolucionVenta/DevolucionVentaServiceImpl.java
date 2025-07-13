@@ -1,6 +1,5 @@
 package com.neon.sve.service.devolucionVenta;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,20 +10,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.neon.sve.dto.cupon.DatosRespuestaCupon;
 import com.neon.sve.dto.devolucionVenta.DatosActualizarDevolucionVenta;
 import com.neon.sve.dto.devolucionVenta.DatosListadoDevolucionVenta;
 import com.neon.sve.dto.devolucionVenta.DatosProductoDevolucion;
 import com.neon.sve.dto.devolucionVenta.DatosRegistroDevolucionVenta;
 import com.neon.sve.dto.devolucionVenta.DatosRespuestaDevolucionVenta;
-import com.neon.sve.dto.reclamoGarantia.DatosListadoReclamoGarantia;
 import com.neon.sve.model.producto.Producto;
 import com.neon.sve.model.usuario.Usuario;
-import com.neon.sve.model.ventas.Cupon;
 import com.neon.sve.model.ventas.DetalleDevolucion;
 import com.neon.sve.model.ventas.DetalleVenta;
 import com.neon.sve.model.ventas.DevolucionVenta;
-import com.neon.sve.model.ventas.ReclamoGarantia;
 import com.neon.sve.model.ventas.RegistroVenta;
 import com.neon.sve.model.ventas.Tipos.EstadoReclamo;
 import com.neon.sve.repository.DetalleDevolucionRepository;

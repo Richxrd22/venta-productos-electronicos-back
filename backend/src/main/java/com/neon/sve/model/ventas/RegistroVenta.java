@@ -5,7 +5,6 @@ import java.sql.Timestamp;
 
 import org.hibernate.annotations.CreationTimestamp;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.neon.sve.dto.registroVenta.DatosActualizarRegistroVenta;
 import com.neon.sve.dto.registroVenta.DatosRegistroVenta;
 import com.neon.sve.model.usuario.Usuario;
@@ -13,7 +12,6 @@ import com.neon.sve.model.usuario.Usuario;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -22,7 +20,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

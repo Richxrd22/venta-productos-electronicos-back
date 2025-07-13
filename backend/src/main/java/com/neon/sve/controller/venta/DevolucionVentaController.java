@@ -23,7 +23,6 @@ import com.neon.sve.dto.devolucionVenta.DatosRegistroDevolucionVenta;
 import com.neon.sve.dto.devolucionVenta.DatosRespuestaDevolucionVenta;
 import com.neon.sve.service.devolucionVenta.DevolucionVentaService;
 
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
 @Controller

@@ -19,7 +19,6 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setCharacterEncoding("UTF-8");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
-        // Este error solo aplica si el JWT no es válido o no se envió
         response.getWriter().write("{\"error\": \"No autorizado: token inválido o ausente\"}");
     }
 }

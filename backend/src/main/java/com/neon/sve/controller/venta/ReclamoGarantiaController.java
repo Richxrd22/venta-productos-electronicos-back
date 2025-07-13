@@ -18,10 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.neon.sve.dto.MensajeRespuesta;
-import com.neon.sve.dto.metodoPago.DatosActualizarMetodoPago;
-import com.neon.sve.dto.metodoPago.DatosListadoMetodoPago;
-import com.neon.sve.dto.metodoPago.DatosRegistroMetodoPago;
-import com.neon.sve.dto.metodoPago.DatosRespuestaMetodoPago;
 import com.neon.sve.dto.reclamoGarantia.DatosActualizarReclamoGarantia;
 import com.neon.sve.dto.reclamoGarantia.DatosListadoReclamoGarantia;
 import com.neon.sve.dto.reclamoGarantia.DatosRegistroReclamoGarantia;
