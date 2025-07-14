@@ -83,24 +83,6 @@ public class CuponServiceImpl implements CuponService {
         }
     }
 
-    /*
-    @Override
-    public List<Cupon> buscarPorTipoDescuento(String tipoDescuento) {
-        if (tipoDescuento == null || tipoDescuento.isBlank()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El tipo de descuento no puede estar vacío.");
-        }
-
-        List<Cupon> cupones = cuponRepository.findByTipoDescuentoIgnoreCase(tipoDescuento);
-        if (cupones.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                    "No se encontraron cupones con ese tipo de descuento.");
-        }
-
-        return cupones;
-
-    }
-        */
-
     @Override
     public void activarDescuento(Long id) {
         Cupon cupon = cuponRepository.findById(id)
