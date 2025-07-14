@@ -58,18 +58,4 @@ public class Categoria {
     @OneToMany(mappedBy = "categoria")
     private List<Descuento> descuentos;
 
-    /*
-    public Categoria(@Valid DatosRegistroCategoria datosRegistroCategoria) {
-        this.nombre = datosRegistroCategoria.nombre();
-        this.categoriaPadre = datosRegistroCategoria.id_categoria_padre();
-        this.nivel = datosRegistroCategoria.nivel();
-    }
-
-    public void actualizar(@Valid DatosActualizarCategoria datosActualizarCategoria) {
-        this.nombre = datosActualizarCategoria.nombre();
-        this.categoriaPadre = datosActualizarCategoria.id_categoria_padre();
-        this.nivel = datosActualizarCategoria.nivel();
-    }
-    */
-
 }
