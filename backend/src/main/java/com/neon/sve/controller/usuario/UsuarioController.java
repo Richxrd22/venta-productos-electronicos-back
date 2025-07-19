@@ -4,7 +4,9 @@ import java.net.URI;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -52,7 +54,9 @@ public class UsuarioController {
 
     @GetMapping("/listar")
     public ResponseEntity<List<DatosListadoUsuario>> listarUsuarios() {
-        Pageable paginacion = Pageable.unpaged();
+        Sort sort = Sort.by(Sort.Direction.DESC, "id"); 
+        Pageable paginacion = PageRequest.of(0, Integer.MAX_VALUE, sort);
+
         List<DatosListadoUsuario> usuarios = usuarioService.getAllUsuarios(paginacion).getContent();
         return ResponseEntity.ok(usuarios);
     }

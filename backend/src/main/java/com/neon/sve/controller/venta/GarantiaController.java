@@ -4,7 +4,9 @@ import java.net.URI;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -66,7 +68,9 @@ public class GarantiaController {
 
     @GetMapping("/listar")
     public ResponseEntity<List<DatosListadoGarantia>> listarPorDetalleVenta() {
-        Pageable pageable = Pageable.unpaged();
+        Sort sort = Sort.by(Sort.Direction.DESC, "id_garantia");
+        Pageable pageable = PageRequest.of(0, Integer.MAX_VALUE, sort);
+
         List<DatosListadoGarantia> listaGarantias = garantiaService.listarPorDetalleVenta(pageable).getContent();
         return ResponseEntity.ok(listaGarantias);
     }

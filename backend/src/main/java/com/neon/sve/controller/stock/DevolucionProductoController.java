@@ -3,7 +3,9 @@ package com.neon.sve.controller.stock;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -31,7 +33,6 @@ public class DevolucionProductoController {
     @Autowired
     private DevolucionProductoService devolucionProductoService;
 
-    
     @GetMapping("/buscar/{id}")
     public ResponseEntity<?> getDevolucionById(@PathVariable Long id) {
 
@@ -47,7 +48,8 @@ public class DevolucionProductoController {
 
     @GetMapping("/listar")
     public ResponseEntity<List<DatosListadoDevolucionProducto>> getAllDevoluciones(Pageable pageable) {
-        Pageable paginacion = Pageable.unpaged();
+        Sort sort = Sort.by(Sort.Direction.DESC, "id_devolucion_producto"); 
+        Pageable paginacion = PageRequest.of(0, Integer.MAX_VALUE, sort);
         List<DatosListadoDevolucionProducto> listadoDevolucionProductos = devolucionProductoService
                 .getAllDevoluciones(paginacion).getContent();
         return ResponseEntity.ok(listadoDevolucionProductos);

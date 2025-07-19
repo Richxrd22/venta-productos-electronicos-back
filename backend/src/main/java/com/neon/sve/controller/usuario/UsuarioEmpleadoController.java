@@ -3,7 +3,9 @@ package com.neon.sve.controller.usuario;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -30,9 +32,12 @@ public class UsuarioEmpleadoController {
 
     @GetMapping("/listar")
     public ResponseEntity<List<DatosListadoUsuarioEmpleado>> listarUsuarioEmpleados() {
-        Pageable paginacion = Pageable.unpaged();
+        Sort sort = Sort.by(Sort.Direction.DESC, "id_empleado");
+        Pageable paginacion = PageRequest.of(0, Integer.MAX_VALUE, sort);
+
         List<DatosListadoUsuarioEmpleado> usuarioEmpleados = usuarioEmpleadoService.getAllUsuarioEmpleados(paginacion)
                 .getContent();
+
         return ResponseEntity.ok(usuarioEmpleados);
     }
 

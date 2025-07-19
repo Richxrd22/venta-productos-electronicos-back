@@ -9,17 +9,19 @@ public record DatosRespuestaEmpleado(
         String dni,
         String correo,
         String celular,
-        int activo) {
+        int activo, 
+        Long id_rol) {
 
     public DatosRespuestaEmpleado(Empleado empleado) {
         this(
-                empleado.getId(),
-                empleado.getNombre(),
-                empleado.getApellido(),
-                empleado.getDni(),
-                empleado.getUsuario().getCorreo(),
-                empleado.getCelular(),
-                empleado.getActivo() != null && empleado.getActivo() ? 1 : 0  // Convertir a 0 o 1
-                );
+            empleado.getId(),
+            empleado.getNombre(),
+            empleado.getApellido(),
+            empleado.getDni(),
+            empleado.getUsuario().getCorreo(),
+            empleado.getCelular(),
+            empleado.getActivo() != null && empleado.getActivo() ? 1 : 0,
+            empleado.getUsuario().getId_rol().getId()
+        );
     }
 }

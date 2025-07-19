@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -33,9 +35,14 @@ public class DevolucionVentaController {
     private DevolucionVentaService devolucionVentaService;
 
     @GetMapping("/listar")
-    public ResponseEntity<List<DatosListadoDevolucionVenta>> listarDevoluciones(Pageable pageable) {
-        Page<DatosListadoDevolucionVenta> devoluciones = devolucionVentaService.getAllDevolucionVenta(pageable);
-        return ResponseEntity.ok(devoluciones.getContent());
+    public ResponseEntity<List<DatosListadoDevolucionVenta>> listarDevoluciones() {
+        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+        Pageable paginacion = PageRequest.of(0, Integer.MAX_VALUE, sort);
+
+        List<DatosListadoDevolucionVenta> devoluciones = devolucionVentaService.getAllDevolucionVenta(paginacion)
+                .getContent();
+
+        return ResponseEntity.ok(devoluciones);
     }
 
     @GetMapping("/buscar/{id}")

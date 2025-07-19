@@ -4,7 +4,9 @@ import java.net.URI;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -37,7 +39,8 @@ public class CategoriaController {
 
     @GetMapping("/listar")
     public ResponseEntity<List<DatosListadoCategoria>> listarCategoria() {
-        Pageable paginacion = Pageable.unpaged();
+        Sort sort = Sort.by(Sort.Direction.DESC, "id"); 
+        Pageable paginacion = PageRequest.of(0, Integer.MAX_VALUE, sort); 
         List<DatosListadoCategoria> categorias = categoriaService.getAllCategoria(paginacion).getContent();
         return ResponseEntity.ok(categorias);
     }
@@ -45,7 +48,8 @@ public class CategoriaController {
     @GetMapping("/listar-detalle")
     public ResponseEntity<List<DatosListadoDetalleCategorias>> listarCategoriaDetalle() {
         Pageable paginacion = Pageable.unpaged();
-        List<DatosListadoDetalleCategorias> categorias = categoriaService.getAllCategoriaDetalle(paginacion).getContent();
+        List<DatosListadoDetalleCategorias> categorias = categoriaService.getAllCategoriaDetalle(paginacion)
+                .getContent();
         return ResponseEntity.ok(categorias);
     }
 
