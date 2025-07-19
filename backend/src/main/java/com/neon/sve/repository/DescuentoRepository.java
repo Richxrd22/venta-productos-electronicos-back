@@ -17,9 +17,10 @@ public interface DescuentoRepository extends JpaRepository<Descuento, Long> {
     // específica
     List<Descuento> findByCategoriaAndActivoTrueAndFechaFinAfter(Categoria categoria, LocalDate fecha);
 
-    // (Opcional pero recomendado) Este es útil para buscar el descuento activo de
-    // una categoría
+    // buscar el descuento activo de una categoría
     Optional<Descuento> findFirstByCategoriaAndActivoTrueAndFechaFinAfterOrderByPorcentajeDesc(Categoria categoria,
             LocalDate fecha);
+
+    List<Descuento> findByCategoriaAndActivoTrue(Categoria categoria);
 
 }

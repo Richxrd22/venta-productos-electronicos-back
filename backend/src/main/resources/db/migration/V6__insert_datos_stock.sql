@@ -615,3 +615,49 @@ INSERT INTO devolucion_productos (id_serie_producto, id_detalle_ingreso, cantida
 (17, 5, 1, '2024-08-20 11:00:00', 'No era el color esperado por el cliente.', 'Se aplicó reposición por el mismo producto en otro color.', 1, 1, 1),
 (32, 12, 1, '2025-01-05 16:45:00', 'El cliente se arrepintió de la compra.', 'Producto en perfecto estado. Se devuelve a stock.', 1, 0, 1),
 (10, 28, 1, '2025-06-10 14:00:00', 'Caja dañada durante el envío.', 'Se coordinó con el courier y se envió nuevo producto.', 1, 1, 1);
+
+-- NUEVOS REGISTROS
+
+INSERT INTO devolucion_productos (id_serie_producto, id_detalle_ingreso, cantidad, fecha_devolucion, motivo, observaciones, id_usuario, reposicion_aplicada, activo) VALUES
+(10, 27, 3, '2025-06-10 14:00:00', 'Defecto de fábrica, no enciende', 'Se notifico al proveedor el hecho', 2, 3, 1),
+(22, 25, 1, '2025-01-15 11:30:00', 'Producto defectuoso', 'No enciende.', 2, 1, 1),
+(5, 112, 1, '2025-01-20 09:15:00', 'No cumple con las especificaciones', 'El color no corresponde al solicitado.', 3, 1, 1),
+(31, 24, 2, '2025-02-05 14:00:00', 'Daño estético en el empaque', 'Cliente rechazó el producto por caja dañada.', 1, 0, 1),
+(8, 77, 3, '2025-02-10 16:45:00', 'Producto no compatible', 'Incompatibilidad con el sistema operativo del cliente.', 3, 1, 1),
+(45, 18, 1, '2025-02-18 12:00:00', 'Cliente se arrepintió de la compra', 'Ya no necesita el producto.', 2, 0, 1),
+(19, 94, 2, '2025-03-02 10:10:00', 'Faltan accesorios', 'No incluía el cargador.', 3, 1, 1),
+(22, 15, 1, '2025-03-08 17:30:00', 'Producto defectuoso', 'La batería no retiene la carga.', 1, 1, 1),
+(3, 201, 5, '2025-03-15 11:00:00', 'Daño físico en el producto', 'Pantalla con rayaduras.', 2, 1, 1),
+(40, 28, 2, '2025-03-22 13:20:00', 'No cumple con las expectativas', 'El rendimiento es inferior al esperado.', 2, 0, 1),
+(11, 42, 4, '2025-04-01 15:00:00', 'Producto incorrecto', 'Se envió un modelo diferente.', 3, 1, 1),
+(8, 31, 6, '2025-04-07 09:45:00', 'Producto no compatible', 'Los puertos no son los correctos para sus dispositivos.', 1, 1, 1),
+(25, 19, 2, '2025-04-14 18:00:00', 'Cliente se arrepintió de la compra', NULL, 2, 0, 1),
+(36, 19, 1, '2025-04-21 10:35:00', 'Producto defectuoso', 'Presenta sobrecalentamiento excesivo.', 2, 1, 1),
+(22, 88, 1, '2025-04-28 12:15:00', 'No cumple con las especificaciones', 'La capacidad de almacenamiento es menor.', 3, 1, 1),
+(5, 21, 2, '2025-05-03 16:00:00', 'Daño estético en el producto', 'Carcasa con golpes.', 1, 1, 1),
+(15, 6, 1, '2025-05-10 11:50:00', 'Faltan accesorios', 'No venía con el manual de usuario.', 3, 1, 1),
+(31, 15, 2, '2025-05-18 14:30:00', 'Producto no compatible', 'Conflicto de software con otros programas.', 2, 0, 1),
+(42, 219, 1, '2025-05-25 09:00:00', 'Cliente se arrepintió de la compra', 'Encontró una mejor oferta.', 3, 0, 1),
+(8, 23, 3, '2025-06-02 13:00:00', 'Producto defectuoso', 'El dispositivo se reinicia constantemente.', 1, 1, 1),
+(29, 17, 1, '2025-06-08 10:25:00', 'Producto incorrecto', 'El color no es el que ordenó.', 1, 1, 1),
+(19, 33, 3, '2025-06-12 15:40:00', 'No cumple con las expectativas', 'La calidad de la cámara es deficiente.', 2, 0, 1),
+(45, 33, 3, '2025-06-19 17:55:00', 'Daño físico en el producto', 'Botón de encendido atascado.', 3, 1, 1),
+(22, 19, 2, '2025-06-23 11:10:00', 'Producto defectuoso', 'Problemas con la conectividad Wi-Fi.', 1, 1, 1),
+(36, 29, 2, '2025-06-28 09:30:00', 'Faltan accesorios', 'Falta el cable de alimentación.', 2, 1, 1),
+(8, 19, 1, '2025-06-30 16:20:00', 'Producto no compatible', 'No es compatible con su red eléctrica.', 2, 1, 1);
+
+-- #####################################################
+-- INSERT DE DESCUENTOS
+-- #####################################################
+
+INSERT INTO descuentos (id_categoria, porcentaje, fecha_inicio, fecha_fin, activo) VALUES
+(1, 10, '2025-01-01', '2025-01-31', 0),
+(15, 05, '2025-02-15', '2025-02-28', 0),
+(30, 20, '2025-03-01', '2025-03-15', 0),
+(45, 12, '2025-04-10', '2025-04-20', 0),
+(5, 08, '2025-05-01', '2025-05-31', 0),
+(20, 15, '2025-06-01', '2025-06-30', 0),
+(35, 25, '2025-07-01', '2025-07-07', 1),
+(50, 07, '2025-08-01', '2025-08-15', 1),
+(10, 18, '2025-09-01', '2025-09-10', 0),
+(25, 09, '2025-10-01', '2025-10-31', 1);
