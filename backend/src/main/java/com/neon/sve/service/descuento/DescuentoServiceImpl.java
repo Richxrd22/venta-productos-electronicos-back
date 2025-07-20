@@ -2,7 +2,9 @@ package com.neon.sve.service.descuento;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -33,22 +35,18 @@ public class DescuentoServiceImpl implements DescuentoService {
     private CategoriaRepository categoriaRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public DatosRespuestaDescuento getDescuentoById(Long id) {
-        Optional<Descuento> descuentoOptional = descuentoRepository.findById(id);
-
-        if (descuentoOptional.isPresent()) {
-            Descuento descuento = descuentoOptional.get();
-            return new DatosRespuestaDescuento(descuento);
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Descuento no encontrado");
-        }
-
+        Descuento descuento = descuentoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Descuento no encontrado con ID: " + id));
+        return new DatosRespuestaDescuento(descuento);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<DatosListadoDescuento> getAllDescuento(Pageable pageable) {
-        Page<Descuento> descuentoPage = descuentoRepository.findAll(pageable);
-        return descuentoPage.map(DatosListadoDescuento::new);
+        return descuentoRepository.findAll(pageable).map(DatosListadoDescuento::new);
     }
 
     @Transactional
@@ -57,7 +55,7 @@ public class DescuentoServiceImpl implements DescuentoService {
         // 1. Validaciones iniciales
         Categoria categoria = categoriaRepository.findById(datosRegistroDescuento.id_categoria())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Categoria no encontrada con ID: " + datosRegistroDescuento.id_categoria()));
+                        "Categoría no encontrada con ID: " + datosRegistroDescuento.id_categoria()));
 
         if (Boolean.FALSE.equals(categoria.getActivo())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
@@ -72,11 +70,16 @@ public class DescuentoServiceImpl implements DescuentoService {
         // 2. Crear la nueva instancia del descuento
         Descuento nuevoDescuento = new Descuento(datosRegistroDescuento, categoria);
 
-        // 3. Gestionar la lógica de activación
-        gestionarLogicaDeActivacion(nuevoDescuento);
-
-        // 4. Guardar y devolver el resultado
+        // 3. Guardar primero para obtener un ID
+        // Esto simplifica la lógica de activación, ya que siempre trabajaremos con un
+        // objeto persistido.
         Descuento descuentoGuardado = descuentoRepository.save(nuevoDescuento);
+
+        // 4. Gestionar la lógica de activación con el descuento ya guardado
+        gestionarLogicaDeActivacion(descuentoGuardado);
+
+        // 5. Guardar los cambios de estado y devolver
+        descuentoRepository.save(descuentoGuardado);
         return new DatosRespuestaDescuento(descuentoGuardado);
     }
 
@@ -100,16 +103,13 @@ public class DescuentoServiceImpl implements DescuentoService {
                     "No se puede asociar el descuento a una categoría inactiva.");
         }
 
-        // Actualizar los datos del descuento
         descuentoAActualizar.actualizar(datosActualizarDescuento, categoria);
 
-        // Validar coherencia de fechas después de la actualización
         if (descuentoAActualizar.getFechaFin().isBefore(descuentoAActualizar.getFecha_inicio())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "La fecha de fin no puede ser anterior a la fecha de inicio.");
         }
 
-        // Re-evaluar el estado activo del descuento con la nueva información
         gestionarLogicaDeActivacion(descuentoAActualizar);
 
         Descuento descuentoActualizado = descuentoRepository.save(descuentoAActualizar);
@@ -127,27 +127,28 @@ public class DescuentoServiceImpl implements DescuentoService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El descuento ya está activo.");
         }
 
-        // Usar la lógica centralizada para determinar si puede activarse
+        // La lógica centralizada se encarga de todo
         gestionarLogicaDeActivacion(descuento);
+
+        // Guardamos el estado modificado por la lógica de activación
+        descuentoRepository.save(descuento);
 
         // Si después de la lógica, el descuento sigue inactivo, es porque hay uno
         // mejor.
         if (!descuento.getActivo()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "No se puede activar: Ya existe un descuento activo con un porcentaje igual o mayor para esta categoría.");
+                    "No se puede activar: Ya existe un descuento activo con un porcentaje mayor para esta categoría.");
         }
-
-        descuentoRepository.save(descuento);
     }
 
+    @Transactional
     @Override
     public void desactivarDescuento(Long id) {
         Descuento descuento = descuentoRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Descuento no encontrado con el ID ingresado : " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Descuento no encontrado con el ID ingresado: " + id));
 
         if (!descuento.getActivo()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El descuento ya está desactivado");
-
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El descuento ya está desactivado.");
         }
 
         descuento.setActivo(false);
@@ -155,53 +156,57 @@ public class DescuentoServiceImpl implements DescuentoService {
     }
 
     /**
+     * LÓGICA DE ACTIVACIÓN REFACTORIZADA
      * Centraliza la lógica para determinar si un descuento debe estar activo.
      * Considera la fecha y otros descuentos en la misma categoría.
-     * Modifica el estado 'activo' del objeto Descuento pasado como parámetro y
-     * desactiva otros si es necesario.
+     * Modifica el estado 'activo' del objeto Descuento y desactiva otros si es
+     * necesario.
      */
     private void gestionarLogicaDeActivacion(Descuento descuentoAProcesar) {
         Categoria categoria = descuentoAProcesar.getCategoria();
         LocalDate hoy = LocalDate.now();
 
-        // 1. Validar que el descuento esté dentro de su rango de fechas y que su
-        // categoría esté activa.
-        boolean puedeSerActivoPorFechaYCategoria = !hoy.isBefore(descuentoAProcesar.getFecha_inicio())
+        // 1. Validar si el descuento puede ser candidato a estar activo por fecha y
+        // categoría.
+        boolean esCandidato = !hoy.isBefore(descuentoAProcesar.getFecha_inicio())
                 && !hoy.isAfter(descuentoAProcesar.getFechaFin())
                 && categoria.getActivo();
 
-        if (!puedeSerActivoPorFechaYCategoria) {
+        if (!esCandidato) {
             descuentoAProcesar.setActivo(false);
-            return; // No puede ser activo, no hay nada más que hacer.
+            return; // Si no es candidato, se desactiva y terminamos.
         }
 
-        double porcentajeActual = descuentoAProcesar.getPorcentaje();
+        // 2. Obtener TODOS los otros descuentos activos para la misma categoría.
+        // Se excluye el descuento que estamos procesando para evitar compararlo consigo
+        // mismo.
+        List<Descuento> otrosDescuentosActivos = descuentoRepository.findByCategoriaAndActivoTrue(categoria)
+                .stream()
+                .filter(d -> !Objects.equals(d.getId(), descuentoAProcesar.getId()))
+                .collect(Collectors.toList());
 
-        // 2. Buscar otros descuentos activos en la MISMA categoría.
-        List<Descuento> otrosDescuentosActivos = descuentoRepository
-                .findByCategoriaAndActivoTrue(categoria);
+        // 3. Buscar si existe un descuento mejor (con mayor porcentaje) entre los
+        // otros.
+        Optional<Descuento> mejorDescuentoExistente = otrosDescuentosActivos.stream()
+                .max((d1, d2) -> Double.compare(d1.getPorcentaje(), d2.getPorcentaje()));
 
-        boolean hayUnoMejor = false;
-        for (Descuento otro : otrosDescuentosActivos) {
-            if (otro.getId().equals(descuentoAProcesar.getId())) {
-                continue; // No comparar consigo mismo
-            }
+        boolean hayUnoMejor = mejorDescuentoExistente.isPresent() &&
+                mejorDescuentoExistente.get().getPorcentaje() >= descuentoAProcesar.getPorcentaje();
 
-            if (otro.getPorcentaje() >= porcentajeActual) {
-                hayUnoMejor = true;
-                break; // Se encontró uno mejor o igual, el actual no puede ser activo.
-            } else {
-                // El actual es mejor, se desactiva el otro
+        // 4. Tomar decisiones basadas en la comparación.
+        if (hayUnoMejor) {
+            // Si ya existe un descuento mejor o igual, el que procesamos debe estar
+            // inactivo.
+            descuentoAProcesar.setActivo(false);
+        } else {
+            // Si el descuento que procesamos es el mejor, se activa.
+            descuentoAProcesar.setActivo(true);
+            // Y todos los demás descuentos que estaban activos para esa categoría se
+            // desactivan.
+            for (Descuento otro : otrosDescuentosActivos) {
                 otro.setActivo(false);
                 descuentoRepository.save(otro);
             }
-        }
-
-        // 3. Establecer el estado final del descuento a procesar.
-        if (hayUnoMejor) {
-            descuentoAProcesar.setActivo(false);
-        } else {
-            descuentoAProcesar.setActivo(true);
         }
     }
 }
