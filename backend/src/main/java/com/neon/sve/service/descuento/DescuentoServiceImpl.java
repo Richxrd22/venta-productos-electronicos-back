@@ -174,7 +174,9 @@ public class DescuentoServiceImpl implements DescuentoService {
 
         if (!esCandidato) {
             descuentoAProcesar.setActivo(false);
-            return; // Si no es candidato, se desactiva y terminamos.
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "El descuento no puede ser activado porque está fuera del rango de fechas o la categoría está inactiva.");
         }
 
         // 2. Obtener TODOS los otros descuentos activos para la misma categoría.
